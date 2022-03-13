@@ -1,0 +1,562 @@
+// // ■ DigitalOut Class
+    // 1. 사용방법
+        // 1) 생성자 : DigitalOut
+
+// DigitalOut myled(LED1);
+
+// int main(){
+//     while(1){
+//         myled = 1;
+//         wait(0.2);
+//         myled = 0;
+//         wait(1.0);
+//     }
+// }
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+// // ■ DigitalIn Class
+    // 1. 사용방법
+        // 1) 생성자 : 
+
+// DigitalOut led(LED1);
+
+// DigitalIn but(BUTTON1);
+// int main() {
+//     while(1) {
+//         led = !but;
+//     }
+// }
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+// // ■ PwmOut Class
+//     // 1. 사용방법
+//         // 1) 생성자 : PwmOut class
+
+// PwmOut pwm(D7);
+
+// int main(){
+//     int count = 0;
+//     pwm.period_us(25);
+
+//     while(1){
+//         pwm = count / 100.;
+//         count++;
+//         count %= 101;
+//         wait(0.1);
+//     }
+// }
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+// // ■ AnalogIn Class
+
+// AnalogIn POT(A0);
+// int main(){
+//     while(1) {
+//         float voltage = POT * 3.3f;
+//         uint16_t value = POT.read_u16();
+//         printf("POT Value = %u, Voltage = %f \n", value, voltage);
+//         wait(0.5);
+//     }
+// }
+
+// GP2A psd1(A0, 20, 150, 60, 0);
+// int main(){
+//     while(1) {
+//         printf("Value = %lf, Voltage = %lf \n", psd1.getDistance(), psd1.getVoltage());
+//         wait(0.5);
+//     }
+// }
+
+// GP2A psd2(A0, 7, 80, 0.23625, -0.297);
+// int main(){
+//     while(1) {
+//         printf("Value = %lf, Voltage = %lf \n", psd2.getDistance(), psd2.getVoltage());
+//         wait(0.5);
+//     }
+// }
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+// ● Timer
+//     2. Ticker 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+Ticker tic;
+DigitalOut led1(LED1);
+DigitalOut led2(D7);
+
+void toggle(){
+    led1 =! led1;
+}
+
+int main(){
+    tic.attach(&toggle, 0.1);
+    while(true){
+        led2 =! led2;
+        wait(1.0);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+
+class Blinker{
+    DigitalOut _led; // 가계약
+    Ticker _tick;
+    void blink(){
+        _led =! _led;
+    }
+    public:
+        Blinker(PinName pin): _led(pin){
+            _led = 0;
+        }
+        void begin(float sec){
+            _tick.attach(callback(this, &Blinker::blink, sec));
+        }
+};
+
+Blinker blink(LED1);
+DigitalOut led2(D7);
+
+int main(){
+    blink.begin(0.1);
+    while(true){
+        led2 =! led2;
+        wait(0.1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+// ● UART
+//     2. Serial 실습
+//         1) Serial_Basic
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+
+Serial pc(USBTX, USBRX);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+int main(){
+    int n, m;
+
+    while(1){
+        pc.printf("Type two integers : ");
+        pc.scanf("%d%d", &n, &m);
+        pc.printf("\n You typed %d and %d\n", n, m);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//             2) Seiral loopback
+/*
+#include "mbed.h"
+
+RawSerial pc(USBTX, USBRX); // Serial 클래스 사용 시, 통신 데이터가 손실될 수 있으므로, RawSerial 사용.
+
+int main(){
+    printf("Loop back program start \n");
+    while(1){
+        if (pc.readable()){
+            pc.putc(pc.getc());
+        }
+        // wait(0.001); // wait이 있으면 통신이 날아가는 도중에 막혀서 데이터 손실되므로, 통신에는 사용x.
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//             3) Seiral loopback + Callback
+/*
+#include "mbed.h"
+#include <string>
+
+RawSerial pc(USBTX, USBRX);
+DigitalOut led(LED1);
+int d0;
+
+// Callback Def
+void serialEvent(){
+    if(pc.readable()){
+        pc.putc(pc.getc());
+    }
+}
+
+int main(){
+    printf("Loop back program start \n");
+    pc.attach(&serialEvent);
+    while(1){
+        led =! led;
+        wait(0.1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//             4) Serial Communication + Callback
+/*
+#include "mbed.h"
+
+InterruptIn btn(BUTTON1);
+DigitalOut led(LED1);
+RawSerial pc(USBTX, USBRX);
+
+volatile char c = '\0';
+volatile bool pressed = false;
+
+// Callback Def
+void onCharReceived(){
+    c = pc.getc();
+}
+void onPressed(){
+    pressed = true;
+}
+
+int main(){
+    pc.attach(&onCharReceived);
+    btn.fall(&onPressed);
+
+    while(true){
+        if(c == '1'){
+            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+            led = 1;
+        }
+        else if(c == '0'){
+            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+            led = 0;
+        }
+        if (pressed){
+            pc.putc('b');
+            pressed = false;   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//             5) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*
+#include "mbed.h"
+#include <string>
+
+DigitalOut led1(LED1);
+RawSerial pc(USBTX, USBRX);
+
+volatile bool gotPacket = false;
+volatile float data[3];
+
+// Callback Def
+void onSerialRx(){
+    static char serialInBuffer[32];
+    static int serialCount = 0;
+
+    while(pc.readable()){
+        char byteIn = pc.getc();
+        // 통신 데이터 마지막인 경우
+        if(byteIn == '\n'){
+            serialInBuffer[serialCount] = 0;
+            float d0, d1, d2;
+            if (scanf(serialInBuffer, "%f, %f, %f", &d0, &d1, &d2) == 3){
+                data[0] = d0;
+                data[1] = d1;
+                data[2] = d2;
+                gotPacket = true;
+            }
+            serialCount = 0;
+        }
+        // 통신 데이터 마지막이 아닌 경우
+        else {
+            serialInBuffer[serialCount] = byteIn;
+            if(serialCount < 32)
+                serialCount++;
+        }
+    }
+}
+
+int main() {
+    pc.attach(&onSerialRx);
+    while(true) {
+        if(gotPacket) {
+            gotPacket = false;
+            pc.printf("data = %.3f, %.3f, %.3f \n\r", data[0], data[1], data[2]);
+        }
+        led1 =! led1;
+        wait(0.2);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//             6) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 되냐??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*
+#include "mbed.h"
+
+DigitalOut led1(LED1);
+RawSerial pc(USBTX, USBRX);
+
+volatile bool gotPacket = false;
+volatile float data[3];
+
+void onSerialRx(){
+    static char serialInBuffer[32];
+    static int data_cnt = 0, buff_cnt = 0;
+
+    if(pc.readable()){
+        char byteIn = pc.getc();
+        if(byteIn == ','){
+            serialInBuffer[buff_cnt]='\0';
+            data[data_cnt++]=atof(serialInBuffer);
+            buff_cnt = 0;
+        }
+        else if(byteIn=='\n'){
+            serialInBuffer[buff_cnt] = '\0';
+            data[data_cnt]=atof(serialInBuffer);
+            buff_cnt=0; data_cnt=0;
+            gotPacket = true;
+        }
+        else{
+            serialInBuffer[buff_cnt++]=byteIn;
+        }
+    }
+}
+
+int main() {
+    pc.attach(&onSerialRx);
+    while(true) {
+        if(gotPacket) {
+            gotPacket = false;
+            pc.printf("data = %.3f, %.3f, %.3f \n\r", data[0], data[1], data[2]);
+        }
+        led1 =! led1;
+        wait(0.2);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ● RTOS
+//     2. Thread 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* 
+#include "mbed.h"
+DigitalOut led1(LED1), led2(D7);
+Thread thread;
+void led1_thread(){
+    while (true){
+        led1 =! led1;
+        wait_us(100000);
+    }
+}
+int main(){
+    thread.start(&led1_thread);
+    while (true){
+        led2 =! led2;
+        wait_us(500000);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* 
+#include "mbed.h"
+Thread thread;
+DigitalOut led1(LED1), led2(D7);
+volatile bool running = true;
+void blink(DigitalOut *led){
+    while(running){
+        *led =! *led;
+        wait_us(20000);
+    }
+}
+int main(){
+    thread.start(callback(&blink, &led1));
+    led2 =1;
+    wait_us(5000000);
+    running = false;
+    thread.join();
+    led2 = 0;
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ● RTOS
+//     2. Mutex 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+# include "mbed.h"
+Mutex mutex;
+Thread t2, t3;
+int cnt = 0;
+DigitalOut led(LED1);
+
+void notify(const char* name, int ct){
+    printf("%s : %3d\n\r", name, ct);
+}
+void thread_plus(const char *args){
+    while(true){
+        if(mutex.trylock_for(1)){ // true or false 반환
+            led =! led;
+            notify((const char*)args, ++cnt);
+            mutex.unlock();
+            wait_us(490000);
+        }
+    }
+}
+void thread_minus(const char *args){
+    mutex.lock();
+    notify((const char*)args, --cnt);
+    mutex.unlock();
+    wait_us(1000000);
+}
+
+int main(){
+    t2.start(callback(&thread_plus, (const char*)"Th 2"));
+    t3.start(callback(&thread_minus, (const char*)"Th 3"));
+
+    while(true){
+        thread_minus((const char *)"Th 1");
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ● RTOS
+//     2. Queue 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+# include "mbed.h"
+typedef struct { // 구조체 생성
+    float voltage, current;
+    uint32_t counter;
+} message_t;
+MemoryPool<message_t, 16> mpool; // MemoryPool 생성
+Queue<message_t, 16> queue; // Queue 생성
+Thread thread;
+
+void generator(void){
+    uint32_t i = 0;
+    while(true){
+        i++;
+        message_t *message = mpool.alloc(); // MemoryPool 주소 할당 to 구조체 변수 생성
+        message -> voltage = (i * 0.1) * 33; // 구조체 변수 주소의 항목
+        message -> current = (i * 0.1) * 11;
+        message -> counter = i;
+        queue.put(message); // Enqueue
+        wait_us(1000000);
+    }
+}
+
+int main(void){
+    thread.start(&generator);
+    while(true){
+        osEvent evt = queue.get(); // queue 상태 반환
+        if (evt.status == osEventMessage){
+            message_t *message = (message_t*)evt.value.p;
+            printf("\nVoltage : %.2f V\n", message -> voltage); // 구조체 변수 주소의 항목 
+            printf("Current : %.2f A\n", message -> current);
+            printf("Number of cycles : %u\n", message -> counter);
+            mpool.free(message); // MemoryPool 주소 반환
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+Serial pc(USBTX, USBTX);
+
+MemoryPool<uint32_t,16> mpool; // MemoryPool 생성
+Queue<uint32_t,16> queue; // Queue 생성
+
+Thread thread;
+Mutex uart_mutex;
+
+DigitalOut led(LED1);
+
+void send_thread(void){
+    uint32_t i = 0;
+    while(true){
+        uint32_t *value = mpool.alloc(); // MemoryPool 주소 할당 to 구조체 변수 생성
+        *value = i;
+        queue.put(value); // Enqueue
+        uart_mutex.lock();
+        pc.printf("Thread : %d\n", *value);
+        uart_mutex.unlock();
+        wait_us(400000);
+        i++;
+    }
+}
+
+int main(){
+    thread.start(&send_thread);
+    while(true){
+        osEvent evt = queue.get(0); // queue 상태 반환
+        if(evt.status == osEventMessage){
+            led =! led;
+            uint32_t *value = (uint32_t*)evt.value.p;
+            uart_mutex.lock();
+            pc.printf("Main : %d\n", *value);
+            uart_mutex.unlock();
+            mpool.free(value); // MemoryPool 주소 반환
+        }
+        uart_mutex.lock();
+        pc.printf("Main : wating... \n");
+        uart_mutex.unlock();
+        wait_us(200000);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+Serial pc(USBTX, USBTX);
+
+MemoryPool<uint32_t,16> mpool; // MemoryPool 생성
+Queue<uint32_t,16> queue; // Queue 생성
+
+Thread thread;
+Mutex uart_mutex;
+
+DigitalOut led(LED1);
+
+void send_thread(void){
+    uint32_t i = 0;
+    while(true){
+        uint32_t *value = mpool.alloc(); // MemoryPool 주소 할당 to 구조체 변수 생성
+        *value = i;
+        queue.put(value); // Enqueue
+        uart_mutex.lock();
+        pc.printf("Thread : %d\n", *value);
+        uart_mutex.unlock();
+        wait_us(400000);
+        i++;
+    }
+}
+
+int main(){
+    thread.start(&send_thread);
+    uint32_t cnt = 0;
+    while(true){
+        osEvent evt = queue.get(0); // queue 상태 반환
+        if(evt.status == osEventMessage){
+            led =! led;
+            uint32_t *value = (uint32_t*)evt.value.p;
+            uart_mutex.lock();
+            pc.printf("Main : %d\n", *value);
+            uart_mutex.unlock();
+            mpool.free(value); // MemoryPool 주소 반환
+        }
+        if(cnt%20 == 0){
+            uart_mutex.lock();
+            pc.printf("Main : wating... \n");
+            uart_mutex.unlock();
+            wait_us(200000);
+        }
+        wait_us(200000);
+        cnt++;
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

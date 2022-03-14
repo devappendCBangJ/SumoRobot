@@ -53,7 +53,7 @@ void in_SerialRx_print();
 void th_SerialRx();
 
 void DC_set();
-void DC_go();
+void DC_chk();
 
 // [main문]
 int main(){
@@ -65,7 +65,7 @@ int main(){
         // in_SerialRx_print(); // interrupt 전용
         // sensor_print();
 
-        // DC_chk();
+        DC_chk();
     }
 }
 

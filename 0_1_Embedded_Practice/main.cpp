@@ -30,55 +30,133 @@
 
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-// // ■ PwmOut Class
-//     // 1. 사용방법
-//         // 1) 생성자 : PwmOut class
+// ● PwmOut
+//     2. PwmOut 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
 
-// PwmOut pwm(D7);
+PwmOut pwm(D7);
 
-// int main(){
-//     int count = 0;
-//     pwm.period_us(25);
+int main(){
+    int count = 0;
+    pwm.period_us(25);
 
-//     while(1){
-//         pwm = count / 100.;
-//         count++;
-//         count %= 101;
-//         wait(0.1);
-//     }
-// }
+    while(1){
+        pwm = count / 100.;
+        count++;
+        count %= 101;
+        wait(0.1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
 
+PwmOut rcServo(D6);
+
+void turn(PwmOut &rc, float deg);
+template <class T> T map (T x, T in_min, T in_max, T out_min, T out_max);
+
+int main(){
+    float ang=0., inc=0.1;
+    rcServo.period_ms(10);
+    turn(rcServo, 0);
+    
+    while(1){
+        turn(rcServo, ang);
+        wait_ms(10);
+        ang+=inc;
+        if (ang > 180.f || ang < 0.f){
+            inc = -inc;
+        }
+    }
+}
+
+void turn(PwmOut &rc, float deg){
+    uint16_t pulseW = map<float>(deg, 0., 180., 600., 2400.);
+    rc.pulsewidth_us(pulseW);
+}
+
+template <class T> T map (T x, T in_min, T in_max, T out_min, T out_max){
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+*/
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-// // ■ AnalogIn Class
-
-// AnalogIn POT(A0);
-// int main(){
-//     while(1) {
-//         float voltage = POT * 3.3f;
-//         uint16_t value = POT.read_u16();
-//         printf("POT Value = %u, Voltage = %f \n", value, voltage);
-//         wait(0.5);
-//     }
-// }
-
-// GP2A psd1(A0, 20, 150, 60, 0);
-// int main(){
-//     while(1) {
-//         printf("Value = %lf, Voltage = %lf \n", psd1.getDistance(), psd1.getVoltage());
-//         wait(0.5);
-//     }
-// }
-
-// GP2A psd2(A0, 7, 80, 0.23625, -0.297);
-// int main(){
-//     while(1) {
-//         printf("Value = %lf, Voltage = %lf \n", psd2.getDistance(), psd2.getVoltage());
-//         wait(0.5);
-//     }
-// }
-
+// ● AnalogIn
+//     2. AnalogIn 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+
+AnalogIn POT(A0);
+int main(){
+    while(1) {
+        float voltage = POT * 3.3f;
+        uint16_t value = POT.read_u16();
+        printf("POT Value = %u, Voltage = %f \n", value, voltage);
+        wait(0.5);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+GP2A psd1(A0, 20, 150, 60, 0);
+
+int main(){
+    while(1) {
+        printf("Value = %lf, Voltage = %lf \n", psd1.getDistance(), psd1.getVoltage());
+        wait(0.5);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+GP2A psd2(A0, 7, 80, 0.23625, -0.297);
+
+int main(){
+    while(1) {
+        printf("Value = %lf, Voltage = %lf \n", psd2.getDistance(), psd2.getVoltage());
+        wait(0.5);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+#include "mbed.h"
+
+PwmOut rcServo(D6);
+AnalogIn POT(A0);
+
+void turn(PwmOut &rc, float deg);
+template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max);
+
+int main(){
+    float ang = 0., inc = 0.1;
+    rcServo.period_ms(10);
+    turn(rcServo, 0);
+
+    while(1){
+        inc = 2.0f * POT - 1.0f;
+        ang += inc;
+        if (ang > 180.0f) ang = 180.0f;
+        else if (ang < 0.0f) ang = 0.0f;
+        turn(rcServo, ang);
+        wait_ms(10);
+    }
+}
+
+void turn(PwmOut &rc, float deg){
+    uint16_t pulseW = map<float>(deg, 0., 180., 600., 2400.);
+    rc.pulsewidth_us(pulseW);
+}
+
+template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 // ● Timer
 //     2. Ticker 실습

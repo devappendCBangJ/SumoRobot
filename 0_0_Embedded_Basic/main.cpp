@@ -6,8 +6,8 @@
             (1) 메소드 : 객체명.write(0 or 1)
             (2) 함수 오버로딩 : 객체명 = 0 or 1
         2) 읽기
-            (1) 메소드 : 객체명.read()
-            (2) 함수 오버로딩 : 특정 변수 = 객체명
+            (1) 메소드 : int v = 객체명.read()
+            (2) 연산자 오버로딩 : int v = 객체명
     
     +a) 
         0) wait
@@ -55,8 +55,8 @@
         2) 입력모드 설정 : 객체명.mode(Pin_mode)
             - Pin_mode : PullUp / PullDown / PullNone
         3) 읽기 : 
-            (1) 메소드 : 객체명.read()
-            (2) 함수 오버로딩 : 특정 변수 = 객체명
+            (1) 메소드 : int v = 객체명.read()
+            (2) 연산자 오버로딩 : 특정 변수 = 객체명
             
     +a) 
         1) 스위치 회로
@@ -95,6 +95,91 @@
                         - 선언 시 초기화 필수
                         - NULL 참조자는 없다
 
+● PwmOut
+    0. Pwm 개요
+        1) PWM(Pulse Width Modulation) : 펄스폭 변조
+            - 일정한 주기의 펄스에서 펄스 폭 변경
+            (1) 목적
+                1] 정보 전달
+                    - 정보 전달 by 일정 주기 펄스 폭 제공
+                    ex. 서보모터
+                2] 근사 아날로그 출력
+                    - 근사 아날로그 출력 by 매우 짧은 주기
+                    - 고가 DAC or 아날로그 회로 사용하지 않으므로 저렴함
+                    ex. 모터 제어, 히터 제어, 조명 제어
+
+    1. Pwm Class
+        1) 생성자 : PwmOut 객체명(Pin_name)
+        2) 주기 설정
+            (1) 초 : 객체명.period(sec) // float sec
+            (2) 밀리초 : 객체명.period_ms(ms) // int ms
+            (3) 마이크로초 : 객체명.period_us(us) // int us
+        2) 펄스폭 설정
+            (1) 초 : 객체명.pulsewidth(sec) // float sec
+            (2) 밀리초 : 객체명.pulsewidth_ms(ms) // int ms
+            (3) 마이크로초 : 객체명.pulsewidth_us(us) // int us
+        3) 쓰기
+            (1) 메소드 : 객체명.write(value) // float value
+            (2) 연산자 오버로딩 : 객체명 = 0.0 ~ 1.0
+        4) 읽기
+            (1) 메소드 : float v = 객체명.read()
+            (2) 연산자 오버로딩 : float v = 객체명
+
+    +a)
+        1) RC 서보모터
+            (1) 특징
+                - 구성 : DC 모터, 감속기, POT
+                - 각도 제어 feedback : 각도 명령 -> 제어기 -> 서보모터 -> 현재 각도 feedback
+            (2) 명령 식
+                수식 : pulse_width[ms] = (2.4-0.6)/180 * ang + 0.6
+                - period : 10 ~ 20ms
+                - 0도 : 펄스폭 600us
+                - 180도 : 펄스폭 2400us
+        2) map 함수 : 선형 mapping 사용자 정의 함수
+            T map(T x, T in_min, T in_max, T out_min, T out_max)
+        3) C++의 template
+            1] 목적 : 클래스 or 함수의 매개변수 or 반환값이 여러개 일때
+            2] 특징 : 자료형이 다른 여러 개 함수들을 따로 만들 필요 없이 하나의 틀로 만들기
+
+            template <typename T> T sumTwo(T a, T b){
+                return a + b;
+            }
+            float s1 = sumTwo<float>(3.2, 4.5);
+            float s2 = sumTwo<int>(33,45);
+            unsigned int s3 = sumTwo<unsigned int>(33, 45);
+
+● AnalogIn
+    0. ADC 개요
+        1) ADC
+            (1) ADC : 아날로그 입력 >> 디지털 데이터 변환
+            (2) 샘플링 주기 : 아날로그 전압 읽는 주기
+            (3) 양자화 : 샘플된 전압을 일시적으로 아날로그 전압을 유지 >> 유한한 비트 수의 디지털 데이터로 변환
+        2) 분해능
+            (1) 분해능 : 출력 데이터 1비트 변화시키는 입력 전압의 변화
+            (1) 분해능 = V_span / (2^n)
+                - V_span : 측정 스팬 전압
+                - n : n비트로 변환
+            (2) nucleo 보드 분해능
+                - 12bit ADC : 0 ~ 3.3V 전압 >> 0 ~ 4095 수로 양자화
+                - 분해능 : 1bit 변화 >> 3.3/4095 = 0.8mV 변화
+    1. AnalogIn Class
+        1) 생성자 : AnalogIn 객체명(Pin_name)
+        2) 읽기
+            1] 메소드 : float v = 객체명.read()
+                - return : 아날로그 핀의 현재 ADC값 (0.0 ~ 1.0) // float
+            2] 메소드 : uint16_t v = 객체명.read_u16()
+                - return : 아날로그 핀의 현재 ADC값 (0 ~ 65535) // uint16_t
+                - 분해능이 12bit but 16bit로 값을 읽음
+            3] 연산자 오버로딩 : float v = 객체명
+                - return : 아날로그 핀의 현재 ADC값 (0.0 ~ 65535) // float
+    
+    +a)
+        1) 가변저항(POT)
+            (1) 원리
+                - 슬라이더
+                - 저항체 트랙
+                - 전극
+
 
 ● Ticker, Timer, TimeOut
     0. Timer 개요
@@ -103,7 +188,7 @@
             - start : 기동
             - stop : 정지
             - reset : 0
-            - read : 읽기
+            - read : 읽기.
         3) TimeOut : 지정한 시간 후, 1회 callback 측정
     1. Timer Class
         1) 생성자 : Ticker 객체명

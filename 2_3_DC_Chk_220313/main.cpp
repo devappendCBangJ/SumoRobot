@@ -4,8 +4,8 @@
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 통신
-RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
-RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+// Serial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+Serial pc(USBTX, USBRX, 1200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
 
 // DC 모터
 DigitalOut DirL(PB_6);
@@ -16,7 +16,6 @@ PwmOut PwmR(PB_5);
 // 통신
 volatile bool gotPacket2 = false;
 volatile float data2[3];
-int good = 1;
 
 // [함수정의]
 void DC_set();
@@ -24,9 +23,10 @@ void DC_go();
 
 // [main문]
 int main(){
-    DC_set();
+    //DC_set();
     while(1){
-        DC_go();
+        printf("%c", pc.getc());
+        //DC_go();
     }
 }
 

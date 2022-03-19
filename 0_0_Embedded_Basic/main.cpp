@@ -1,4 +1,170 @@
 /*
+● Mbed
+    1. Mbed //♣♣♣♣♣
+        1) 개념 : Cortex-M 마이크로컨트롤러 프로그램용 OS
+            - 온라인 소프트웨어 개발 툴 + USB 메모리 & 전원
+        2) 특징 //♣♣♣♣♣
+            (1) 장점
+                1] 사용성 편리
+                2] 회로 몰라도 개발 가능
+                3] 별도 다운로드 장비 불필요
+                4] 방대한 라이브러리 in 온라인
+                5] 고성능 ARM 코어의 다양한 기능
+                    - Ethernet, USBHost, USBDevice, SPI, I2C, CAN, AnalogIn, PwmOut, AnalogOut, ...
+                6] 많은 보드, 모듈, 부품 지원
+            (2) 단점
+                1] 레지스터 레벨 디버깅 불가
+        3) Nucleo Board //♣♣♣♣♣
+            (1) 특징
+                1] 제조사 : STMicroelectronics
+                2] 개발보드 : 수많은 lineup 존재
+                    - Cortex-M
+        4) Nucleo-f401re datasheet //♣♣♣♣♣
+            (1) 프로세서 : STM32F401RET6
+                1] 특징
+                    [0] LQFP64 : 칩 패키지
+                    [1] Core
+                        - ARM32-bit Cortex-M4 CPU
+                        - CPU frequency : max 84Mhz
+                        - FPU : 부동소수점 연산기
+                        - 연산속도 : 105MIPS
+                    [2] Memory
+                        - 프로그램 메모리 : 512KB Flash
+                        - 데이터 메모리 : 96KB SRAM
+                    [3] 동작 전원
+                        - VDD : 1.7V ~ 3.6V
+                    [4] USB
+                        - USB 2.0 OTG FS
+                    [5] GPIO
+                        - GPIO : 50개. 모두 외부인터럽트 가능
+                    [6] ADC
+                        - ADC : 12bit. 16channel
+                    [7] 통신
+                        - USART/UART : 4개
+                        - I2C : 3개
+                        - SPI : 3개
+                        - SDIO : 1개
+                    [8] Timer
+                        - RTC(Real Time Clock) : 실시간 클럭 내장
+                        - Advanced-Control Timer : 3상 PWM 발생
+                        - General Purpose Timers : 16비트 5개, 32비트 2개
+                        - Watchdog Timers : 2개
+            (2) ST-LINK/V2-1 debugger/programmer 내장
+                - 점퍼 변경으로 ST-LINK/V2-1로도 사용 가능
+            (3) USB mini B type : 3가지 접속 방법 제공
+                1] Virtual COM port : 직렬 통신
+                2] Mass storage(USB Disk drive)
+                3] Debug port
+            (4) Pin
+                1] Arduino Uno R3 호환핀
+                2] Morpho headers : STM32 I/O 핀을 위한 확장핀
+            (5) 기타
+                1] LED
+                2] BUTTON
+                3] RESET BUTTON
+            (6) 전원 공급
+                - 유연한 전원 공급 : 3.3V, 5V, 7V ~ 12V
+        5) Mbed API //♣♣♣♣♣
+            (1) Mbed OS 구조
+                1] User Application Code -> Mbed OS5 API -> H/W Interface
+                    [1] 핵심 Mbed OS5 API
+                        - Core
+                            Drivers : MCU 다양한 장치들에 대한 API
+                            Platform : MCU 기능에 대한 기초 인프라
+                            RTOS : Thread, Mutex 등 실시간 운영체제 관련 API
+                            Storage : SD카드, Flash Memory 등 다양한 저장장치 관련 기능
+                            USB : 마우스, 키보드, HID 장치, 오디오 장치 등 다양한 주변장치 역할
+                            ...
+                        - Connectivity
+                            Network Socket : TCP, UDP를 근간으로 하는 소켓 만들어 데이터 주고 받음
+                            Network Interface : Ethernet, WiFi, Cellular 등 네트워크 인터페이스 주고 받음
+                            Bluetooth : BLE(Bluetooth Low Energy) 관련 기능
+                            NFC : NFC 통신기능
+                            ...
+                        - Security
+                            Security : 장치의 보안, 통신
+    2. Mbed 프로그래밍 순서
+        1) import 마법사
+            - 이미 작성된 프로그램 수정
+        1) New project
+            1] 기본 예제 (mbed 라이브러리)
+                - 이미 작성된 프로그램 수정
+            2] Empty 프로젝트 + import mbed 라이브러리 + cpp 파일 생성
+                - 프로그램 직접 생성
+        2) 코드 수정
+        3) Compile
+        4) 보드 Sub 연결
+        5) bin 파일 drag & drop
+
+    +a)
+        1) 유용한 기능 : 키워드 클릭 시 클래스 가이드 표시
+            - 정의 위치, 관련 문서 등 확인 가능
+        2) C vs C++ //♣♣♣♣♣
+            (1) 특징 
+                - C ⊂ C++
+                1] C
+                    [1] 설계 개념 : 절차적
+                        - function driven
+                        - top down
+                    [2] 캡슐화 : data와 function 분리
+                    [3] 정보 은닉 : x
+                    [4] 오버로딩 : x
+                    [5] 상속 : x
+                    [6] 키워드 수 : 32
+                    [7] 이름 공간 : x
+                    [8] 메모리 할당 : malloc(), free()
+                    [9] 참조 변수 : x
+                    [10] 예외 처리 : x
+                    [11] 문자, 불 자료형 : x
+                    [12] 매개변수의 기본값 : x
+                    [13] 인라인 함수 : x
+                2] C++
+                    [1] 설계 개념 : 객체지향적
+                        - object driven
+                        - bottom up
+                    [2] 캡슐화 : data와 function 통합
+                    [3] 정보 은닉 : 지원
+                    [4] 오버로딩 : function, operator
+                    [5] 상속 : Class
+                    [6] 키워드 수 : 52
+                    [7] 이름 공간 : 지원
+                    [8] 메모리 할당 : new, delete operator
+                    [9] 참조 변수 : 참조자 &
+                    [10] 예외 처리 : try ~ catch 블록
+                    [11] 문자, 불 자료형 : Bool, String
+                    [12] 매개변수의 기본값 : 지원
+                    [13] 인라인 함수 : 지원
+        3) 객체지향 OPP
+            (1) 개념
+                1] 클래스 : 설계도
+                    - 만드는 기준o. 실체x
+                    ex. 자동차 설계도
+                2] 객체 : 설계도로 만들어진 상품
+                    - 실체o
+                    ex. 자동차
+            (2) 특징
+                1] 추상화(Abstraction)
+                    - 단순 >> 구체화
+                    ex. 동물 -> 고양이 -> 사향 고양이
+                2] 캡슐화(Encapsulation)
+                    - 클래스 : 데이터와 함수(메서드)를 한 통에 넣는다
+                3] 상속(Inheritance)
+                    - 기본 클래스 상속 + 분화
+                    - 효율성 증가
+                4] 다형성(Polymorphism)
+                    - 오버로딩 : 같은 이름의 함수나 연산자로도 다양한 기능
+                5] 정보 은닉, 보안
+            (3) 사용
+                1] 객체 선언 : Class_name Object_name(var1, var2, ...);
+                2] 멤버함수 호출
+                    - Object_name.member_name(var1, ...);
+                    - Object_name.member_name;
+                3] 접근 한정자 : 객체 내 멤버들에 대한 접근 제한
+                    [1] public : 외부, 자식, 자신 모두 접근 가능
+                    [2] protected : 자식, 자신만 접근 가능
+                    [3] private : 자신만 접근 가능
+
+
 ● DigitalOut
     1. DigitalOut Class
         1) 생성자 : DigitalOut 객체명(Pin_name)
@@ -301,6 +467,7 @@
                     pc.putc('\n');
             (2) 읽기 가능 : 객체명.readable() // bool
                 - return : 수신 버퍼에 데이터 있으면 true, 아니면 false
+                - if(객체명.readable == true)를 사용하지않으면 getc 사용시 수신버퍼가 찰때까지 계속 기다린다 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
                 
                 if(pc.readable())
                     char c = pc.getc();s
@@ -479,5 +646,89 @@
         2) MemoryPool, Queue 동작 원리
             (1) MemoryPool : 실제 메시지가 저장된 메모리
             (2) Queue : 주소 관리
+
+
+● Encoder Sensor Project
+    0. Encoder Sensor 개요
+        1) Encoder 원리
+            (1) Single track encoder : 한방향 속도
+            (2) Multi track encoder : 양방향 속도
+
+        2) Encoder 분류법
+            (1) 측정값
+                1] 선형(Linear) : 직선 변위 측정
+                2] 회전(Rotary) : 회전 변위(각도) 측정
+            (2) 출력 기준
+                1] 절대식(Absolute) : 절대 위치
+                    - 특정 위치 0도 기준, 펄스 위치 측정
+                2] 증분식(Incremental) : 초기 위치에 대한 상대 위치
+                    - 특정 위치가 0도 기준x, 지나간 펄스 개수만 측정
+            (3) 측정 원리 of 증분식 엔코더
+                1] 광학식(Optical) : 빛
+                    - 휠 후면 : LED 2개
+                    - 휠 전면 : 광센서. 위상차 90도 정도의 각도와 위치. 2개
+
+                    [1] A, B상 위상차 : 방향 파악
+                    [2] 펄스 개수 : 각도 파악
+                2] 자기식(Magnetic) : 자기력
+                    - 회전축 : 영구자석
+                    - 보드 : Hall센서 120도 각도. 2개
+
+                    [1] A, B상 위상차 : 방향 파악
+                    [2] 펄스 개수 : 각도 파악
+
+                    [1] Hall 센서
+                        1]] 특징
+                            - 싼 가격
+                            - 튼튼
+                            - 2개 센서 90도 위상차 : 방향 파악
+                            - 펄스 개수 : 각도 파악
+                        2]] 작동 원리
+                            일정한 직류전류 to 금속판 >> 면에 수직한 자기력선 변화 줘봐 >> 전자의 진행 경로 바뀜
+                            >> 전류 방향에 수직한 금속판 양단에 전위차 V_h 발생 (V_h ∝ B)
+            (4) 출력 형태
+                1] Push-Pull : 0V or 5V
+                2] Open Collector : 사용자 원하는 전압 Pull up
+                3] Line Drive : High는 5V, Low는 플로팅
+                
+        3) Encoder Pulse 해독 원리
+            (1) 정방향
+                A상 에지 상승 : 00 -> 10
+                B상 에지 상승 : 10 -> 11
+                A상 에지 하강 : 11 -> 01
+                B상 에지 하강 : 01 -> 00
+            (2) 역방향
+                B상 에지 상승 : 00 -> 01
+                A상 에지 상승 : 01 -> 11
+                B상 에지 하강 : 11 -> 10
+                A상 에지 하강 : 10 -> 00
+
+            (3) 상태도
+                정방향 : 00 -> 10 -> 11 -> 01 -> Circular 반복
+                역방향 : 00 -> 01 -> 11 -> 10 -> Circular 반복
+                에러 : 10 -> 01 or 01 -> 10 or 00 -> 11 or 11 -> 00
+
+                - 원 : 상태
+                - 화살표 : 상태 천이
+                - 사각형 : 해야할 일
+            
+    1. Thread Class
+        1) 생성자
+            (1) Thread 생성 (자동 실행x) : Thread 객체명(pri, stk_sz, stk_mem, thr_name)
+                - pri : 우선순위
+                    default : osPriorityNormal
+                    1]] osPriorityIdle : value = -3
+                    2]] osPriorityLow : value = -2
+                    3]] osPriorityBelowNormal : value = -1
+                    4]] osPriorityNormal : value = 0
+                    5]] osPriorityAboveNormal : value = 1
+                    6]] osPriorityHigh : value = 2
+                    7]] osPriorityRealtime : value = 3
+                - stk_sz : 스택 사이즈
+                    default : OS_STACK_SIZE
+                - stk_mem : 스택 메모리의 포인터
+                    default : NULL
+                - name : 스레드의 이름
+                    default : NULL
 
 */

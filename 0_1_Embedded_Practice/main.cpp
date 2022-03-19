@@ -30,6 +30,7 @@
 
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
+
 // ● PwmOut
 //     2. PwmOut 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -60,7 +61,7 @@ void turn(PwmOut &rc, float deg);
 template <class T> T map (T x, T in_min, T in_max, T out_min, T out_max);
 
 int main(){
-    float ang=0., inc=0.1;
+    float ang=0., inc=0.5;
     rcServo.period_ms(10);
     turn(rcServo, 0);
     
@@ -84,6 +85,7 @@ template <class T> T map (T x, T in_min, T in_max, T out_min, T out_max){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
 
 // ● AnalogIn
 //     2. AnalogIn 실습
@@ -126,6 +128,7 @@ int main(){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
 #include "mbed.h"
 
 PwmOut rcServo(D6);
@@ -157,6 +160,9 @@ void turn(PwmOut &rc, float deg){
 template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
 
 // ● Timer
 //     2. Ticker 실습
@@ -634,6 +640,89 @@ int main(){
         }
         wait_us(200000);
         cnt++;
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ● Encoder Sensor Project
+//     2. Encoder Library
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <mbed.h>
+DigitalOut led1(LED1);
+// extern DigitalOut led1; // 외부 변수 사용
+class QEncoder{
+    public:
+        QEncoder(PinName pinA, PinName pinB) : _pinA(pinA), _pinB(pinB), _bi(pinA, pinB){}
+
+        void init(){
+            _pinA.rise(callback(this, &QEncoder::decode)); // 모든 핀의 edge에서 interrupt를 이용하여 decode함수 사용
+            _pinA.fall(callback(this, &QEncoder::decode));
+            _pinB.rise(callback(this, &QEncoder::decode));
+            _pinB.fall(callback(this, &QEncoder::decode));
+            _previousState = _bi; // 0 ~ 3까지 4가지 종류의 상태 중 하나
+            _count = 0;
+            _errorCount = 0;
+        }
+
+        int32_t getCount(){
+            return _count;
+        }
+
+        void setCount(int32_t EncoderVal){
+            _pinA.disable_irq(); // 엔코더값이 지속적으로 변화함. 이 때 값을 넣으려고 하면 오류 발생할 수 있으므로 
+                                    // interrupt를 disable 시킨 후, 값 넣고 다시 재개(엔코더 끄고 값 넣고 킴)
+            _pinB.disable_irq();
+            _count = EncoderVal;
+            _pinA.enable_irq();
+            _pinB.enable_irq();
+        }
+
+        int32_t getErrorCount(){
+            return _errorCount;
+        }
+
+    private: // 밖에서 건들 수 없도록 설정
+        InterruptIn _pinA; // 예약만 해둔 상태
+        InterruptIn _pinB;
+        BusIn _bi;
+        uint8_t _previousState;
+        volatile int32_t _count;
+        volatile int32_t _errorCount;
+
+        void decode(){
+            uint8_t newState = _bi;
+            switch((_previousState << 2) | newState){ // 과거와 현재 상태를 한 변수에 넣음
+                case 0b0001:
+                case 0b0111:
+                case 0b1110:
+                case 0b1000:
+                    _count --; // 역방향
+                    break;
+                case 0b0010:
+                case 0b1011:
+                case 0b1101:
+                case 0b0100:
+                    _count ++; // 정방향
+                    break;
+                default:
+                    _errorCount++;
+                    break;
+            }
+            _previousState = newState;
+            led1 =! led1;
+        }
+};
+
+QEncoder enco(D2, D3);
+int main(){
+    enco.init();
+    enco.setCount(0);
+    while(1){
+        printf("count = %d, %d \n", enco.getCount(), enco.getErrorCount());
+        wait(0.01);
     }
 }
 */

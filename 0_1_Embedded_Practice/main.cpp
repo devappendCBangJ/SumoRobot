@@ -164,6 +164,111 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ● InterruptIn
+//     2. InterruptIn 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+DigitalOut led1(LED1);
+DigitalOut led2(D7);
+InterruptIn btn(BUTTON1);
+
+void flip(){
+    led2 =! led2;
+}
+
+int main(){
+    btn.fall(&flip);
+    while(true){
+        led1 =! led1;
+        wait_ms(100);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+class Counter{
+    InterruptIn _interrupt;
+    volatile uint16_t _count;
+    volatile bool _updated;
+    void isr(){
+        _count++;
+        _updated = 1;
+    }
+    public:
+        Counter(PinName pin): _interrupt(pin){
+            _count = 0; _updated = 0;
+            _interrupt.fall(callback(this, &Counter::isr));
+        }
+        uint16_t read(){
+            _updated = 0;
+            return _count;
+        }
+        bool isUpdated(){
+            return _updated;
+        }
+        operator int(){ // 오버로딩 연산자
+            return read();
+        }
+};
+
+Counter cnt(BUTTON1);
+int main(){
+    while(1){
+        if(cnt.isUpdated()){
+            // printf("count = %3d\n", cnt.read()); // 클래스 멤버함수
+            printf("count = %3d\n", (int)cnt); // 오버로딩 연산자. int 변환 필수
+            wait(0.1);
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 제대로 안되냐??? 플로팅 현상 때문??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+
+class CounterUD{
+    InterruptIn _upBot, _downBot;
+    volatile int _count;
+    volatile bool _updated;
+    void plus(){
+        _count++;
+        _updated = true;
+    }
+    void minus(){
+        _count--;
+        _updated = true;
+    }
+    public:
+        CounterUD(PinName p1, PinName p2): _upBot(p2, PullUp), _downBot(p1, PullUp){
+            _count = 0; _updated = false;
+            _upBot.fall(callback(this, &CounterUD::plus));
+            _downBot.fall(callback(this, &CounterUD::minus));
+        }
+        int read(){
+            _updated = false;
+            return _count;
+        }
+        bool isUpdated(){
+            return _updated;
+        }
+};
+
+CounterUD cnt(D2, D3);
+
+int main(){
+    while(1){
+        if(cnt.isUpdated()){
+            printf("count = %3d \n", cnt.read());
+            wait(0.005);
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
 // ● Timer
 //     2. Ticker 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

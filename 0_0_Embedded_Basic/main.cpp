@@ -347,6 +347,93 @@
                 - 전극
 
 
+● InterruptIn
+    0. InterruptIn 개요
+        0) Polling & Interrupt
+            (0) 비유 : 영화 시청 중 중요 전화 받기
+                main문 : 영화 감상
+                Interrupt : 전화 통화
+            (1) Polling : 영화 시청 중에 계속 전화기 확인
+                영화를 제대로 보기 힘들다
+            (2) Interrupt : 영화 편안하게 시청 >> 전화오면 일시정지 후 전화 받음 >> 통화를 마친 후 영화 재개
+                영화를 제대로 볼 수 있다
+            - ISR : Interrupt Service Routine
+            - IRQ : Interrupt ReQuest
+    1. Interrupt Class
+        1) 생성자 : InterruptIn 객체명(Pin_name, Pin_mode)
+            - Pin_name // PinName
+            - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
+                PullUp
+                PullDown
+                PullNone
+                PullDefault
+        2) 내부 Pull회로 지정 : 객체명.mode(Pin_mode)
+            - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
+                PullUp
+                PullDown
+                PullNone
+                PullDefault
+        3) 콜백 함수 지정
+            (1) 일반함수 지정
+                1] 상승 에지 : 객체명.rise(&func)
+                    - &func : 상승 에지에서 호출될 반환형이 void인 함수 주소 // Callback<void()> func
+                2] 하강 에지 : 객체명.fall(&func)
+                    - &func : 하강 에지에서 호출될 반황형이 void인 함수 주소 // Callback<void()> func
+            (2) 멤버함수 지정
+                1] 상승 에지 : 객체명.rise(callback(obj, &func))
+                    - obj : Interrupt 객체가 포함된 객체의 주소 // T
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
+
+                    class Counter(){
+                        InterruptIn _but;
+                        Counter(PinName p) _but(p);{
+                            _but.rise(callback(this, &Counter::ISR));
+                        }
+                    }
+                2] 하강 에지 : 객체명.fall(callback(obj, &func))
+                    - obj : Interrupt 객체가 포함된 객체의 주소 // T
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
+
+                    class Counter(){
+                        InterruptIn _but;
+                        Counter(PinName p) _but(p);{
+                            _but.fall(callback(this, &Counter::ISR));
+                        }
+                    }
+        4) 읽기
+            (1) 메소드 : int v = 객체명.read()
+                - return : 입력핀의 현재값(0/1)
+            (2) 연산자 오버로딩 : int v = 객체명
+                - return : 입력핀의 현재값(0/1)
+        5) Interrupt 활성화 / 비활성화
+            (1) Interrupt 활성화 : 객체명.enable_irq() // void
+            (2) Interrupt 비활성화 : 객체명.disable_irq() // void
+
+    +a)
+        1) 멤버 함수 콜백 지정
+            Class A
+                InterruptIn 멤버 객체 obj
+                멤버함수 f2()
+                    - 주소 : &A::f2
+
+            Class A의 객체 a
+                - 주소 : this
+
+            일반함수 f1()
+                - 주소 : &f1
+        2) Callback, ISR 주의사항
+            (1) 주의사항
+                1] 속도
+                    [1] 다른 큰 라이브러리 함수 호출 자제
+                    [2] blocking code 사용 자제
+                        - while문 이용한 대기
+                        - wait() 함수 이용한 지연
+                        - 기타 blocking 함수
+                2] 꼬임
+                    [1] 메모리 할당 malloc, new 사용 자제
+                    [2] printf 사용 자제
+
+
 ● Ticker, Timer, TimeOut
     0. Timer 개요
         1) Ticker : 일정 주기 시간. callback 반복
@@ -354,22 +441,22 @@
             - start : 기동
             - stop : 정지
             - reset : 0
-            - read : 읽기.
+            - read : 읽기
         3) TimeOut : 지정한 시간 후, 1회 callback 측정
     1. Timer Class
         1) 생성자 : Ticker 객체명
         2) 콜백 함수 지정
             (1) 일반 함수 지정
                 1] 초 단위 주기 : 객체명.attach(&func, time)
-                    - &func : 주기적으로 호출될 콜백 함수 주소. 반환형이 void여야함 // Callback<void()>
+                    - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time : 콜백 함수 호출 주기(초단위) // float
                 2] us 단위 주기 : 객체명.attach_us(&func, time_us)
-                    - &func : 주기적으로 호출될 콜백 함수 주소. 반환형이 void여야함 // Callback<void()>
+                    - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
             (2) 멤버 함수 지정
                 1] 초 단위 주기 : 객체명.attach(Callback(obj, &func), time)
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
-                    - &func : 호출될 멤버 함수의 주소 // M
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
 
                     class myClass{
@@ -380,7 +467,7 @@
                     }
                 2] us 단위 주기 : 객체명.attach(Callback(obj, &func), time_us)
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
-                    - &func : 호출될 멤버 함수의 주소 // M
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
 
                     class myClass{
@@ -440,7 +527,7 @@
                     2비트 : 2
         3) 콜백 함수 지정
             (1) 일반 함수 지정 : 객체명.attach(&func, type) // void
-                - &func : 인터럽트 발생 시 호출될 함수 주소 // Callback<void()>
+                - &func : 인터럽트 발생 시 호출될 함수 절대 주소 // Callback<void()>
                 - type : 인터럽트 종류 // IrqType
                     default : RxIrq
                     수신 : RxIrq
@@ -533,7 +620,7 @@
                 - name : 스레드의 이름
                     default : NULL
             (2) Thread 생성 (자동 실행o) : Thread 객체명(&task, pri, stk_sz, stk_mem, thr_name)
-                - &task : 실행시키고자 하는 함수 주소
+                - &task : 실행시키고자 하는 함수 절대 주소
                 - pri : 우선순위
                     default : osPriorityNormal
                     1]] osPriorityIdle : value = -3
@@ -552,7 +639,7 @@
 
         2) Thread 제어
             (1) Thread start : 객체명.start(&task)
-                - &task : 실행시키고자 하는 함수 주소
+                - &task : 실행시키고자 하는 함수 절대 주소
             (1) Thread start : 객체명.start(Callback(this, &myClass::task))
                 - this : 객체가 생성된 주소
                 - myClass : 객체가 있는 class 주소

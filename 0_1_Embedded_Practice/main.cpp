@@ -425,7 +425,7 @@ int main(){
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             5) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
-/*
+
 #include "mbed.h"
 #include <string>
 
@@ -435,7 +435,6 @@ RawSerial pc(USBTX, USBRX);
 volatile bool gotPacket = false;
 volatile float data[3];
 
-// Callback Def
 void onSerialRx(){
     static char serialInBuffer[32];
     static int serialCount = 0;
@@ -446,7 +445,7 @@ void onSerialRx(){
         if(byteIn == '\n'){
             serialInBuffer[serialCount] = 0;
             float d0, d1, d2;
-            if (scanf(serialInBuffer, "%f, %f, %f", &d0, &d1, &d2) == 3){
+            if (sscanf(serialInBuffer, "%f, %f, %f", &d0, &d1, &d2) == 3){
                 data[0] = d0;
                 data[1] = d1;
                 data[2] = d2;
@@ -474,7 +473,7 @@ int main() {
         wait(0.2);
     }
 }
-*/
+
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             6) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 되냐??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
 /*

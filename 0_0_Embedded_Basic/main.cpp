@@ -1,25 +1,120 @@
 /*
+● Microcontroller
+    1. 프로세서
+        (0) 개별 논리소자
+            - 디지털 논리회로 구성 by 개별 논리소자
+            ex. TTL, CMOS ♣♣♣
+            1] 특징
+                [0] fixed logic
+                [1] 디지털 논리회로 수정 : 수정 hard
+        (1) 마이크로 프로세서(MPU = MicroProcessor Unit)
+            - 프로그래밍을 통한 수정
+            1] 특징
+                [0] programmable logic
+                [1] 프로그램 수정 : 수정 easy
+                [2] 유지보수 / 업그레이드 용이
+                [3] 소형화 / 소비전력 작음
+                [4] 회로 단순화 : 신뢰성 향상 ♣♣♣
+                [5] 작은 CPU 역할 : 프로그래머가 작성한 프로그램(Firmware)대로 동작 ♣♣♣
+                [6] 주변장치와 Interface : memory, I/O port, ADC, DAC, communications chip 등 주변장치와 interface by 외부장치와 정보교환 가능한 BUS ♣♣♣
+            2] 구조
+                // 강의자료 참조
+        (2) 마이크로 컨트롤러(MCU = MicroController Unit) = One-chip = 마이콤 = SOC(System On Chip)
+            1] 특징
+                [0] 개념 : 단일 IC 집적 = MPU + Memory + GPIO + Timer/Counter + Communications
+                [1] 하나의 작은 컴퓨터
+                [2] 저전력 / 빠른 개발 
+                [3] MPU에 비해 소형화 / 저렴한 시스템 구성 ♣♣♣
+                [4] 활용 : 간단한 장치 or 제어기 구축 ♣♣♣
+            2] 구조
+                // 강의자료 참조
+            3] 예시
+                - Intel : 8051
+                - Microchips : PIC
+                - ATmel : AVR
+        (3) DSP = Digital Signal Processor ♣♣♣
+            1] 특징
+                [1] 개념 : 특수 MPU = MPU + 디지털 신호처리에 적합한 연산기능
+                [2] 활용 : Audio, Video 등 처리
+    2. ARM
+        1) 특징
+            (1) 원래 Acorn computers라는 교육용 컴퓨터 회사
+            (1) ARM(Advanced RISC Machines) Fabless 반도체 회사
+            (2) RISC 프로세서 : 임베디드 특화
+            (3) 저전력 / 고성능 mobile 프로세서 절대 강자
+            (4) 세계 대기업들의 ARM 코어 사용
+        2) 종류
+            (1) Classic : 예전 모델
+            (2) Embedded : MCU
+                ex. 드론, 세탁기
+            (3) Real-time : Real time system
+                ex. 자동차, 로봇팔
+            (4) Application : 고기능, 고성능 운영체제
+                ex. 고성능 휴대폰, 노트북
+    3. 프로그래밍
+        1) MPU 프로그래밍
+            (1) 과거 : 어셈블리어
+                - 기계에게 효율적 but 프로그래머에게 비효율적
+            (2) 과도기 : C(고급 언어)
+                - 크로스 컴파일러 사용
+                - 초창기 컴파일러의 기술적 한계로, 일부 중요한 부분은 직접 어셈블리어 코딩
+            (3) 현재 : C++(고급 언어)
+                - 크로스 컴파일러 사용
+                - 프로세서 속도 증가, 컴파일러 기술 증가로 어셈블리어 거의 사용 안함
+        2) MCU 프로그래밍
+            (1) 과거 : 레지스터 접근
+                - 상태, 제어, 입출력 담당 레지스터 접근
+                - 방대한 양의 레지스터 숙지
+                - 많은 시간 소요
+            (2) 현재 : 레지스터 접근 거의 안함
+                - 레지스터에 대한 직접적 접근 필요 없음
+                - 추상적 함수들만으로 프로그래밍 가능
+                - 적은 시간 소요(비전공자에게 유용)
+
+    +a)
+        1) RISC(Reduced Instruction Set Computer) 프로세서
+            (1) 특징
+                1] 명령어 단순화 / 개수 최소화
+                2] 장점
+                    - 효율적 하드웨어 사용
+                    - 병렬 수행 like 파이프라인
+                3] 단점
+                    - 컴파일러 코드 최적화 복잡
+                    - 프로그램 길어짐
+        2) CISC(Complex Instruction Set Computer) 프로세서
+
 ● Mbed
-    1. Mbed //♣♣♣♣♣
+    1. Mbed //♣♣♣
         1) 개념 : Cortex-M 마이크로컨트롤러 프로그램용 OS
             - 온라인 소프트웨어 개발 툴 + USB 메모리 & 전원
-        2) 특징 //♣♣♣♣♣
+        2) 특징 //♣♣♣
+            (1) 장점
+                1] 개발 난이도
+                    - 개발 환경 구축 신속
+                    - Cortex-M 칩 : 브랜드, 부품 번호 변경에 대한 부담x
+                    - 오픈 소스 : 방대한 C++ 기반 Mbed 라이브러리 in 온라인
+                    - 레지스터 레벨 고려x : 복잡한 레지스터 고려x
+                    - Mbed API 일관성 : 몇몇 API 기능 이해만으로 나머지 학습 용이
+                2] 성능
+                    - 낮은 가격 : 8비트 수준 가격으로 32비트 고성능 시스템 구축
+                    - IOT 지향 : 연결성(Ethernet, USB, Bluetooth, CAN 등)
+                    - RTOS 지원 : 실시간 프로그래밍
             (1) 장점
                 1] 사용성 편리
                 2] 회로 몰라도 개발 가능
                 3] 별도 다운로드 장비 불필요
                 4] 방대한 라이브러리 in 온라인
-                5] 고성능 ARM 코어의 다양한 기능
+                5] 고성능 ARM 코어의 다양한 기능(RTOS, 연결성 등)
                     - Ethernet, USBHost, USBDevice, SPI, I2C, CAN, AnalogIn, PwmOut, AnalogOut, ...
                 6] 많은 보드, 모듈, 부품 지원
             (2) 단점
                 1] 레지스터 레벨 디버깅 불가
-        3) Nucleo Board //♣♣♣♣♣
+        3) Nucleo Board //♣♣♣
             (1) 특징
                 1] 제조사 : STMicroelectronics
                 2] 개발보드 : 수많은 lineup 존재
                     - Cortex-M
-        4) Nucleo-f401re datasheet //♣♣♣♣♣
+        4) Nucleo-f401re datasheet //♣♣♣
             (1) 프로세서 : STM32F401RET6
                 1] 특징
                     [0] LQFP64 : 칩 패키지
@@ -49,9 +144,9 @@
                         - Advanced-Control Timer : 3상 PWM 발생
                         - General Purpose Timers : 16비트 5개, 32비트 2개
                         - Watchdog Timers : 2개
-            (2) ST-LINK/V2-1 debugger/programmer 내장
+            (2) ST-LINK/V2-1 debugger/programmer 내장 //♣♣♣
                 - 점퍼 변경으로 ST-LINK/V2-1로도 사용 가능
-            (3) USB mini B type : 3가지 접속 방법 제공
+            (3) USB mini B type : 3가지 접속 방법 제공 //♣♣♣
                 1] Virtual COM port : 직렬 통신
                 2] Mass storage(USB Disk drive)
                 3] Debug port
@@ -64,7 +159,7 @@
                 3] RESET BUTTON
             (6) 전원 공급
                 - 유연한 전원 공급 : 3.3V, 5V, 7V ~ 12V
-        5) Mbed API //♣♣♣♣♣
+        5) Mbed API //♣♣♣
             (1) Mbed OS 구조
                 1] User Application Code -> Mbed OS5 API -> H/W Interface
                     [1] 핵심 Mbed OS5 API
@@ -99,7 +194,7 @@
     +a)
         1) 유용한 기능 : 키워드 클릭 시 클래스 가이드 표시
             - 정의 위치, 관련 문서 등 확인 가능
-        2) C vs C++ //♣♣♣♣♣
+        2) C vs C++ //♣♣♣
             (1) 특징 
                 - C ⊂ C++
                 1] C
@@ -155,10 +250,10 @@
                     - 오버로딩 : 같은 이름의 함수나 연산자로도 다양한 기능
                 5] 정보 은닉, 보안
             (3) 사용
-                1] 객체 선언 : Class_name Object_name(var1, var2, ...);
+                1] 객체 선언 : Class_name Object_name(var1, var2, ...)
                 2] 멤버함수 호출
-                    - Object_name.member_name(var1, ...);
-                    - Object_name.member_name;
+                    - Object_name.member_name(var1, ...)
+                    - Object_name.member_name
                 3] 접근 한정자 : 객체 내 멤버들에 대한 접근 제한
                     [1] public : 외부, 자식, 자신 모두 접근 가능
                     [2] protected : 자식, 자신만 접근 가능
@@ -572,11 +667,9 @@
             - Serial : 오류 발생o
                 printf 정의o
                 scanf 정의o
-                <string> 명령어 사용 가능
             - RawSerial : 오류 발생x
                 printf 정의x
                 scanf 정의x
-                <string> 명령어 사용 불가
         2) volatile 자료형
             - compiler는 코드 optimizer를 위해 interrupt나 callback함수와 같이 뜬금없이 튀어오르는 값을
                 없애는 경우가 많으므로, 휘발성 자료형이라고 compiler에게 미리 알려줌

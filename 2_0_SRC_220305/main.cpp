@@ -38,11 +38,11 @@ int black = 40000;
 // AC서보 모터
 PwmOut Servo(PA_8);
 
-float ang=0., inc=1.0;
+float ang=90.0, inc=0.015;
 
 // DC 모터
-DigitalOut DirL(PB_6);
-DigitalOut DirR(PC_7);
+DigitalOut DirL(PC_7);
+DigitalOut DirR(PB_6);
 PwmOut PwmL(PB_4);
 PwmOut PwmR(PB_5);
 
@@ -101,34 +101,38 @@ void th_SerialRx();
 
 // [main문]
 int main(){
+    pc.format(8, SerialBase::Even, 1);
+
     Servo.period_ms(10);
     DC_set();
     // ras.attach(&in_SerialRx); // interrupt 전용
+
     com_th.start(&th_SerialRx); // thread 전용
     while(1){
         // in_SerialRx_print(); // interrupt 전용
 
         sensor_read();
         sensor_cal();
-        sensor_print();
+        // sensor_print();
 
         // servo_chk(Servo); // Test 코드
         // DC_chk(); // Test 코드
 
         // 초기 동작 : 상대 탐색
         if(mode == 0){
-            if(ras_data[0] == 0){
-                DC_move(1, 0, 0.3, 0.3);
+            if(ras_data[0] == 9){
+                DC_move(1, 0, 0.12, 0.12);
             }
             else if(ras_data[0] == 1){
-                DC_move(0, 1, 0.3, 0.3);
+                DC_move(0, 1, 0.12, 0.12);
             }
             else if(ras_data[0] == 2){
                 DC_move(1, 1, 0.0, 0.0);
                 mode = 1;
+                pc.printf("mode = 1");
             }
             else if(ras_data[0] == 3){
-                DC_move(1, 0, 0.3, 0.3);
+                DC_move(1, 0, 0.12, 0.12);
             }
         }
         
@@ -136,16 +140,16 @@ int main(){
         else if(mode == 1){
             servo_move(Servo);
 
-            if(ras_data[0] == 0){
-                if(pre_data0 == 1) DC_move(0, 1, 0.3, 0.3);
-                else if(pre_data0 == 2) DC_move(1, 0, 0.3, 0.3);
-                else if(pre_data0 == 3) DC_move(1, 0, 0.3, 0.3);
-                else DC_move(1, 0, 0.3, 0.3);
+            if(ras_data[0] == 9){
+                if(pre_data0 == 1) DC_move(0, 1, 0.12, 0.12);
+                else if(pre_data0 == 2) DC_move(1, 0, 0.12, 0.12);
+                else if(pre_data0 == 3) DC_move(1, 0, 0.12, 0.12);
+                else DC_move(1, 0, 0.12, 0.12);
             }
-            if(ras_data[0] != 0){
-                if(ang < 80) DC_move(1, 1, 0.3, 0.5);
-                else if(80 <= ang && ang <= 100) DC_move(1, 1, 0.3, 0.3);
-                else if(100 < ang) DC_move(1, 1, 0.5, 0.3);
+            else if(ras_data[0] != 9){
+                if(ang < 80) DC_move(1, 1, 0.30, 0.06);
+                else if(80 <= ang && ang <= 100) DC_move(1, 1, 0.12, 0.12);
+                else if(100 < ang) DC_move(1, 1, 0.06, 0.30);
             }
         }
     }
@@ -203,22 +207,22 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 }
 
 void servo_move(PwmOut &rc){
-    if(ras_data[0] == 0){
-        if(pre_data0 == 1) ang -= inc;
-        else if(pre_data0 == 2) ang += ang;
-        else if(pre_data0 == 3) ang += inc;
-        else ang += inc;
+    if(ras_data[0] == 9){
+        if(pre_data0 == 1) ang = ang - inc;
+        else if(pre_data0 == 2) ang = ang + inc;
+        else if(pre_data0 == 3) ang = ang + inc;
+        else ang = ang + inc;
     }
-    else if(ras_data[0] == 1){
-        ang-=inc;
+    else if(ras_data[0] == 1.0f){
+        ang = ang - inc;
         pre_data0 = 1;
     }
-    else if(ras_data[0] == 2){
+    else if(ras_data[0] == 2.0f){
         ang = ang;
         pre_data0 = 2;
     }
-    else if(ras_data[0] == 3){
-        ang+=inc; 
+    else if(ras_data[0] == 3.0f){
+        ang = ang + inc; 
         pre_data0 = 3;
     }
 
@@ -228,7 +232,7 @@ void servo_move(PwmOut &rc){
     else if (ang < 0.0f){
         ang = 0.0;
     }
-    uint16_t pulseW = map<float>(ang, 0., 180., 500., 2600.);
+    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
     rc.pulsewidth_us(pulseW);
 }
 
@@ -248,8 +252,10 @@ void DC_set(){
 }
 
 void DC_move(int _dirL, int _dirR, float _PwmL, float _PwmR){
-    DirL = _dirL, DirR = _dirR;
-    PwmL = _PwmL, PwmR = _PwmR;
+    DirL = _dirL;
+    DirR = _dirR;
+    PwmL = _PwmL;
+    PwmR = _PwmR;
 }
 
 void DC_chk(){
@@ -257,18 +263,18 @@ void DC_chk(){
     static int buff_cnt2 = 0;
         
     if(pc.readable()) {
-        pc.printf("%d \n", pc.readable());
-        // pc.printf("Ras 연결 OK \n"); // Ras, mbed 통신 출력
+        // pc.printf("%d \n", pc.readable());
+        // pc.printf("pc 연결 OK \n"); // pc, mbed 통신 출력
         char byteIn2 = pc.getc();
         if(byteIn2=='\n'){
-            pc.printf("byteIn == '띄워' : %c \n", byteIn2);
+            // pc.printf("byteIn == '띄워' : %c \n", byteIn2); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
             pc_serialInBuffer2[buff_cnt2] = '\0';
             pc_data[0]=atof(pc_serialInBuffer2);
             buff_cnt2=0;
             gotPacket2 = true;
         }
         else{
-            pc.printf("byteIn == '나머지' : %c \n", byteIn2);
+            // pc.printf("byteIn == '나머지' : %c \n", byteIn2); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
             pc_serialInBuffer2[buff_cnt2++]=byteIn2;
         }
 
@@ -339,14 +345,14 @@ void th_SerialRx(){ // thread 전용
             
             // ',' : 단어 자르기
             if(byteIn == ','){
-                pc.printf("byteIn == ',' : %c\n", byteIn); // 
+                // pc.printf("byteIn == ',' : %c\n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 ras_serialInBuffer[ras_buff_cnt]='\0';
                 ras_data[ras_data_cnt++]=atof(ras_serialInBuffer);
                 ras_buff_cnt = 0;
             }
             // '/' : 시리얼 완료
             else if(byteIn=='/'){
-                pc.printf("byteIn == '/' : %c \n", byteIn); // 
+                // pc.printf("byteIn == '/' : %c \n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 ras_serialInBuffer[ras_buff_cnt] = '\0';
                 ras_data[ras_data_cnt]=atof(ras_serialInBuffer);
                 ras_buff_cnt=0; ras_data_cnt=0;
@@ -354,7 +360,7 @@ void th_SerialRx(){ // thread 전용
             }
             // 이외 : 시리얼 저장
             else{
-                pc.printf("byteIn == '나머지' : %c\n", byteIn); // 
+                // pc.printf("byteIn == '나머지' : %c\n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 ras_serialInBuffer[ras_buff_cnt++]=byteIn;
             }
         }

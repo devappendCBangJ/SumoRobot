@@ -52,20 +52,20 @@ int main(){
             // pc.printf("pc 연결 OK\n"); // pc, mbed 통신 출력
             char byteIn = pc.getc();
             if(byteIn == ','){
-                // pc.printf("byteIn == ',' : %c\n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
+                // pc.printf("byteIn == ',' : %c\n", byteIn); // 중간에 이게 있으면 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 serialInBuffer[buff_cnt]='\0';
                 data[data_cnt++]=atof(serialInBuffer);
                 buff_cnt = 0;
             }
             else if(byteIn=='/'){
-                // pc.printf("byteIn == '\n' : %c \n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
+                // pc.printf("byteIn == '\n' : %c \n", byteIn); // 중간에 이게 있으면 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 serialInBuffer[buff_cnt] = '\0';
                 data[data_cnt]=atof(serialInBuffer);
                 buff_cnt=0; data_cnt=0;
                 gotPacket = true;
             }
             else{
-                // pc.printf("byteIn == '나머지' : %c\n", byteIn); // 중간에 이게 있으면 pc와 mbed 서로가 데이터 주려고 함. 연산량이 많아져서 데이터를 띄엄띄엄 받음
+                // pc.printf("byteIn == '나머지' : %c\n", byteIn); // 중간에 이게 있으면 연산량이 많아져서 데이터를 띄엄띄엄 받음
                 serialInBuffer[buff_cnt++]=byteIn;
             }
         }

@@ -13,7 +13,7 @@ AnalogIn irmr(PA_4);
 AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
-GP2A psdb(PC_4, 30, 150, 60, 0);
+GP2A psdb(PC_4, 10, 80, 0.246, -0.297);
 
 uint16_t irfl_val, irfr_val, irmr_val, irbr_val, irbl_val, irml_val;
 double psdb_val;
@@ -57,7 +57,8 @@ void sensor_read(){
 }
 
 void sensor_print(){
-    printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", irfl_val, irfr_val, irmr_val, irbr_val, irbl_val, irml_val);
+    // printf("ir_val : | %u | \n", irbl_val);
+    // printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", irfl_val, irfr_val, irmr_val, irbr_val, irbl_val, irml_val);
     printf("psd_val : | %lf |\n", psdb_val);
 }
 

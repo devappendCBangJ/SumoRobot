@@ -197,7 +197,7 @@ class Counter{
         _updated = 1;
     }
     public:
-        Counter(PinName pin): _interrupt(pin){
+        Counter(PinName pin): _interrupt(pin){ // ♣♣♣
             _count = 0; _updated = 0;
             _interrupt.fall(callback(this, &Counter::isr));
         }
@@ -208,7 +208,7 @@ class Counter{
         bool isUpdated(){
             return _updated;
         }
-        operator int(){ // 오버로딩 연산자
+        operator int(){ // 오버로딩 연산자 ♣♣♣
             return read();
         }
 };
@@ -217,8 +217,8 @@ Counter cnt(BUTTON1);
 int main(){
     while(1){
         if(cnt.isUpdated()){
-            // printf("count = %3d\n", cnt.read()); // 클래스 멤버함수
-            printf("count = %3d\n", (int)cnt); // 오버로딩 연산자. int 변환 필수
+            // printf("count = %3d\n", cnt.read()); // 클래스 멤버함수 ♣♣♣
+            printf("count = %3d\n", (int)cnt); // 오버로딩 연산자. int 변환 필수 ♣♣♣
             wait(0.1);
         }
     }
@@ -291,23 +291,25 @@ int main(){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/* // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*
 #include "mbed.h"
+#include "blinker.h"
 
-class Blinker{
-    DigitalOut _led; // 가계약
-    Ticker _tick;
-    void blink(){
-        _led =! _led;
-    }
-    public:
-        Blinker(PinName pin): _led(pin){
-            _led = 0;
-        }
-        void begin(float sec){
-            _tick.attach(callback(this, &Blinker::blink, sec));
-        }
-};
+// // 라이브러리화 by header file & class ♣♣♣
+// class Blinker{
+//     DigitalOut _led; // 가계약
+//     Ticker _tick;
+//     void blink(){
+//         _led =! _led;
+//     }
+//     public:
+//         Blinker(PinName pin): _led(pin){
+//             _led = 0;
+//         }
+//         void begin(float sec){
+//             _tick.attach(callback(this, &Blinker::blink), sec);
+//         }
+// };
 
 Blinker blink(LED1);
 DigitalOut led2(D7);
@@ -320,7 +322,116 @@ int main(){
     }
 }
 */
+//     2. Timer 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+
+Timer watch;
+
+int main(){
+    while(1){
+        watch.reset();
+        watch.start();
+        printf("Print 15bytes!\n");
+        watch.stop();
+        printf("It takes about %5u us.\n", watch.read_us());
+        wait(1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+#define SAMPLE_INTERVAL 10000
+
+Timer tmr;
+DigitalOut led(LED1);
+
+int main(){
+    tmr.start();
+    while(1){
+        if(tmr.read_us() > SAMPLE_INTERVAL){
+            tmr.reset();
+            led=!led;
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//     2. Timeout 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+
+Timeout tmo;
+DigitalOut led1(LED1);
+DigitalOut led2(D7, 1);
+
+void flip(){
+    led2 =! led2;
+}
+
+int main(){
+    tmo.attach(&flip, 10.0);
+    while(1){
+        led1 =! led1;
+        wait(0.2);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // ♣♣♣♣♣ 이해하기 어렵다
+#include "mbed.h"
+
+class Debounce{
+    InterruptIn _btn;
+    Timeout _tmo;
+    int _intval;
+    int _state, _ready;
+
+    void btnISR(){
+        if(_ready){
+            _ready = 0;
+            _tmo.attach_us(callback(this, &Debounce::decide), _intval); // ♣♣♣
+        }
+    }
+    void decide(){
+        _state = 0;
+        _ready = 1;
+        _tmo.detach(); // ♣♣♣
+    }
+
+    public:
+        Debounce(PinName pin, int intv = 100000) : _btn(pin){
+            _btn.fall(callback(this, &Debounce::btnISR)); // ♣♣♣
+            _state = 1;
+            _ready = 1;
+            _intval = intv;
+        }
+        int read(){
+            int state = _state;
+            _state = 1;
+            return state;
+        }
+        operator int(){
+            return read(); // ♣♣♣
+        }
+};
+
+int main(){
+    Debounce dbc(BUTTON1, 100000);
+    int cnt = 0;
+    while(1){
+        if(!dbc){
+            cnt++;
+            printf("count = %d\n", cnt);
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
 
 // ● UART
 //     2. Serial 실습
@@ -329,7 +440,7 @@ int main(){
 /*
 #include "mbed.h"
 
-Serial pc(USBTX, USBRX);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+Serial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용. RawSerial 클래스에는 scanf가 정의되어있지 않다.
 int main(){
     int n, m;
 
@@ -345,7 +456,7 @@ int main(){
 /*
 #include "mbed.h"
 
-RawSerial pc(USBTX, USBRX); // Serial 클래스 사용 시, 통신 데이터가 손실될 수 있으므로, RawSerial 사용.
+Serial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용
 
 int main(){
     printf("Loop back program start \n");
@@ -353,7 +464,7 @@ int main(){
         if (pc.readable()){
             pc.putc(pc.getc());
         }
-        // wait(0.001); // wait이 있으면 통신이 날아가는 도중에 막혀서 데이터 손실되므로, 통신에는 사용x.
+        // wait(0.001); // wait이 있으면 통신이 날아가는 도중에 막혀서 데이터 손실되므로, 통신에는 사용x
     }
 }
 */
@@ -361,9 +472,8 @@ int main(){
 //             3) Seiral loopback + Callback
 /*
 #include "mbed.h"
-#include <string>
 
-RawSerial pc(USBTX, USBRX);
+RawSerial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용
 DigitalOut led(LED1);
 int d0;
 
@@ -390,7 +500,7 @@ int main(){
 
 InterruptIn btn(BUTTON1);
 DigitalOut led(LED1);
-RawSerial pc(USBTX, USBRX);
+RawSerial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용
 
 volatile char c = '\0';
 volatile bool pressed = false;
@@ -409,28 +519,28 @@ int main(){
 
     while(true){
         if(c == '1'){
-            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌 ♣♣♣
             led = 1;
         }
         else if(c == '0'){
-            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+            c = '\0';   // if문 1번만 동작시키기 위해 바로 값 바꿔줌 ♣♣♣
             led = 0;
         }
         if (pressed){
             pc.putc('b');
-            pressed = false;   // if문 1번만 동작시키기 위해 바로 값 바꿔줌
+            pressed = false;   // if문 1번만 동작시키기 위해 바로 값 바꿔줌 ♣♣♣
         }
     }
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             5) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
-
+/*
 #include "mbed.h"
 #include <string>
 
 DigitalOut led1(LED1);
-RawSerial pc(USBTX, USBRX);
+RawSerial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용
 
 volatile bool gotPacket = false;
 volatile float data[3];
@@ -473,14 +583,14 @@ int main() {
         wait(0.2);
     }
 }
-
+*/
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             6) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 되냐??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
 /*
 #include "mbed.h"
 
 DigitalOut led1(LED1);
-RawSerial pc(USBTX, USBRX);
+RawSerial pc(USBTX, USBRX); // mbed-os5에서는 RawSerial 사용
 
 volatile bool gotPacket = false;
 volatile float data[3];

@@ -371,11 +371,11 @@
 
     1. Pwm Class
         1) 생성자 : PwmOut 객체명(Pin_name)
-        2) 주기 설정
+        2) 주기 설정 // ♣♣♣
             (1) 초 : 객체명.period(sec) // float sec
             (2) 밀리초 : 객체명.period_ms(ms) // int ms
             (3) 마이크로초 : 객체명.period_us(us) // int us
-        2) 펄스폭 설정
+        2) 펄스폭 설정 // ♣♣♣
             (1) 초 : 객체명.pulsewidth(sec) // float sec
             (2) 밀리초 : 객체명.pulsewidth_ms(ms) // int ms
             (3) 마이크로초 : 객체명.pulsewidth_us(us) // int us
@@ -457,7 +457,7 @@
     1. Interrupt Class
         1) 생성자 : InterruptIn 객체명(Pin_name, Pin_mode)
             - Pin_name // PinName
-            - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
+            - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode ♣♣♣
                 PullUp
                 PullDown
                 PullNone
@@ -500,7 +500,7 @@
                 - return : 입력핀의 현재값(0/1)
             (2) 연산자 오버로딩 : int v = 객체명
                 - return : 입력핀의 현재값(0/1)
-        5) Interrupt 활성화 / 비활성화
+        5) Interrupt 활성화 / 비활성화 // ♣♣♣
             (1) Interrupt 활성화 : 객체명.enable_irq() // void
             (2) Interrupt 비활성화 : 객체명.disable_irq() // void
 
@@ -516,7 +516,7 @@
 
             일반함수 f1()
                 - 주소 : &f1
-        2) Callback, ISR 주의사항
+        2) Callback, ISR 주의사항 // ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
             (1) 주의사항
                 1] 속도
                     [1] 다른 큰 라이브러리 함수 호출 자제
@@ -531,25 +531,25 @@
 
 ● Ticker, Timer, TimeOut
     0. Timer 개요
-        1) Ticker : 일정 주기 시간. callback 반복
-        2) Timer : 임의 구간 시간
-            - start : 기동
+        1) Ticker : 일정 주기 시간. callback 반복 (오래걸리는 블럭을 interrupt ticker나 delay로 처리하면 안된다) // ♣♣♣
+        2) Timer : 임의 구간 시간 (오래걸리는 블럭을 처리할때는 timer 사용, wait은 while문을 중단시키지만, timer는 while문을 돌린다) // ♣♣♣
+            - start : 재개 // ♣♣♣
             - stop : 정지
-            - reset : 0
+            - reset : 초기화 후 재개 // ♣♣♣
             - read : 읽기
-        3) TimeOut : 지정한 시간 후, 1회 callback 측정
-    1. Timer Class
+        3) TimeOut : 지정한 시간 후, callback 1회만 실행
+    1-1. Ticker Class
         1) 생성자 : Ticker 객체명
         2) 콜백 함수 지정
             (1) 일반 함수 지정
-                1] 초 단위 주기 : 객체명.attach(&func, time)
+                1] 초 단위 주기 : 객체명.attach(&func, time) // void
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time : 콜백 함수 호출 주기(초단위) // float
-                2] us 단위 주기 : 객체명.attach_us(&func, time_us)
+                2] us 단위 주기 : 객체명.attach_us(&func, time_us) // void
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
             (2) 멤버 함수 지정
-                1] 초 단위 주기 : 객체명.attach(Callback(obj, &func), time)
+                1] 초 단위 주기 : 객체명.attach(Callback(obj, &func), time) // void
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
@@ -560,7 +560,7 @@
                             tic.attach(callback(this, &myClass::ISR), time)
                         }
                     }
-                2] us 단위 주기 : 객체명.attach(Callback(obj, &func), time_us)
+                2] us 단위 주기 : 객체명.attach_us(Callback(obj, &func), time_us)
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
@@ -572,7 +572,65 @@
                         }
                     }
         3) 콜백 함수 지정 해제 : 객체명.detach()
+    1-2. Timer Class
+        1) 생성자 : Timer 객체명
+        2) 동작
+            (1) 측정 재개 : 객체명.start()
+            (2) 측정 정지 : 객체명.stop()
+            (3) 측정 초기화 후 재개 : 객체명.reset()
+        3) 읽기
+            (1) 메소드
+                1] 초 읽기 : float t = 객체명.read()
+                    - return : 현재 시간(초 단위) // float
+                2] 밀리초 읽기 : int t = 객체명.read_ms()
+                    - return : 현재 시간(밀리초 단위) // int
+                3] 마이크로초 읽기 : int t = 객체명.read_us()
+                    - return : 현재 시간(마이크로초 단위) // int
+            (2) 오버로딩
+                1] 초 읽기 : float t = 객체명
+                    - return : 현재 시간(초 단위) // float
+            (3) 부분 코드 실행
+                - 원하는 블록 전 : start
+                - 원하는 블록 후 : stop & read
+    1-3. Timeout Class
+        1) 생성자 : Timeout 객체명
+        2) 콜백함수 지정
+            (1) 일반 함수 지정
+                1] 초 단위 지정 : 객체명.attach(&func, time) // void
+                    - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반황형이 void여야함 // Callback<void()>
+                    - time : 콜백 함수 호출될 때까지의 시간(초단위) // float
+                2] us 단위 지정 : 객체명.attach_us(&func, time) // void
+                    - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
+                    - time : 콜백 함수 호출될 때까지의 시간(마이크로 초단위) // us_timestamp_t
+            (2) 멤버 함수 지정
+                1] 초 단위 지정 : 객체명.attach(Callback(obj, &func), time) // void
+                    - obj : Timeout 객체가 포함된 객체의 주소 // T
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
+                    - time : 콜백 함수 호출될 때까지의 시간(초단위) // us_timestamp_t
 
+                    Class myClass{
+                        Timeout tmo;
+                        myClass(){
+                            tmo.attach(callback(this, &myClass::ISR), time)
+                        }
+                    }
+                2] us 단위 지정 : 객체명.attach_us(Callback(obj, &func), time_us) // void
+                    - obj : Timeout 객체가 포함된 객체의 주소 // T
+                    - &func : 호출될 멤버 함수의 절대 주소 // M
+                    - time : 콜백 함수 호출될 때까지의 시간(마이크로 초단위) // us timestamp_t
+
+                    Class myClass{
+                        Timeout tmo;
+                        myClass(){
+                            tmo.attach(callback(this, &myClass::ISR), time_us)
+                        }
+                    }
+        3) 콜백함수 지정 해제 : 객체명.detach()
+    3. Debouncing
+        0) Debouncing 개요
+            - 스위치 : 탄성력이 접점에 작용
+            - Bouncing 현상 : 스위치 버튼 누를 때, 뗄 때 일정 시간동안 Bouncing 현상 발생
+            
 
 ● UART
     0. UART 통신 개요
@@ -582,7 +640,7 @@
         2) UART 전송 프레임 정의 : 보드 간 UART 설정 같아야한다
             (1) BaudRate : 1초당 통신 bit 수(bps)
                 - 2400의 배수
-            (2) 비트 폭 : 1/(BaudRate)
+            (2) 비트 폭 : 1/BaudRate
             (3) Start bit : 시작 표시 (필수 포함)
             (4) 데이터 비트수 : 데이터 구성 비트 수
             (5) Parity bit : 데이터 오류 판별
@@ -676,6 +734,101 @@
         3) static 자료형
             - 함수 내의 변수는 나갈때 사라지는데, 정적 선언을 위해 코드 실행하는 동안 제거x
         4) atof(alphabet to float) : atof(배열)
+
+
+● I2C
+    0. I2C 개요
+        1) 특징
+            (1) 회로
+                1] 2개 선(SDA, SCL)
+                    - SDA, SCL line : 2kΩ ~ 10kΩ로 PullUp
+                    - SDA : Serial Data
+                    - SCL : Serial Clock
+                    - master, slave 모두 open drain 회로로 0으로 만들 수 있음
+            (2) 통신 방식
+                1] master-slave
+                    - master가 각 slave에 고유 주소 부여
+                    - 2개 선으로 복수개 장치와 통신 가능
+                2] 동기 통신 : clock 신호에 동기
+                3] 반이중 양방향 통신 : 보내기, 받기 동시 불가 but 각각 따로는 가능
+                    ex. 무전기
+        2) 작동 원리
+            (0) Basic
+                - clock 신호 : master만 출력 가능
+                - SDA : SCL이 low인 시점만 변경 가능
+                    예외 : 시작 or 정지 조건
+                - 데이터 전송 : 항상 2개 데이터 전송
+                    master 쓰기
+                        주소 : master -> slave
+                        데이터 : master -> slave
+                    master 읽기
+                        주소 : master -> slave
+                        데이터 : slave -> master
+            (1) 전송 시작 or 정지
+                1] 시작 조건
+                    - 시작 조건 이전
+                        slave : 대기
+                    - 시작 조건
+                        master : SCL를 high로 유지, SDA를 low로 내림
+                    - 시작 조건 이후
+                        slave : 시작 조건 감지 -> address 읽기
+                2] 정지 조건
+                    - 정지 조건
+                        master : SCL를 high로 유지, SDA를 high로 올림
+            (2) 쓰기 Master -> Slave
+                1] 시작 조건 생성 master
+                2] 주소/데이터 송신 of master
+                    - address : A6~A0(7bit)
+                    - R/W : 0(마지막 1bit)
+                        R : high
+                        W : low
+                3] 주소/데이터 수신 여부 of slave
+                    - 수신 성공 : ACK = 0
+                    - 수신 실패 : NACK = 1
+            (3) 읽기 Slave -> Master
+                1] 시작 조건 생성 of master
+                2] 주소 송신 of master
+                    - address : A6~A0(7bit)
+                    - R/W : 1(마지막 1bit)
+                        R : high
+                        W : low
+                3] 주소 수신 여부 of slave
+                    - 수신 성공 : ACK = 0
+                    - 수신 실패 : NACK = 1
+                4] 정지 조건 생성 of master
+                    - 데이터 수신 완료 시, NACK의 의미로 SDA를 high(1)로 만듦
+    1. I2C Class
+        1) 생성자 : I2C 객체명(SDA_Pin_name, SCL_Pin_name) // I2C
+            - SDA_Pin_name : I2C data 핀이름 // PinName
+            - SCL_Pin_name : I2C clock 핀이름 // PinName
+        2) 주파수 설정 : 객체명.frequency(hz) // void
+            - hz : Hz단위의 I2C clock 주파수 // int
+                default : 40kHz
+        3) 쓰기 & 읽기
+            (1) 여러 바이트 쓰기 : 객체명.write(address, data, length, repeat)
+                - address : slave device의 I2C 주소 // int
+                    쓰기 : 마지막 byte 1로 수동 지정
+                - data : 전송할 char 배열 // const char*
+                - length : 전송 byte 수 // int
+                - repeat : 반복 여부 // bool
+                    default : false
+                    반복 x. Stop o : false
+                    반복 o. Stop x : true
+                - return : slave 수신 여부
+                    성공(ACK) : 0
+                    실패(NACK) : 1
+            (2) 여러 바이트 읽기 : 객체명.read(address, data, length, repeat)
+                - address : slave device의 I2C 주소 // int
+                    읽기 : 마지막 byte 0으로 수동 지정
+                - data : 수신 데이터 저장할 char 배열 // const char*
+                - length : 수신 byte 수 // int
+                - repeat : 반복 여부 // bool
+                    default : false
+                    반복 x. Stop o : false
+                    반복 o. Stop x : true
+                - return : slave 수신 여부
+                    성공(ACK) : 0
+                    실패(NACK) : 1
 
 
 ● RTOS

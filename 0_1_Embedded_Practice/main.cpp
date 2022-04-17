@@ -435,6 +435,7 @@ int main(){
 
 // ● UART
 //     2. Serial 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //         1) Serial_Basic
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
@@ -453,6 +454,7 @@ int main(){
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             2) Seiral loopback
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"
 
@@ -470,6 +472,7 @@ int main(){
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             3) Seiral loopback + Callback
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"
 
@@ -495,6 +498,7 @@ int main(){
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             4) Serial Communication + Callback
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"
 
@@ -535,6 +539,7 @@ int main(){
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             5) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 안되냐?? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"
 #include <string>
@@ -586,6 +591,7 @@ int main() {
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //             6) Serial Protocol(,를 기준으로 잘라서, 3개 string 배열 만들기) + Callback // 이거 왜 되냐??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"
 
@@ -628,6 +634,226 @@ int main() {
         led1 =! led1;
         wait(0.2);
     }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ● I2C
+//     2. I2C 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         1) 미지 주소 장치 검색
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // mbed-os5 버전 : i2c에 데이터 배열 설정하지 않으면 오류 발생 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+
+I2C i2c(I2C_SDA, I2C_SCL);
+
+int main(){
+    uint8_t count = 0;
+    while(1){
+        printf("\nScanning I2C devices....\n");
+        count = 0;
+        char data[1];
+        for(int adr = 0; adr < 256; adr++){
+            // if(i2c.read(adr,0,0) == 0){
+            if(i2c.read(adr,data,1,0) == 0){
+                count++;
+                printf("found @ 0x%02X \n", adr);
+            }
+            wait(0.005);
+        }
+        printf("\n Total %2d deviceds are found\n", count);
+        wait(1.0);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         2) RTC 모듈 : 시간 출력
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // mbed-os5 버전 : i2c에 데이터 배열 설정하지 않으면 오류 발생 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+// 레지스터 주소 선언
+#define REG_SEC (0x02) // 레지스터 datasheet 참조 ♣♣♣
+#define REG_MIN (0x03)
+#define REG_HOUR (0x04)
+#define PCF8563_ADDR (0xA2)
+
+I2C i2c(I2C_SDA, I2C_SCL);
+
+void writeByte(uint8_t address, uint8_t regAddress, uint8_t data);
+char readByte(uint8_t address, uint8_t regAddress);
+uint8_t BCDToDec(uint8_t val);
+uint8_t DecToBCD(uint8_t val);
+
+int main(){
+    while(1){
+        // sec, min, hour 받기
+        char s = readByte(PCF8563_ADDR, REG_SEC);
+        char m = readByte(PCF8563_ADDR, REG_MIN);
+        char h = readByte(PCF8563_ADDR, REG_HOUR);
+
+        // sec, min, hour 출력
+        printf("Time = %02u:%02u:%02u\n", BCDToDec(h & 0x3F), BCDToDec(m & 0x7F), BCDToDec(s & 0x7F)); // 0x3F : 6비트 마스크, 0x7F : 7비트 마스크, %02u : 2자리 차지 + 10의 자리수 없는 경우 0으로 채움 + unsigned형 ♣♣♣
+        wait(1.0);
+    }
+}
+
+// 쓰기 to 레지스터
+void writeByte(uint8_t address, uint8_t regAddress, uint8_t data){
+    char data_write[2];
+    data_write[0] = regAddress;
+    data_write[1] = data;
+    i2c.write(address, data_write, 2, 0);
+}
+
+// 읽기 from 레지스터
+char readByte(uint8_t address, uint8_t regAddress){
+    char data[1];
+    char data_write[1];
+    data_write[0] = regAddress;
+    i2c.write(address, data_write, 1, 1);
+    i2c.read(address, data, 1, 0);
+    return data[0];
+}
+
+// 8비트 BCD <-> 10진수 변환
+uint8_t BCDToDec(uint8_t val){
+    return ((val/16)*10 + (val%16));
+}
+
+uint8_t DecToBCD(uint8_t val){
+    return ((val/10)*16 + (val%10));
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         3) OLED 모듈 : 문자 출력
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#include "Adafruit_SSD1306.h"
+
+I2C i2c(I2C_SDA, I2C_SCL);
+Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 32, 128);
+
+int main(){
+    uint16_t q = 0;
+    i2c.frequency(400000);
+
+    // 문자 출력
+    myOled.begin();
+    myOled.printf("%ux%u\n Hello World\r\n", myOled.width(), myOled.height());
+    myOled.printf("First sample\r\n");
+    myOled.display();
+    while(1){
+        myOled.printf("%u\r", q++);
+        myOled.display();
+        printf("q = %u \n", q);
+        wait(1.0);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         3) OLED 모듈 : 그래픽 출력
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#include "Adafruit_SSD1306.h"
+
+I2C i2c(I2C_SDA, I2C_SCL);
+Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 32, 128);
+
+int main(){
+    int16_t x = 0;
+    float inc = 0.0f, force = 1.0f;
+    i2c.frequency(400000);
+
+    // 문자 출력
+    myOled.begin();
+    myOled.printf("Hello World\r\n");
+    myOled.display();
+    while(1){
+        // 박스 출력
+        myOled.fillRect(0, 19, 128, 12, 0);
+        myOled.drawRect(x, 20, 10, 10, 1);
+        myOled.display();
+
+        // 박스 좌표
+        inc+=0.1f*force;
+        x+=inc;
+        if(118 < x || x < 0){
+            force = -force;
+            inc = 0.0f;
+        }
+        wait(0.01);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         3) OLED + RTC 모듈 : 시계 만들기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#include "Adafruit_SSD1306.h"
+#define REG_SEC (0x02)
+#define REG_MIN (0x03)
+#define REG_HOUR (0x04)
+#define PCF8563_ADDR (0xA2)
+
+I2C i2c(I2C_SDA, I2C_SCL);
+DigitalOut myled(LED1);
+Adafruit_SSD1306_I2c Oled(i2c, D4, 0x78, 32, 128);
+
+void writeByte(uint8_t address, uint8_t regAddress, uint8_t data);
+char readByte(uint8_t address, uint8_t regAddress);
+uint8_t BCDToDec(uint8_t val);
+uint8_t DecToBCD(uint8_t val);
+
+int main(){
+    // 텍스트 출력
+    Oled.begin();
+    Oled.setTextSize(1);
+    Oled.printf("15/MAY/2020\r\n\n");
+
+    // 시간 출력
+    Oled.setTextSize(2);
+    while(1){
+        // sec, min, hour 받기
+        char s = readByte(PCF8563_ADDR, REG_SEC);
+        char m = readByte(PCF8563_ADDR, REG_MIN);
+        char h = readByte(PCF8563_ADDR, REG_HOUR);
+
+        // sec, min, hour 출력
+        Oled.printf("%02u:%02u:%02u\r", BCDToDec(h&0x3F), BCDToDec(m&0x7F), BCDToDec(s&0x7F));
+        Oled.display();
+    }
+}
+
+// 쓰기 to 레지스터
+void writeByte(uint8_t address, uint8_t regAddress, uint8_t data){
+    char data_write[2];
+    data_write[0] = regAddress;
+    data_write[1] = data;
+    i2c.write(address, data_write, 2, 0);
+}
+
+// 읽기 from 레지스터
+char readByte(uint8_t address, uint8_t regAddress){
+    char data[1];
+    char data_write[1];
+    data_write[0] = regAddress;
+    i2c.write(address, data_write, 1, 1);
+    i2c.read(address, data, 1, 0);
+    return data[0];
+}
+
+// 8비트 BCD <-> 10진수 변환
+uint8_t BCDToDec(uint8_t val){
+    return ((val/16)*10 + (val%16));
+}
+
+uint8_t DecToBCD(uint8_t val){
+    return ((val/10)*16 + (val%10));
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

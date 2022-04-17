@@ -710,7 +710,7 @@
                 - if(객체명.readable == true)를 사용하지않으면 getc 사용시 수신버퍼가 찰때까지 계속 기다린다 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
                 
                 if(pc.readable())
-                    char c = pc.getc();s
+                    char c = pc.getc();
         5) 쓰기 & 읽기
             (1) 쓰기 : 객체명.putc(c) // int
                 - c : 전송할 1바이트 데이터 // int
@@ -742,41 +742,46 @@
             (1) 회로
                 1] 2개 선(SDA, SCL)
                     - SDA, SCL line : 2kΩ ~ 10kΩ로 PullUp
-                    - SDA : Serial Data
-                    - SCL : Serial Clock
-                    - master, slave 모두 open drain 회로로 0으로 만들 수 있음
+                        SDA : Serial Data
+                        SCL : Serial Clock
+                    - master, slave 모두 open drain 회로로 0으로 만들 수 있음 ♣♣♣
             (2) 통신 방식
                 1] master-slave
                     - master가 각 slave에 고유 주소 부여
                     - 2개 선으로 복수개 장치와 통신 가능
                 2] 동기 통신 : clock 신호에 동기
-                3] 반이중 양방향 통신 : 보내기, 받기 동시 불가 but 각각 따로는 가능
+                3] 반이중 양방향 통신
+                    - 보내기, 받기 동시 불가 but 각각 따로는 가능
+                    - 1:N 반이중 양방향 통신
                     ex. 무전기
         2) 작동 원리
             (0) Basic
-                - clock 신호 : master만 출력 가능
-                - SDA : SCL이 low인 시점만 변경 가능
-                    예외 : 시작 or 정지 조건
-                - 데이터 전송 : 항상 2개 데이터 전송
-                    master 쓰기
+                1] clock 신호 : master만 출력 가능
+                2] SDA : SCL이 low인 시점만 변경 가능
+                    - 예외 : 시작 or 정지 조건
+                3] 데이터 전송 : 항상 2개 데이터 전송
+                    [1] master 쓰기
                         주소 : master -> slave
                         데이터 : master -> slave
-                    master 읽기
+                    [2] master 읽기
                         주소 : master -> slave
                         데이터 : slave -> master
             (1) 전송 시작 or 정지
                 1] 시작 조건
-                    - 시작 조건 이전
-                        slave : 대기
-                    - 시작 조건
-                        master : SCL를 high로 유지, SDA를 low로 내림
-                    - 시작 조건 이후
-                        slave : 시작 조건 감지 -> address 읽기
-                2] 정지 조건
-                    - 정지 조건
-                        master : SCL를 high로 유지, SDA를 high로 올림
+                    [1] 시작 조건 이전
+                        - slave : 대기
+                    [2] 시작 조건
+                        - master : SCL를 high로 유지, SDA를 low로 내림
+                    [3] 시작 조건 이후
+                        - slave : 시작 조건 감지 -> address 읽기
+                2] 데이터 변경 가능 시점
+                    [1] 데이터 변경 가능 : SCL = low인 경우
+                    [2] 데이터 변경 불가 : SCL = high인 경우
+                3] 정지 조건
+                    [1] 정지 조건
+                        - master : SCL를 high로 유지, SDA를 high로 올림
             (2) 쓰기 Master -> Slave
-                1] 시작 조건 생성 master
+                1] 시작 조건 생성 of master
                 2] 주소/데이터 송신 of master
                     - address : A6~A0(7bit)
                     - R/W : 0(마지막 1bit)
@@ -796,7 +801,7 @@
                     - 수신 성공 : ACK = 0
                     - 수신 실패 : NACK = 1
                 4] 정지 조건 생성 of master
-                    - 데이터 수신 완료 시, NACK의 의미로 SDA를 high(1)로 만듦
+                    - 데이터 수신 완료 시, NACK의 의미로 SDA를 high(1)로 만듦 ♣♣♣
     1. I2C Class
         1) 생성자 : I2C 객체명(SDA_Pin_name, SCL_Pin_name) // I2C
             - SDA_Pin_name : I2C data 핀이름 // PinName
@@ -829,6 +834,89 @@
                 - return : slave 수신 여부
                     성공(ACK) : 0
                     실패(NACK) : 1
+    2. I2C 모듈
+        1) RTC 모듈 개요
+            (1) 특징
+                1] 용도 : 정확한 현재 시간이 필요한 경우
+                    ex. 현재 시간에 따른 미세 설정 컨트롤
+                    ex. 시간을 포함한 측정 데이터 전송
+                2] 배터리
+                    - 보존용 리튬 배터리 : 전원 제거 시 시간 유지
+                    - 저전력 회로 : 몇년 동안 배터리 사용 가능
+            (2) 제품
+                1] 제품명 : PCF8563
+                    - NXP사 real time clock
+                2] 사용법
+                    - 레지스터 table 참조
+                        BCD 데이터 사용 in 레지스터
+                        레지스터에 맞는 마스크 사용
+                    - I2C 주소 : 0xA2
+        2) OLED 모듈 개요
+            (1) 특징
+                1] 용도 : 디스플레이
+                2] 구조 : 유기발광 다이오드의 매트릭스 구조
+            (2) 제품
+                1] 제품명 : SSD1306
+                    - Size : 최대 128x64
+                    - 통신 : I2C, SPI 지원
+                    - 라이브러리 : 방대한 기능 지원하므로 직접 제작보단, 라이브러리 사용
+                2] Adafruit_SSD1306_I2c Class
+                    [0] 라이브러리 다운
+                        import -> I2C_SSD1306_Helloworld
+                    [1] 생성자 : Adafruit_SSD1306_I2c 객체명(i2c, rst_pin, i2c_adr, height, width)
+                        - i2c : OLED 모듈 연결된 I2C 객체 // I2C
+                        - rst_pin : mbed보드의 모듈 reset용 Pin // PinName
+                        - i2c_adr : OLED 모듈 I2C 주소 // int
+                        - height : 디스플레이 높이 // int
+                        - width : 디스플레이 폭 // int
+                    [2] 디스플레이 초기화 : 객체명.begin()
+                    [3] 디스플레이 표시 of 버퍼
+                        객체명.printf(~~~)
+                        객체명.display()
+                    [4] 텍스트 사이즈 변경
+                        Adafruit_GFX_config.h에 있는 "GFX_SIZABLE_TEXT"의 주석 해제
+
+                        객체명.setTextSize(size)
+                            - size : 텍스트 사이즈 // uint8_t
+                    [5] 그리기
+                        Adafruit_GFX_config.h에 있는 "GFX_WANT_ABSTRACTS"의 주석 해제
+                        1]] 선 그리기 : 객체명.drawLine(x0, y0, x1, y1, color)
+                            - x0, y0 : 시작점 좌표 // int16_t
+                            - x1, y1 : 끝점 좌표 // int16_t
+                            - color : 색 // uint16_t
+                                0 : 흰색
+                                1 : 배경색(파란색)
+                        2]] 직사각형 외곽선 그리기 : 객체명.drawRect(x, y, w, h, color)
+                            - x, y : 직사각형 좌측 상단 좌표 // int16_t
+                            - w, h : 직사각형 폭, 넓이 // int16_t
+                            - color : 색 // uint16_t
+                                0 : 흰색
+                                1 : 배경색(파란색)
+                        3]] 꽉찬 직사각형 그리기 : 객체명.fillRect(x, y, w, h, color)
+                            - x, y : 직사각형 좌측 상단 좌표 // int16_t
+                            - w, h : 직사각형 폭, 넓이 // int16_t
+                            - color : 색 // uint16_t
+                                0 : 흰색
+                                1 : 배경색(파란색)
+                        4]] 원 그리기 : 객체명.drawCircle(x, y, r, color)
+                            - x, y : 원 중심 좌표 // int16_t
+                            - r : 원 반경 // int16_t
+                            - color : 색 // uint16_t
+                                0 : 흰색
+                                1 : 배경색(파란색)
+
+
+    +a)
+        1) 제품별 고유 I2C 주소
+            (1) 8비트 주소 제공
+                - 하위 R/W비트 포함
+                - 읽기/쓰기 주소 별도 제공
+            (2) 7비트 주소 제공
+                - 하위 R/W비트 미포함
+        2) BCD <-> 10진수
+            16진수의 4비트씩 자른 단위에서 0~9만 사용
+            ex. 39(H) -> 57(D)
+            ex. 39(BCD) -> 39(D)
 
 
 ● RTOS

@@ -639,6 +639,7 @@ int main() {
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // ● I2C
 //     2. I2C 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -729,12 +730,12 @@ uint8_t DecToBCD(uint8_t val){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //         3) OLED 모듈 : 문자 출력
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*  // 한 프로젝트에 main문이 2개 있으면 컴파일 에러 발생 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
 #include "mbed.h"
 #include "Adafruit_SSD1306.h"
 
 I2C i2c(I2C_SDA, I2C_SCL);
-Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 32, 128);
+Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 64, 128);
 
 int main(){
     uint16_t q = 0;
@@ -756,12 +757,12 @@ int main(){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //         3) OLED 모듈 : 그래픽 출력
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*
 #include "mbed.h"
 #include "Adafruit_SSD1306.h"
 
 I2C i2c(I2C_SDA, I2C_SCL);
-Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 32, 128);
+Adafruit_SSD1306_I2c myOled(i2c, D4, 0x78, 64, 128);
 
 int main(){
     int16_t x = 0;
@@ -792,7 +793,7 @@ int main(){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 //         3) OLED + RTC 모듈 : 시계 만들기
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*  // 이거 실습 해보기 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+/*
 #include "mbed.h"
 #include "Adafruit_SSD1306.h"
 #define REG_SEC (0x02)
@@ -859,6 +860,234 @@ uint8_t DecToBCD(uint8_t val){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ● SPI
+//     2. SPI 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         1) 1바이트 읽기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // 아직 안돌려봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#define WHO_AM_I 0x75                   // register address
+#define SPI_READ 0x80                   // register address 최상위 비트 1로 만들기
+SPI spi(D11, D12, D13);                 // mosi, miso, sclk
+// SPI spi(SPI_MOSI, SPI_MISO, SPI_SCK) // same pin
+DigitalOut ss(D2);
+
+int main(){
+    ss = 1;
+    spi.format(8, 3);
+    spi.frequency(15000000);
+    while(true){
+        ss = 0;
+        spi.write(WHO_AM_I | SPI_READ);
+        int whoami = spi.write(0);
+        printf("WHOAMI register = 0x%X\n", whoami);
+        ss = 1;
+        wait(0.1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         1) 1바이트 읽기 class화
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*  // 아직 안돌려봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#define WHO_AM_I 0x75
+#define SPI_READ 0x80
+
+class Dummy{
+    SPI _spi;
+    DigitalOut _ss;
+    public:
+        Dummy(PinName mosi, PinName miso, PinName clk, PinName ss):_spi(mosi, miso, clk), _ss(ss){
+            _ss = 1;
+            _spi.format(8, 3);
+            _spi.frequency(15000000);
+        }
+    uint8_t readByte(uint8_t address){
+        _ss = 0;
+        _spi.write(address | SPI_READ);
+        int data = _spi.write(0);
+        _ss = 1;
+        return data;
+    }
+};
+
+Dummy dum(D11, D12, D13, D2);
+Serial pc(USBTX, USBRX, 115200);
+
+int main(){
+    while(true){
+        pc.printf("WHOAMI register = 0x%X\n", dum.readByte(WHO_AM_I));
+        wait(0.1);
+    }
+}
+*/
+
+
+// ● Bus
+//     2. BusIn, BusOut 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         1) RGB LED 순서대로 켜기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+#define LED_PINS 3
+
+BusOut leds(D4, D5, D6);
+int main(){
+    leds = 0x07; // 전부 on
+    while(true){
+        for(int i = 0; i < LED_PINS; i++){
+            leds[i] = 0; // off
+            wait(0.1);
+            leds[i] = 1; // on
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         2) RGB LED 무작위로 켜기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include "mbed.h"
+#include <cstdlib>
+#define LED_PINS 3
+
+BusOut leds(D4, D5, D6);
+int main(){
+    leds = 0x07; // 전부 on
+    while(true){
+        for(int i = 0; i < LED_PINS; i++){
+            leds = rand(); // 선택적 off
+            wait(1);
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         3) RGB LED 패턴대로 켜기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 안되지??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#define LED_PINS 3
+#define Ndata 8
+
+Ticker tic;
+BusOut leds(D4, D5, D6);
+uint16_t data[] = {0b000, 0b001, 0b010, 0b100, 0b011, 0b101, 0b110, 0b111};
+volatile int cnt = 0;
+void colorGen(){
+    leds = data[cnt];
+    cnt++;
+    cnt %= Ndata;
+}
+
+int main(){
+    leds = 0x07; // 전부on
+    tic.attach(&colorGen, 1.0);
+    while(true){}
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         4) RGB LED 푸시버튼으로 켜기
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 왜 안되지??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+
+BusIn pbs(D14, D15);
+BusOut leds(D4, D5, D6);
+uint16_t data[] = {0b001, 0b010, 0b100};
+
+int main(){
+    pbs.mode(PullUp);
+    while(true){
+        leds = data[pbs];
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         5) 16진수 순차적으로 FND에 출력
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+
+BusOut fnd(D2, D3, D4, D5, D6, D7, D8, D9);
+uint16_t num[] = {0x88, 0xBE, 0xC4, 0x94, 0xB2, 0x81, 0xBC, 0x80, 0xB0, 0x84, 0x83, 0xC7, 0x86, 0xC1, 0xE1};    // 애노드 타입 1 ~ F ♣
+
+int main(){
+    fnd = 0xFF;                 // 애노드 타입인데 전부1이므로 전부 끈 상태로 시작 ♣
+    uint16_t cnt = 0;
+    while(true){
+        fnd = num[cnt++%16];
+        wait(0.5);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         6) 4개 푸시버튼을 2진수로 생각하여 해당하는 16진수 FND에 출력
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+BusIn pbs(D10, D11, D12, D13);
+BusOut fnd(D2, D3, D4, D5, D6, D7, D8, D9);
+uint16_t num[] = {0x88, 0xBE, 0xC4, 0x94, 0xB2, 0x81, 0xBC, 0x80, 0xB0, 0x84, 0x83, 0xC7, 0x86, 0xC1, 0xE1};    // 애노드 타입 1 ~ F ♣
+
+int main(){
+    pbs.mode(PullUp);           // Pullup ♣
+    fnd = num[0];
+    while(true){
+        fnd = num[pbs^0x0F];    // 0인 마스크만 1, 나머지는 0으로 변환하여 16진수 만듦 ♣
+        wait(0.1);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//         7) 외곽 회전 FND / 4개 푸시버튼 : 주기 조절
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+BusIn pbs(D10, D11, D12, D13);
+BusOut fnd(D2, D3, D4, D5, D6, D7, D8, D9);
+uint16_t seg[] = {~0x01, ~0x40, ~0x20, ~0x10, ~0x04, ~0x02};    // 애노드 타입이므로 1개만 0으로, 나머지는 1로 해야 1개만 켜짐 ♣
+Timer tmr;
+
+int main(){
+    pbs.mode(PullUp);               // Pullup ♣
+    fnd = 0xFF;                     // 애노드 타입인데 전부1이므로 전부 끈 상태로 시작 ♣
+    tmr.start();
+    uint16_t n_cnt = 0, cnt = 0, intv = 1;
+
+    while(true){
+        if(tmr.read_us()>1000){     // 1ms마다 타이머 초기화 + 버튼에 따른 재설정 + FND 작동 ♣
+            tmr.reset();
+            switch(pbs^0x0f){
+                case 1:
+                    intv = 10;
+                    break;
+                case 2:
+                    intv = 50;
+                    break;
+                case 4:
+                    intv = 100;
+                    break;
+                case 8:
+                    intv = 500;
+                    break;
+            }
+            if(cnt % intv == 0){
+                fnd = seg[n_cnt++%6];
+            }
+            cnt++;
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // ● RTOS
 //     2. Thread 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -904,6 +1133,7 @@ int main(){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // ● RTOS
 //     2. Mutex 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -946,6 +1176,7 @@ int main(){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // ● RTOS
 //     2. Queue 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -1086,10 +1317,145 @@ int main(){
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ● 초음파 센서
+//     2. 초음파 센서 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//          1) 초음파 센서값 Oled 표시
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#include "Adafruit_SSD1306.h"
+#include "sonar.h"
+
+I2C i2c(I2C_SDA, I2C_SCL);
+Serial pc(SERIAL_TX, SERIAL_RX);
+
+DigitalOut myled(LED1);
+Adafruit_SSD1306_I2c Oled(i2c, D4, 0x78, 32, 128);
+Sonar sonar(D5, D6);
+
+int main(){
+    Oled.begin();
+    Oled.setTextSize(1);
+    Oled.printf("Distance\r\n\n");
+    Oled.setTextSize(2);
+    sonar.start();
+
+    while(1){
+        Oled.printf("%7.2fcm\r", sonar.read());
+        Oled.display();
+        pc.printf("%7.2fcm \r\n", sonar.read());
+        wait(0.1f);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ● CircularBuffer
+//     2. CircularBuffer 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//          1) 1초마다 push + 사용자가 입력한 문자 push + 0.5초마다 pop
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#define BUF_SIZE 10
+
+Serial pc(USBTX, USBRX);
+DigitalOut led(LED1);
+CircularBuffer<char, BUF_SIZE> buff;
+Ticker tickman;
+
+void dataArrived(){
+    if(pc.readable()){
+        char c = pc.getc();
+        if(!buff.full()) buff.push(c);
+    }
+}
+void pusher(){
+    if(!buff.full()) buff.push('!');
+}
+
+int main(){
+    tickman.attach(&pusher, 1.0);
+    pc.attach(&dataArrived);
+    char c;
+    while(true){
+        if(!buff.empty()){
+            buff.pop(c);
+            pc.printf("size : %u, got : '%c'\n", buff.size(), c);
+        }
+        led = buff.full()? 1:0;
+        wait(0.5);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ● StepMotor
+//     2. StepMotor 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//          1) 0 ~ 180도 왕복 StepMotor
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+#include "DRV8825.h"
+
+#define MOTOR_STEPS_PER_REV 400                                     // 1회전 당 모터 step 수 : 400
+#define MICRO_STEP_DIV 32                                           // microstep 개수 : 32
+#define MICRO_STEP_PER_REV (MOTOR_STEPS_PER_REV * MICRO_STEP_DIV)   // 1회전 당 모터 microstep 수 : 400 x 32 = 12800
+
+#define DESIRED_STEPS_PER_SEC 50                                    // 초당 step 수 : 50
+#define DESIRED_MICRO_STEPS_PER_SEC (32 * DESIRED_STEPS_PER_SEC)    // 초당 microstep 수 : 50 x 32 = 1600
+
+#define SAMPLE_TIME (1000000L / DESIRED_MICRO_STEPS_PER_SEC)        // 1 microstep 주기 = 625us
+
+#define MAX_STEP (MICRO_STEP_PER_REV / 2)                           // 0.5회전 당 모터 microstep 수 : 400 x 32 / 2 = 6400
+
+Serial pc(USBTX, USBRX, 115200);
+
+Timer tmr;
+InterruptIn bot(BUTTON1);
+DigitalOut led(LED1);
+DRV8825 stepper(D3, D2);
+volatile bool f_run = false;
+
+void botPress(){
+    f_run =! f_run;
+}
+
+int main(){
+    bot.fall(&botPress);
+    tmr.start();
+    while(1){
+        // 1microstep 샘플링 시간 < 타이머 시간 : step모터 회전 + 각도 출력
+        if(tmr.read_us() > SAMPLE_TIME){
+            tmr.reset();
+            if(f_run){
+                stepper.scan(0, MAX_STEP);
+                int32_t steps = stepper.getSteps();
+                // 1step 돌때마다 step 수 출력
+                if(steps % MICRO_STEP_DIV == 0){
+                    led != led;
+                    pc.printf("step = %d\n", steps/MICRO_STEP_DIV);
+                }
+            }
+        }
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // ● Encoder Sensor Project
 //     2. Encoder Library
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*
+/*  // 이거 왜 안됨??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
 #include <mbed.h>
 DigitalOut led1(LED1);
 // extern DigitalOut led1; // 외부 변수 사용
@@ -1166,4 +1532,34 @@ int main(){
     }
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// ● DC Motor Drive
+//     2. DC Motor Drive
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//          1) CW CCW 테스트
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*      // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include "mbed.h"
+PwmOut PWM(D10);
+DigitalOut IN1(D8), IN2(D9);
+
+int main(){
+    IN1 = 1; IN2 = 0;
+    while(1){
+        IN1 = 1; IN2 = 0;   // CW
+        PWM = 1.0;
+        wait_ms(2000);
+        IN1 = 0; IN2 = 1;   // CCW
+        PWM = 0.5;
+        wait_ms(2000);
+        PWM = 0;
+        wait_ms(2000);
+    }
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//          2) 라이브러리 생성
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

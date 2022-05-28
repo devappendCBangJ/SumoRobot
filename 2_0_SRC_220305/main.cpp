@@ -38,7 +38,7 @@ int black = 40000;
 // AC서보 모터
 PwmOut Servo(PA_8);
 
-float ang=90.0, inc=0.015;
+float ang=90.0, inc = 5;
 
 // DC 모터
 DigitalOut DirL(PC_7);
@@ -46,13 +46,16 @@ DigitalOut DirR(PB_6);
 PwmOut PwmL(PB_4);
 PwmOut PwmR(PB_5);
 
+float speed = 0;
+
 template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max);
 
 // 통신
-Serial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
-Serial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
 
 // 통신 - ras_com
+volatile bool All_move = false;
 volatile bool gotPacket = false;
 volatile float ras_data[3];
 // ras_data[0] : 상대 방향 + 보임 유무
@@ -61,9 +64,10 @@ volatile float ras_data[3];
     // 가운데 : 2
     // 오른쪽 : 3
 // ras_data[1] : 상대 크기
-    // 작음 : 0
-    // 보통 : 1
-    // 큼 : 2
+    // 작음 : 1
+    // 보통 : 2
+    // 큼 : 3
+    // 매우 큼 : 4
 // ras_data[2] : 빨간영역 좌표 vs 상대 좌표 비교(거리, 영역)
     // 빨간 영역 안 : 0(상대 가까울 때만 공격)
     // 빨간 영역 밖 : 1(무조건 공격)
@@ -80,6 +84,8 @@ int pre_data0 = 0;
 volatile bool gotPacket2 = false;
 volatile float pc_data[3];
 
+Mutex mutex;
+
 // 기타
 int mode = 0;
 
@@ -88,6 +94,7 @@ void sensor_read();
 void sensor_cal();
 void sensor_print();
 
+void servo_set(PwmOut &rc);
 void servo_move(PwmOut &rc);
 void servo_chk(PwmOut &rc);
 
@@ -96,7 +103,7 @@ void DC_move(int _dirL, int _dirR, float _PwmL, float _PwmR);
 void DC_chk();
 
 void in_SerialRx();
-void in_SerialRx_print();
+void in_SerialRx_main();
 void th_SerialRx();
 
 // [main문]
@@ -105,52 +112,69 @@ int main(){
 
     Servo.period_ms(10);
     DC_set();
-    // ras.attach(&in_SerialRx); // interrupt 전용
+    servo_set(Servo);
+    ras.attach(&in_SerialRx); // interrupt 전용
 
-    com_th.start(&th_SerialRx); // thread 전용
+    // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        // in_SerialRx_print(); // interrupt 전용
+        in_SerialRx_main(); // interrupt 전용
 
-        sensor_read();
-        sensor_cal();
-        // sensor_print();
+        if(All_move == true){
+            sensor_read();
+            sensor_cal();
+            // sensor_print();
 
-        // servo_chk(Servo); // Test 코드
-        // DC_chk(); // Test 코드
+            // servo_chk(Servo); // Test 코드
+            // DC_chk(); // Test 코드
 
-        // 초기 동작 : 상대 탐색
-        if(mode == 0){
-            if(ras_data[0] == 9){
-                DC_move(1, 0, 0.12, 0.12);
+            // mutex.lock();
+            // 초기 동작 : 상대 탐색
+            if(mode == 0){
+                if(ras_data[0] == 9){
+                    DC_move(1, 0, 0.20, 0.20);
+                }
+                else if(ras_data[0] == 1){
+                    DC_move(0, 1, 0.20, 0.20);
+                }
+                else if(ras_data[0] == 2){
+                    DC_move(1, 1, 0.0, 0.0);
+                    mode = 1;
+                    // pc.printf("mode = 1");
+                }
+                else if(ras_data[0] == 3){
+                    DC_move(1, 0, 0.20, 0.20);
+                }
             }
-            else if(ras_data[0] == 1){
-                DC_move(0, 1, 0.12, 0.12);
-            }
-            else if(ras_data[0] == 2){
-                DC_move(1, 1, 0.0, 0.0);
-                mode = 1;
-                pc.printf("mode = 1");
-            }
-            else if(ras_data[0] == 3){
-                DC_move(1, 0, 0.12, 0.12);
-            }
-        }
-        
-        // 중간 동작 : 상대 탐색 + 원 회전 + 공격
-        else if(mode == 1){
-            servo_move(Servo);
+            
+            // 중간 동작 : 상대 탐색 + 원 회전 + 공격
+            else if(mode == 1){
+                servo_move(Servo);
 
-            if(ras_data[0] == 9){
-                if(pre_data0 == 1) DC_move(0, 1, 0.12, 0.12);
-                else if(pre_data0 == 2) DC_move(1, 0, 0.12, 0.12);
-                else if(pre_data0 == 3) DC_move(1, 0, 0.12, 0.12);
-                else DC_move(1, 0, 0.12, 0.12);
+                if(ras_data[0] == 9){
+                    if(pre_data0 == 1) DC_move(0, 1, 0.40, 0.40);
+                    else if(pre_data0 == 2) DC_move(1, 0, 0.40, 0.40);
+                    else if(pre_data0 == 3) DC_move(1, 0, 0.40, 0.40);
+                    else DC_move(1, 0, 0.40, 0.40);
+                }
+                else if(ras_data[0] != 9){
+                    // 90 == 0
+                    // 0 == 40
+                    if(ang <= 75){
+                        speed = map<float>(ang, 75.0, 0.0, 0.15, 0.40);
+                        DC_move(0, 1, speed, speed);
+                    }
+                    else if(75 < ang && ang < 105){
+                        DC_move(1, 1, 0.40, 0.40);
+                    }
+                    else if(105 <= ang){
+                        speed = map<float>(ang, 180.0, 0.0, 0.40, 0.15);
+                        DC_move(1, 0, speed, speed);
+                    }
+                }
             }
-            else if(ras_data[0] != 9){
-                if(ang < 80) DC_move(1, 1, 0.30, 0.06);
-                else if(80 <= ang && ang <= 100) DC_move(1, 1, 0.12, 0.12);
-                else if(100 < ang) DC_move(1, 1, 0.06, 0.30);
-            }
+            // mutex.unlock();
+
+            All_move = false;
         }
     }
 }
@@ -206,23 +230,38 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+void servo_set(PwmOut &rc){
+    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    rc.pulsewidth_us(pulseW);
+}
+
 void servo_move(PwmOut &rc){
     if(ras_data[0] == 9){
+        // pc.printf("1");
         if(pre_data0 == 1) ang = ang - inc;
         else if(pre_data0 == 2) ang = ang + inc;
         else if(pre_data0 == 3) ang = ang + inc;
         else ang = ang + inc;
     }
-    else if(ras_data[0] == 1.0f){
-        ang = ang - inc;
+    else if(ras_data[0] == 1){
+        // pc.printf("2");
+        if(ras_data[1] == 1) ang = ang - inc;
+        else if(ras_data[1] == 2) ang = ang - inc;
+        else if(ras_data[1] == 3) ang = ang - inc;
+        else if(ras_data[1] == 4) ang = ang - inc;
         pre_data0 = 1;
     }
-    else if(ras_data[0] == 2.0f){
+    else if(ras_data[0] == 2){
+        // pc.printf("3");
         ang = ang;
         pre_data0 = 2;
     }
-    else if(ras_data[0] == 3.0f){
-        ang = ang + inc; 
+    else if(ras_data[0] == 3){
+        // pc.printf("4");
+        if(ras_data[1] == 1) ang = ang + inc;
+        else if(ras_data[1] == 2) ang = ang + inc;
+        else if(ras_data[1] == 3) ang = ang + inc;
+        else if(ras_data[1] == 4) ang = ang + inc;
         pre_data0 = 3;
     }
 
@@ -305,14 +344,14 @@ void in_SerialRx(){ // interrupt 전용
         char byteIn = ras.getc();
         // ',' : 단어 자르기
         if(byteIn == ','){
-            pc.printf("byteIn == ',' : %c\n", byteIn); // 
+            // pc.printf("byteIn == ',' : %c\n", byteIn); // 
             ras_serialInBuffer[ras_buff_cnt]='\0';
             ras_data[ras_data_cnt++]=atof(ras_serialInBuffer);
             ras_buff_cnt = 0;
         }
         // '/' : 시리얼 완료
         else if(byteIn=='/'){
-            pc.printf("byteIn == '/' : %c \n", byteIn); // 
+            // pc.printf("byteIn == '/' : %c \n", byteIn); // 
             ras_serialInBuffer[ras_buff_cnt] = '\0';
             ras_data[ras_data_cnt]=atof(ras_serialInBuffer);
             ras_buff_cnt=0; ras_data_cnt=0;
@@ -320,16 +359,17 @@ void in_SerialRx(){ // interrupt 전용
         }
         // 이외 : 시리얼 저장
         else{
-            pc.printf("byteIn == '나머지' : %c\n", byteIn); // 
+            // pc.printf("byteIn == '나머지' : %c\n", byteIn); // 
             ras_serialInBuffer[ras_buff_cnt++]=byteIn;
         }
     }
 }
 
-void in_SerialRx_print(){ // interrupt 전용
+void in_SerialRx_main(){ // interrupt 전용
     // pc.printf("pc 연결 OK \n"); // pc, mbed 통신 출력
     if(gotPacket) {
         gotPacket = false;
+        All_move = true;
         pc.printf("ras_data = %.3f, %.3f, %.3f \n\r", ras_data[0], ras_data[1], ras_data[2]);
     }
 }
@@ -339,6 +379,7 @@ void th_SerialRx(){ // thread 전용
     static int ras_data_cnt = 0, ras_buff_cnt = 0;
 
     while(true){
+        // mutex.lock();
         if(ras.readable()){
             // pc.printf("Ras 연결 OK\n"); // Ras, mbed 통신 출력
             char byteIn = ras.getc();
@@ -369,5 +410,7 @@ void th_SerialRx(){ // thread 전용
             gotPacket = false;
             pc.printf("ras_data = %.3f, %.3f, %.3f \n\r", ras_data[0], ras_data[1], ras_data[2]);
         }
+
+        // mutex.unlock();
     }
 }

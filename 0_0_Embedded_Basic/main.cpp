@@ -3,7 +3,7 @@
     1. 프로세서
         (0) 개별 논리소자
             - 디지털 논리회로 구성 by 개별 논리소자
-            ex. TTL, CMOS ♣♣♣
+            ex. TTL, CMOS ♣♣♣♣♣♣
             1] 특징
                 [0] fixed logic
                 [1] 디지털 논리회로 수정 : 수정 hard
@@ -21,41 +21,43 @@
                 // 강의자료 참조
         (2) 마이크로 컨트롤러(MCU = MicroController Unit) = One-chip = 마이콤 = SOC(System On Chip)
             1] 특징
-                [0] 개념 : 단일 IC 집적 = MPU + Memory + GPIO + Timer/Counter + Communications
-                [1] 하나의 작은 컴퓨터
-                [2] 저전력 / 빠른 개발 
+                [0] 개념 : 단일 IC 집적 = MPU + Memory + GPIO + Timer/Counter + Communications ♣♣♣
+                [1] 하나의 작은 컴퓨터 ♣♣♣
+                [2] 저전력 / 빠른 개발 ♣♣♣
                 [3] MPU에 비해 소형화 / 저렴한 시스템 구성 ♣♣♣
                 [4] 활용 : 간단한 장치 or 제어기 구축 ♣♣♣
             2] 구조
-                // 강의자료 참조
-            3] 예시
+                // 강의자료 참조 ♣♣♣♣♣♣
+            3] 예시 ♣♣♣♣♣♣
                 - Intel : 8051
                 - Microchips : PIC
                 - ATmel : AVR
-        (3) DSP = Digital Signal Processor ♣♣♣
+		(3) SOC(System On Chip)
+			1] 특징 : 하나의 칩 안에 프로세서와 주변 장치 모두 포함. MCU보다 대규모의 시스템 의미
+        (4) DSP = Digital Signal Processor ♣♣♣♣♣♣
             1] 특징
                 [1] 개념 : 특수 MPU = MPU + 디지털 신호처리에 적합한 연산기능
                 [2] 활용 : Audio, Video 등 처리
     2. ARM
         1) 특징
-            (1) 원래 Acorn computers라는 교육용 컴퓨터 회사
+            (1) 원래 Acorn computers라는 교육용 컴퓨터 회사 ♣♣♣♣♣♣
             (1) ARM(Advanced RISC Machines) Fabless 반도체 회사
             (2) RISC 프로세서 : 임베디드 특화
             (3) 저전력 / 고성능 mobile 프로세서 절대 강자
             (4) 세계 대기업들의 ARM 코어 사용
         2) 종류
-            (1) Classic : 예전 모델
-            (2) Embedded : MCU
+            (1) Classic : 예전 모델 ♣♣♣
+            (2) Embedded(M) : MCU
                 ex. 드론, 세탁기
-            (3) Real-time : Real time system
+            (3) Real-time(R) : Real time system
                 ex. 자동차, 로봇팔
-            (4) Application : 고기능, 고성능 운영체제
+            (4) Application(A) : 고기능, 고성능 운영체제
                 ex. 고성능 휴대폰, 노트북
     3. 프로그래밍
         1) MPU 프로그래밍
             (1) 과거 : 어셈블리어
                 - 기계에게 효율적 but 프로그래머에게 비효율적
-            (2) 과도기 : C(고급 언어)
+            (2) 과도기 : C(고급 언어) ♣♣♣
                 - 크로스 컴파일러 사용
                 - 초창기 컴파일러의 기술적 한계로, 일부 중요한 부분은 직접 어셈블리어 코딩
             (3) 현재 : C++(고급 언어)
@@ -72,49 +74,49 @@
                 - 적은 시간 소요(비전공자에게 유용)
 
     +a)
-        1) RISC(Reduced Instruction Set Computer) 프로세서
+        1) RISC(Reduced Instruction Set Computer) 프로세서 ♣♣♣♣♣♣
             (1) 특징
                 1] 명령어 단순화 / 개수 최소화
-                2] 장점
+                2] 장점 ♣♣♣
                     - 효율적 하드웨어 사용
                     - 병렬 수행 like 파이프라인
-                3] 단점
+                3] 단점 ♣♣♣
                     - 컴파일러 코드 최적화 복잡
                     - 프로그램 길어짐
         2) CISC(Complex Instruction Set Computer) 프로세서
 
 ● Mbed
-    1. Mbed //♣♣♣
-        1) 개념 : Cortex-M 마이크로컨트롤러 프로그램용 OS
+    1. Mbed
+        1) 개념 : Cortex-M 마이크로컨트롤러 프로그램용 OS ♣♣♣
             - 온라인 소프트웨어 개발 툴 + USB 메모리 & 전원
-        2) 특징 //♣♣♣
+        2) 특징
             (1) 장점
                 1] 개발 난이도
-                    - 개발 환경 구축 신속
-                    - Cortex-M 칩 : 브랜드, 부품 번호 변경에 대한 부담x
+                    - 개발 환경 구축 신속 ♣♣♣
+                    - Cortex-M 칩 : 브랜드, 부품 번호 변경에 대한 부담x ♣♣♣
                     - 오픈 소스 : 방대한 C++ 기반 Mbed 라이브러리 in 온라인
                     - 레지스터 레벨 고려x : 복잡한 레지스터 고려x
                     - Mbed API 일관성 : 몇몇 API 기능 이해만으로 나머지 학습 용이
                 2] 성능
                     - 낮은 가격 : 8비트 수준 가격으로 32비트 고성능 시스템 구축
-                    - IOT 지향 : 연결성(Ethernet, USB, Bluetooth, CAN 등)
+                    - IOT 지향 : 연결성(Ethernet, USB, Bluetooth, CAN 등) ♣♣♣
                     - RTOS 지원 : 실시간 프로그래밍
             (1) 장점
                 1] 사용성 편리
-                2] 회로 몰라도 개발 가능
-                3] 별도 다운로드 장비 불필요
+                2] 회로 몰라도 개발 가능 ♣♣♣
+                3] 별도 다운로드 장비 불필요 ♣♣♣
                 4] 방대한 라이브러리 in 온라인
                 5] 고성능 ARM 코어의 다양한 기능(RTOS, 연결성 등)
                     - Ethernet, USBHost, USBDevice, SPI, I2C, CAN, AnalogIn, PwmOut, AnalogOut, ...
                 6] 많은 보드, 모듈, 부품 지원
-            (2) 단점
+            (2) 단점 ♣♣♣
                 1] 레지스터 레벨 디버깅 불가
-        3) Nucleo Board //♣♣♣
+        3) Nucleo Board
             (1) 특징
                 1] 제조사 : STMicroelectronics
                 2] 개발보드 : 수많은 lineup 존재
                     - Cortex-M
-        4) Nucleo-f401re datasheet //♣♣♣
+        4) Nucleo-f401re datasheet ♣♣♣♣♣♣
             (1) 프로세서 : STM32F401RET6
                 1] 특징
                     [0] LQFP64 : 칩 패키지
@@ -159,7 +161,7 @@
                 3] RESET BUTTON
             (6) 전원 공급
                 - 유연한 전원 공급 : 3.3V, 5V, 7V ~ 12V
-        5) Mbed API //♣♣♣
+        5) Mbed API ♣♣♣
             (1) Mbed OS 구조
                 1] User Application Code -> Mbed OS5 API -> H/W Interface
                     [1] 핵심 Mbed OS5 API
@@ -187,48 +189,48 @@
             2] Empty 프로젝트 + import mbed 라이브러리 + cpp 파일 생성
                 - 프로그램 직접 생성
         2) 코드 수정
-        3) Compile
-        4) 보드 Sub 연결
+        3) Compile ♣♣♣♣♣♣
+        4) 보드 Sub 연결 ♣♣♣♣♣♣
         5) bin 파일 drag & drop
 
     +a)
-        1) 유용한 기능 : 키워드 클릭 시 클래스 가이드 표시
+        1) 유용한 기능 : 키워드 클릭 시 클래스 가이드 표시 ♣♣♣
             - 정의 위치, 관련 문서 등 확인 가능
-        2) C vs C++ //♣♣♣
-            (1) 특징 
+        2) C vs C++
+            (1) 특징 ♣♣♣
                 - C ⊂ C++
                 1] C
-                    [1] 설계 개념 : 절차적
+                    [1] 설계 개념 : 절차적 ♣♣♣♣♣♣
                         - function driven
                         - top down
-                    [2] 캡슐화 : data와 function 분리
+                    [2] 캡슐화 : data와 function 분리 ♣♣♣
                     [3] 정보 은닉 : x
                     [4] 오버로딩 : x
                     [5] 상속 : x
-                    [6] 키워드 수 : 32
-                    [7] 이름 공간 : x
-                    [8] 메모리 할당 : malloc(), free()
-                    [9] 참조 변수 : x
-                    [10] 예외 처리 : x
-                    [11] 문자, 불 자료형 : x
-                    [12] 매개변수의 기본값 : x
-                    [13] 인라인 함수 : x
+                    [6] 키워드 수 : 32 ♣♣♣
+                    [7] 이름 공간 : x ♣♣♣
+                    [8] 메모리 할당 : malloc(), free() ♣♣♣
+                    [9] 참조 변수 : x ♣♣♣
+                    [10] 예외 처리 : x ♣♣♣
+                    [11] 문자, 불 자료형 : x ♣♣♣
+                    [12] 매개변수의 기본값 : x ♣♣♣
+                    [13] 인라인 함수 : x ♣♣♣
                 2] C++
-                    [1] 설계 개념 : 객체지향적
+                    [1] 설계 개념 : 객체지향적 ♣♣♣♣♣♣
                         - object driven
                         - bottom up
-                    [2] 캡슐화 : data와 function 통합
+                    [2] 캡슐화 : data와 function 통합 ♣♣♣
                     [3] 정보 은닉 : 지원
-                    [4] 오버로딩 : function, operator
+                    [4] 오버로딩 : function, operator ♣♣♣
                     [5] 상속 : Class
-                    [6] 키워드 수 : 52
-                    [7] 이름 공간 : 지원
-                    [8] 메모리 할당 : new, delete operator
-                    [9] 참조 변수 : 참조자 &
-                    [10] 예외 처리 : try ~ catch 블록
-                    [11] 문자, 불 자료형 : Bool, String
-                    [12] 매개변수의 기본값 : 지원
-                    [13] 인라인 함수 : 지원
+                    [6] 키워드 수 : 52 ♣♣♣
+                    [7] 이름 공간 : 지원 ♣♣♣
+                    [8] 메모리 할당 : new, delete operator ♣♣♣
+                    [9] 참조 변수 : 참조자 & ♣♣♣
+                    [10] 예외 처리 : try ~ catch 블록 ♣♣♣
+                    [11] 문자, 불 자료형 : Bool, String ♣♣♣
+                    [12] 매개변수의 기본값 : 지원 ♣♣♣
+                    [13] 인라인 함수 : 지원 ♣♣♣
         3) 객체지향 OPP
             (1) 개념
                 1] 클래스 : 설계도
@@ -237,7 +239,7 @@
                 2] 객체 : 설계도로 만들어진 상품
                     - 실체o
                     ex. 자동차
-            (2) 특징
+            (2) 특징 ♣♣♣
                 1] 추상화(Abstraction)
                     - 단순 >> 구체화
                     ex. 동물 -> 고양이 -> 사향 고양이
@@ -249,7 +251,7 @@
                 4] 다형성(Polymorphism)
                     - 오버로딩 : 같은 이름의 함수나 연산자로도 다양한 기능
                 5] 정보 은닉, 보안
-            (3) 사용
+            (3) 사용 ♣♣♣
                 1] 객체 선언 : Class_name Object_name(var1, var2, ...)
                 2] 멤버함수 호출
                     - Object_name.member_name(var1, ...)
@@ -262,7 +264,9 @@
 
 ● DigitalOut
     1. DigitalOut Class
-        1) 생성자 : DigitalOut 객체명(Pin_name)
+        1) 생성자 : DigitalOut 객체명(Pin_name[, value])
+            - Pin_name // PinName
+            - value : 초기 출력값 (0 or 1) // int ♣♣♣
         2) 쓰기
             (1) 메소드 : 객체명.write(0 or 1)
             (2) 함수 오버로딩 : 객체명 = 0 or 1
@@ -278,7 +282,7 @@
                 3] us 대기 : wait_us(us)
             
         0) rand
-            (1) 사용
+            (1) 사용 ♣♣♣
                 1] 난수 seed 설정 : srand(time(NULL))
                     - time : 1970.1.1부터 지금까지 초수 반환
                 2] 0 ~ RAND_MAX 난수 발생 : rand()
@@ -289,33 +293,44 @@
                 - 바이트 크기 표현 명확, 간결
             (2) 종류
                 1] int#_t
-                    [1] char(1byte) = int8_t
-                    [2] short int(2byte) = int16_t
+                    [1] char(1byte) = int8_t ♣♣♣
+                    [2] short int(2byte) = int16_t ♣♣♣
                     [3] int(4byte) = int32_t
                     [4] long(4byte) = int32_t
                     [5] long long(8byte) = int64_t
                 2] uint#_t
-                    [1] char(1byte) = uint8_t
-                    [2] short int(2byte) = uint16_t
+                    [1] char(1byte) = uint8_t ♣♣♣
+                    [2] short int(2byte) = uint16_t ♣♣♣
                     [3] int(4byte) = uint32_t
                     [4] long(4byte) = uint32_t
                     [5] long long(8byte) = uint64_t
             
         2) DigitalOut.h 뜯어보기
-            - 강의자료 참고 ♣
+            - 강의자료 참고 ♣♣♣♣♣♣
         
-        3) HAL(Hardware Abstract Layer) : 추상화 계층
+        3) HAL(Hardware Abstract Layer) : 추상화 계층 ♣♣♣
             (1) 특징
                 - 하드웨어와 무관한 중립 추상 계층
                 - 상위 레이어에서 레지스터 등 하드웨어의 구체적 사항 몰라도 사용 가능
-                - 포함 관계 : Registers < HAL < Mbed
+                - 포함 관계 : Registers ⊂ HAL ⊂ Mbed
+
 
 ● DigitalIn
     1. DigitalIn Class
-        1) 생성자 : DigitalIn 객체명(Pin_name)
+        1) 생성자 : DigitalIn 객체명(Pin_name[, Pin_mode])
+            - Pin_name // PinName
+            - Pin_mode // PinMode ♣♣♣
+                PullUp
+                PullDown
+                PullNone
+                OpenDrain
         2) 입력모드 설정 : 객체명.mode(Pin_mode)
-            - Pin_mode : PullUp / PullDown / PullNone
-        3) 읽기 : 
+            - Pin_mode // PinMode ♣♣♣
+                PullUp
+                PullDown
+                PullNone
+                OpenDrain
+        3) 읽기
             (1) 메소드 : int v = 객체명.read()
             (2) 연산자 오버로딩 : 특정 변수 = 객체명
             
@@ -323,12 +338,12 @@
         1) 스위치 회로
             (1) PullUp : 내부 회로 이용. 기본 High / 누르면 Low
             (2) PullDown : 내부 회로 이용. 기본 Low / 누르면 High
-            (3) PullNone : 외부 회로 이용. 기본 Low / 누르면 High
+            (3) PullNone : 외부 회로 이용. 기본 Low / 누르면 High ♣♣♣
             
         2) Mbed Serial 입출력
             (1) 종류
                 1] 아두이노 시리얼 모니터
-                2] Tera term
+                2] Tera term ♣♣♣
                 3] Cool term
             (2) Serial 입출력
                 1] 출력 : printf()
@@ -338,15 +353,15 @@
             (1) C++ IDE
                 1] Visual Studio
                     - 무거움
-                    - 모든 것이 설치되어있음
+                    - 모든 것이 설치되어있음 ♣♣♣
                 2] Visual Studio Code
                     - 가벼움
-                    - 까다로운 설정
+                    - 까다로운 설정 ♣♣♣
                 3] Dev C++
                     - 가벼움. Simples
-                    - 컴파일러 별도 설치
+                    - 컴파일러 별도 설치 ♣♣♣
 
-            (2) 참조자(reference variable)
+            (2) 참조자(reference variable) ♣♣♣♣♣♣ 강의자료 참조
                 1] 개념 : 어떤 변수의 별명 만들기
                 2] 사용 : 자료형& 별명 = 변수명
                 3] 특징
@@ -355,6 +370,8 @@
                     [3] 주의 사항
                         - 선언 시 초기화 필수
                         - NULL 참조자는 없다
+                    [4] 활용 : 포인터처럼 함수 매개변수로 반환값 받을 때 사용 가능
+
 
 ● PwmOut
     0. Pwm 개요
@@ -371,11 +388,11 @@
 
     1. Pwm Class
         1) 생성자 : PwmOut 객체명(Pin_name)
-        2) 주기 설정 // ♣♣♣
+        2) 주기 설정 ♣♣♣
             (1) 초 : 객체명.period(sec) // float sec
             (2) 밀리초 : 객체명.period_ms(ms) // int ms
             (3) 마이크로초 : 객체명.period_us(us) // int us
-        2) 펄스폭 설정 // ♣♣♣
+        2) 펄스폭 설정 ♣♣♣
             (1) 초 : 객체명.pulsewidth(sec) // float sec
             (2) 밀리초 : 객체명.pulsewidth_ms(ms) // int ms
             (3) 마이크로초 : 객체명.pulsewidth_us(us) // int us
@@ -387,7 +404,7 @@
             (2) 연산자 오버로딩 : float v = 객체명
 
     +a)
-        1) RC 서보모터
+        1) RC 서보모터 ♣♣♣
             (1) 특징
                 - 구성 : DC 모터, 감속기, POT
                 - 각도 제어 feedback : 각도 명령 -> 제어기 -> 서보모터 -> 현재 각도 feedback
@@ -396,9 +413,9 @@
                 - period : 10 ~ 20ms
                 - 0도 : 펄스폭 600us
                 - 180도 : 펄스폭 2400us
-        2) map 함수 : 선형 mapping 사용자 정의 함수
+        2) map 함수 : 선형 mapping 사용자 정의 함수 ♣♣♣
             T map(T x, T in_min, T in_max, T out_min, T out_max)
-        3) C++의 template
+        3) C++의 template ♣♣♣
             1] 목적 : 클래스 or 함수의 매개변수 or 반환값이 여러개 일때
             2] 특징 : 자료형이 다른 여러 개 함수들을 따로 만들 필요 없이 하나의 틀로 만들기
 
@@ -409,18 +426,19 @@
             float s2 = sumTwo<int>(33,45);
             unsigned int s3 = sumTwo<unsigned int>(33, 45);
 
+
 ● AnalogIn
     0. ADC 개요
         1) ADC
-            (1) ADC : 아날로그 입력 >> 디지털 데이터 변환
-            (2) 샘플링 주기 : 아날로그 전압 읽는 주기
-            (3) 양자화 : 샘플된 전압을 일시적으로 아날로그 전압을 유지 >> 유한한 비트 수의 디지털 데이터로 변환
+            (1) ADC : 아날로그 입력 -> 디지털 데이터 변환
+            (2) 샘플링 주기 : 아날로그 전압 읽는 주기 ♣♣♣
+            (3) 양자화 : 샘플된 전압을 일시적으로 아날로그 전압을 유지 -> 유한한 비트 수의 디지털 데이터로 변환 ♣♣♣
         2) 분해능
-            (1) 분해능 : 출력 데이터 1비트 변화시키는 입력 전압의 변화
+            (1) 분해능 : 출력 데이터 1비트 변화시키는 입력 전압의 변화 ♣♣♣
             (1) 분해능 = V_span / (2^n)
                 - V_span : 측정 스팬 전압
                 - n : n비트로 변환
-            (2) nucleo 보드 분해능
+            (2) nucleo 보드 분해능 ♣♣♣
                 - 12bit ADC : 0 ~ 3.3V 전압 >> 0 ~ 4095 수로 양자화
                 - 분해능 : 1bit 변화 >> 3.3/4095 = 0.8mV 변화
     1. AnalogIn Class
@@ -428,18 +446,19 @@
         2) 읽기
             1] 메소드 : float v = 객체명.read()
                 - return : 아날로그 핀의 현재 ADC값 (0.0 ~ 1.0) // float
-            2] 메소드 : uint16_t v = 객체명.read_u16()
+            2] 메소드 : uint16_t v = 객체명.read_u16() ♣♣♣
                 - return : 아날로그 핀의 현재 ADC값 (0 ~ 65535) // uint16_t
                 - 분해능이 12bit but 16bit로 값을 읽음
             3] 연산자 오버로딩 : float v = 객체명
                 - return : 아날로그 핀의 현재 ADC값 (0.0 ~ 65535) // float
     
     +a)
-        1) 가변저항(POT)
+        1) 가변저항(POT) ♣♣♣
             (1) 원리
                 - 슬라이더
                 - 저항체 트랙
                 - 전극
+        2) DeadZone
 
 
 ● InterruptIn
@@ -448,21 +467,28 @@
             (0) 비유 : 영화 시청 중 중요 전화 받기
                 main문 : 영화 감상
                 Interrupt : 전화 통화
-            (1) Polling : 영화 시청 중에 계속 전화기 확인
-                영화를 제대로 보기 힘들다
+            (1) Polling : 영화 시청 중에 계속 전화기 확인 ♣♣♣
+                - 영화를 제대로 보기 힘들다
             (2) Interrupt : 영화 편안하게 시청 >> 전화오면 일시정지 후 전화 받음 >> 통화를 마친 후 영화 재개
-                영화를 제대로 볼 수 있다
-            - ISR : Interrupt Service Routine
-            - IRQ : Interrupt ReQuest
+                - 영화를 제대로 볼 수 있다
+                1] 외부 Interrupt ♣♣♣
+                    [1] Interrupt 종류
+                        1]] Rising Edge
+                        2]] Falling Edge
+                    [2] Interrupt 함수
+                        1]] ISR
+                        2]] callback 함수
+            - ISR : Interrupt Service Routine ♣♣♣
+            - IRQ : Interrupt ReQuest ♣♣♣
     1. Interrupt Class
-        1) 생성자 : InterruptIn 객체명(Pin_name, Pin_mode)
+        1) 생성자 : InterruptIn 객체명(Pin_name, Pin_mode) ♣♣♣ 함수 명령어
             - Pin_name // PinName
             - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode ♣♣♣
                 PullUp
                 PullDown
                 PullNone
                 PullDefault
-        2) 내부 Pull회로 지정 : 객체명.mode(Pin_mode)
+        2) 내부 Pull회로 지정 : 객체명.mode(Pin_mode) ♣♣♣ 함수 명령어
             - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
                 PullUp
                 PullDown
@@ -470,12 +496,12 @@
                 PullDefault
         3) 콜백 함수 지정
             (1) 일반함수 지정
-                1] 상승 에지 : 객체명.rise(&func)
+                1] 상승 에지 : 객체명.rise(&func) ♣♣♣ 함수 명령어
                     - &func : 상승 에지에서 호출될 반환형이 void인 함수 주소 // Callback<void()> func
-                2] 하강 에지 : 객체명.fall(&func)
-                    - &func : 하강 에지에서 호출될 반황형이 void인 함수 주소 // Callback<void()> func
+                2] 하강 에지 : 객체명.fall(&func) ♣♣♣ 함수 명령어
+                    - &func : 하강 에지에서 호출될 반환형이 void인 함수 주소 // Callback<void()> func
             (2) 멤버함수 지정
-                1] 상승 에지 : 객체명.rise(callback(obj, &func))
+                1] 상승 에지 : 객체명.rise(callback(obj, &func)) ♣♣♣ 함수 명령어
                     - obj : Interrupt 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
 
@@ -485,7 +511,7 @@
                             _but.rise(callback(this, &Counter::ISR));
                         }
                     }
-                2] 하강 에지 : 객체명.fall(callback(obj, &func))
+                2] 하강 에지 : 객체명.fall(callback(obj, &func)) ♣♣♣ 함수 명령어
                     - obj : Interrupt 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
 
@@ -500,56 +526,56 @@
                 - return : 입력핀의 현재값(0/1)
             (2) 연산자 오버로딩 : int v = 객체명
                 - return : 입력핀의 현재값(0/1)
-        5) Interrupt 활성화 / 비활성화 // ♣♣♣
+        5) Interrupt 활성화 / 비활성화 ♣♣♣
             (1) Interrupt 활성화 : 객체명.enable_irq() // void
             (2) Interrupt 비활성화 : 객체명.disable_irq() // void
 
     +a)
-        1) 멤버 함수 콜백 지정
+        1) 멤버 함수 콜백 지정 ♣♣♣
             Class A
-                InterruptIn 멤버 객체 obj
+                InterruptIn 멤버_객체
                 멤버함수 f2()
                     - 주소 : &A::f2
 
-            Class A의 객체 a
+            Class A의_객체
                 - 주소 : this
 
             일반함수 f1()
                 - 주소 : &f1
-        2) Callback, ISR 주의사항 // ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+        2) Callback, ISR 주의사항
             (1) 주의사항
                 1] 속도
-                    [1] 다른 큰 라이브러리 함수 호출 자제
+                    [1] 다른 큰 라이브러리 함수 호출 자제 ♣♣♣
                     [2] blocking code 사용 자제
                         - while문 이용한 대기
                         - wait() 함수 이용한 지연
                         - 기타 blocking 함수
-                2] 꼬임
+                2] 꼬임 ♣♣♣
                     [1] 메모리 할당 malloc, new 사용 자제
                     [2] printf 사용 자제
 
 
 ● Ticker, Timer, TimeOut
     0. Timer 개요
-        1) Ticker : 일정 주기 시간. callback 반복 (오래걸리는 블럭을 interrupt ticker나 delay로 처리하면 안된다) // ♣♣♣
-        2) Timer : 임의 구간 시간 (오래걸리는 블럭을 처리할때는 timer 사용, wait은 while문을 중단시키지만, timer는 while문을 돌린다) // ♣♣♣
-            - start : 재개 // ♣♣♣
+        1) Ticker : 일정 주기 시간. callback 반복 (오래걸리는 블럭을 interrupt ticker나 delay로 처리하면 안된다) ♣♣♣
+        2) Timer : 임의 구간 시간 (오래걸리는 블럭을 처리할때는 timer 사용, wait은 while문을 중단시키지만, timer는 while문을 돌린다) ♣♣♣
+            - start : 재개 ♣♣♣
             - stop : 정지
-            - reset : 초기화 후 재개 // ♣♣♣
-            - read : 읽기
+            - reset : 초기화 후 재개 ♣♣♣
+            - read : 읽기 ♣♣♣
         3) TimeOut : 지정한 시간 후, callback 1회만 실행
     1-1. Ticker Class
         1) 생성자 : Ticker 객체명
         2) 콜백 함수 지정
             (1) 일반 함수 지정
-                1] 초 단위 주기 : 객체명.attach(&func, time) // void
+                1] 초 단위 주기 : 객체명.attach(&func, time) // void ♣♣♣ 함수 명령어
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time : 콜백 함수 호출 주기(초단위) // float
-                2] us 단위 주기 : 객체명.attach_us(&func, time_us) // void
+                2] us 단위 주기 : 객체명.attach_us(&func, time_us) // void ♣♣♣ 함수 명령어
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
             (2) 멤버 함수 지정
-                1] 초 단위 주기 : 객체명.attach(Callback(obj, &func), time) // void
+                1] 초 단위 주기 : 객체명.attach(Callback(obj, &func), time) // void ♣♣♣ 함수 명령어
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
@@ -560,7 +586,7 @@
                             tic.attach(callback(this, &myClass::ISR), time)
                         }
                     }
-                2] us 단위 주기 : 객체명.attach_us(Callback(obj, &func), time_us)
+                2] us 단위 주기 : 객체명.attach_us(Callback(obj, &func), time_us) ♣♣♣ 함수 명령어
                     - obj : Ticker 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time_us : 콜백 함수 호출 주기(마이크로 초단위) // us_timestamp_t
@@ -571,23 +597,23 @@
                             tic.attach_us(callback(this, &myClass::ISR), time_us)
                         }
                     }
-        3) 콜백 함수 지정 해제 : 객체명.detach()
+        3) 콜백 함수 지정 해제 : 객체명.detach() ♣♣♣ 함수 명령어
     1-2. Timer Class
         1) 생성자 : Timer 객체명
         2) 동작
-            (1) 측정 재개 : 객체명.start()
-            (2) 측정 정지 : 객체명.stop()
-            (3) 측정 초기화 후 재개 : 객체명.reset()
+            (1) 측정 재개 : 객체명.start() ♣♣♣ 함수 명령어
+            (2) 측정 정지 : 객체명.stop() ♣♣♣ 함수 명령어
+            (3) 측정 초기화 후 재개 : 객체명.reset() ♣♣♣ 함수 명령어
         3) 읽기
             (1) 메소드
-                1] 초 읽기 : float t = 객체명.read()
+                1] 초 읽기 : float t = 객체명.read() ♣♣♣ 함수 명령어
                     - return : 현재 시간(초 단위) // float
-                2] 밀리초 읽기 : int t = 객체명.read_ms()
+                2] 밀리초 읽기 : int t = 객체명.read_ms() ♣♣♣ 함수 명령어
                     - return : 현재 시간(밀리초 단위) // int
-                3] 마이크로초 읽기 : int t = 객체명.read_us()
+                3] 마이크로초 읽기 : int t = 객체명.read_us() ♣♣♣ 함수 명령어
                     - return : 현재 시간(마이크로초 단위) // int
             (2) 오버로딩
-                1] 초 읽기 : float t = 객체명
+                1] 초 읽기 : float t = 객체명 ♣♣♣ 함수 명령어
                     - return : 현재 시간(초 단위) // float
             (3) 부분 코드 실행
                 - 원하는 블록 전 : start
@@ -596,14 +622,14 @@
         1) 생성자 : Timeout 객체명
         2) 콜백함수 지정
             (1) 일반 함수 지정
-                1] 초 단위 지정 : 객체명.attach(&func, time) // void
+                1] 초 단위 지정 : 객체명.attach(&func, time) // void ♣♣♣ 함수 명령어
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반황형이 void여야함 // Callback<void()>
                     - time : 콜백 함수 호출될 때까지의 시간(초단위) // float
-                2] us 단위 지정 : 객체명.attach_us(&func, time) // void
+                2] us 단위 지정 : 객체명.attach_us(&func, time) // void ♣♣♣ 함수 명령어
                     - &func : 주기적으로 호출될 콜백 함수 절대 주소. 반환형이 void여야함 // Callback<void()>
                     - time : 콜백 함수 호출될 때까지의 시간(마이크로 초단위) // us_timestamp_t
             (2) 멤버 함수 지정
-                1] 초 단위 지정 : 객체명.attach(Callback(obj, &func), time) // void
+                1] 초 단위 지정 : 객체명.attach(Callback(obj, &func), time) // void ♣♣♣ 함수 명령어
                     - obj : Timeout 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time : 콜백 함수 호출될 때까지의 시간(초단위) // us_timestamp_t
@@ -614,7 +640,7 @@
                             tmo.attach(callback(this, &myClass::ISR), time)
                         }
                     }
-                2] us 단위 지정 : 객체명.attach_us(Callback(obj, &func), time_us) // void
+                2] us 단위 지정 : 객체명.attach_us(Callback(obj, &func), time_us) // void ♣♣♣ 함수 명령어
                     - obj : Timeout 객체가 포함된 객체의 주소 // T
                     - &func : 호출될 멤버 함수의 절대 주소 // M
                     - time : 콜백 함수 호출될 때까지의 시간(마이크로 초단위) // us timestamp_t
@@ -625,7 +651,7 @@
                             tmo.attach(callback(this, &myClass::ISR), time_us)
                         }
                     }
-        3) 콜백함수 지정 해제 : 객체명.detach()
+        3) 콜백함수 지정 해제 : 객체명.detach() ♣♣♣ 함수 명령어
     3. Debouncing
         0) Debouncing 개요
             - 스위치 : 탄성력이 접점에 작용
@@ -635,12 +661,12 @@
 ● UART
     0. UART 통신 개요
         1) 특징
-            - 양방향 통신
+            - 양방향 통신 ♣♣♣
             - 비동기(Asynchronous) 통신 : 동기 신호x. Baud Rate 의존
         2) UART 전송 프레임 정의 : 보드 간 UART 설정 같아야한다
             (1) BaudRate : 1초당 통신 bit 수(bps)
                 - 2400의 배수
-            (2) 비트 폭 : 1/BaudRate
+            (2) 비트 폭 : 1/BaudRate ♣♣♣
             (3) Start bit : 시작 표시 (필수 포함)
             (4) 데이터 비트수 : 데이터 구성 비트 수
             (5) Parity bit : 데이터 오류 판별
@@ -657,12 +683,12 @@
 
     1. Serial Class
         1) 생성자
-            (1) Serial 생성 : Serial 객체명(Tx_Pin_name, Rx_Pin_name, baud rate) // RawSerial로 안하니까 오류 뜨는데??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+            (1) Serial 생성 : Serial 객체명(Tx_Pin_name, Rx_Pin_name, baud rate) // RawSerial로 안하니까 오류 뜨는데??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣  ♣♣♣ 명령어
                 - Tx_Pin_name : Tx 핀 이름 // PinName
                 - Rx_Pin_name : Rx 핀 이름 // PinName
                 - buad rate : 통신 속도 // int
                     default : 9600
-        2) Serial 설정
+        2) Serial 설정 ♣♣♣
             (1) 통신 속도 : 객체명.baud(buad rate) // void
                 - buad rate : 통신 속도 // int
             (2) 전송 프레임 : 객체명.format(bits, SerialBase::prty, stopb)
@@ -672,23 +698,23 @@
                 - prty : 패리티 비트 설정 // Parity
                     default : None
                     없음 : None
-                    홀수 : Odd
-                    짝수 : Even
-                - stopb : 정지 비트 수 // int
+                    홀수 : Odd ♣♣♣
+                    짝수 : Even ♣♣♣
+                - stopb : 정지 비트 수 // int ♣♣♣
                     default : 1
                     1비트 : 1
                     2비트 : 2
         3) 콜백 함수 지정
-            (1) 일반 함수 지정 : 객체명.attach(&func, type) // void
+            (1) 일반 함수 지정 : 객체명.attach(&func, type) // void ♣♣♣
                 - &func : 인터럽트 발생 시 호출될 함수 절대 주소 // Callback<void()>
-                - type : 인터럽트 종류 // IrqType
+                - type : 인터럽트 종류 // IrqType ♣♣♣
                     default : RxIrq
                     수신 : RxIrq
                     발신 : TxIrq
-            (2) 멤버 함수 지정 : 객체명.attach(Callback(obj, &func), type) // void
+            (2) 멤버 함수 지정 : 객체명.attach(Callback(obj, &func), type) // void ♣♣♣
                 - obj : Serial 객체가 포함된 객체의 주소
                 - &func : 인터럽트 발생 시 호출될 함수 절대 주소
-                - type : 인터럽트 종류 // IrqType
+                - type : 인터럽트 종류 // IrqType ♣♣♣
                     default : RxIrq
                     수신 : RxIrq
                     발신 : TxIrq
@@ -701,12 +727,12 @@
                     }
         4) 상태 확인
             (1) 쓰기 가능 : 객체명.writable() // bool
-                - return : 통신 버퍼에 여유 있으면 true, 아니면 false
+                - return : 통신 버퍼에 여유 있으면 true, 아니면 false ♣♣♣
 
                 if(pc.writable())
                     pc.putc('\n');
             (2) 읽기 가능 : 객체명.readable() // bool
-                - return : 수신 버퍼에 데이터 있으면 true, 아니면 false
+                - return : 수신 버퍼에 데이터 있으면 true, 아니면 false ♣♣♣
                 - if(객체명.readable == true)를 사용하지않으면 getc 사용시 수신버퍼가 찰때까지 계속 기다린다 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
                 
                 if(pc.readable())
@@ -714,14 +740,14 @@
         5) 쓰기 & 읽기
             (1) 쓰기 : 객체명.putc(c) // int
                 - c : 전송할 1바이트 데이터 // int
-                - return : 성공시 c, 실패시 -1
-            (1) 쓰기 : 객체명.printf(~~~)
+                - return : 성공시 c, 실패시 -1 ♣♣♣
+            (1) 쓰기 : 객체명.printf(~~~) ♣♣♣
             (2) 읽기 : 객체명.getc() // int
-                - return : 수신할 1바이트 데이터
-            (2) 읽기 : 객체명.scanf(~~~)
+                - return : 수신할 1바이트 데이터 ♣♣♣
+            (2) 읽기 : 객체명.scanf(~~~) ♣♣♣
     
     +a)
-        1) RawSerial // ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+        1) RawSerial ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
             - Serial : 오류 발생o
                 printf 정의o
                 scanf 정의o
@@ -904,8 +930,6 @@
                             - color : 색 // uint16_t
                                 0 : 흰색
                                 1 : 배경색(파란색)
-
-
     +a)
         1) 제품별 고유 I2C 주소
             (1) 8비트 주소 제공
@@ -914,9 +938,180 @@
             (2) 7비트 주소 제공
                 - 하위 R/W비트 미포함
         2) BCD <-> 10진수
-            16진수의 4비트씩 자른 단위에서 0~9만 사용
+            16진수의 4비트씩 자른 단위에서 0~9만 사용(1바이트 = 최대 99까지 표현 가능)
             ex. 39(H) -> 57(D)
             ex. 39(BCD) -> 39(D)
+
+
+● SPI
+    0. SPI 개요
+        1) 특징
+            (1) 회로
+                1] 4개 선(SS, SCLK, MOSI, MISO)
+                    SS : Serial Select
+                    SCLK : Serial Clock
+                    MOSI : Master Output, Slave Input
+                    MISO : Master Input, Slave Output
+                    - 장치 개수 증가 >> SS선 증가
+            (2) 통신 방식
+                1] master-slave
+                    - master가 각 slave에 고유 주소 부여x
+                    - SS핀 활용해서 장치 선택o
+                    - 4개 이상 선으로 복수개 장치와 통신 가능
+                2] 동기 통신 : clock 신호에 동기
+                    - I2C에 비해 훨씬 빠른 속도(최대 10Mbps)
+                3] 전이중 양방향 통신
+                    - 보내기, 받기 동시 가능
+                    - 1:N 전이중 양방향 통신
+        2) 작동 원리
+            (1) SPI 모드 설정
+                1] clock 극성, 데이터 읽기 위상 결정
+                    [1] CPOL : Clock 시작 상태 지정
+                        - 0 : clock이 0에서 시작
+                        - 1 : clock이 1에서 시작
+                    [2] CPHA : 데이터 읽는 엣지 지점 지정
+                        - 0 : CPOL 지정 상태의 반대가 될 때
+                        - 1 : CPOL 지정 상태가 될 때
+
+                        1]] SPI_MODE0 : CPOL 0 / CPHA 0 / Data Capture Rising
+                        2]] SPI_MODE1 : CPOL 0 / CPHA 1 / Data Capture Falling
+                        3]] SPI_MODE2 : CPOL 1 / CPHA 0 / Data Capture Falling
+                        4]] SPI_MODE3 : CPOL 1 / CPHA 1 / Data Capture Rising
+                2] 데이터 전송 bit 순서
+                    [1] MSBFIRST : MSB 먼저 보냄
+                    [2] LSBFIRST : LSB 먼저 보냄
+                    - mbed : MSBFIRST 사용
+            (2) 쓰기 Master -> Slave
+                1] Slave 선택 of master
+                    - 해당 Slave SS핀 Low로 내림
+                2] 쓰기모드 지정 of master
+                    - 해당 Slave의 레지스터 주소 전송
+                    - 최상위 R/W비트를 0으로 내림
+                3] 데이터 전송 of master
+                    - master가 레지스터에 데이터 전송
+                4] Slave 선택 해제 of master
+                    - 해당 Slave SS핀 High로 올림
+            (3) 읽기 Slave -> Master
+                1] Slave 선택 of master
+                    - 해당 Slave SS핀 Low로 내림
+                2] 읽기모드 지정 of master
+                    - Slave의 원하는 레지스터 주소 전송
+                    - 최상위 R/W비트를 1로 올림
+                3] 데이터 전송 of Slave
+                    - Master가 Slave에 아무 데이터나 보냄
+                    - Slave가 레지스터에 데이터 전송
+                4] Slave 선택 해제 of master
+                    - 해당 Slave SS핀 High로 올림
+    1. SPI Class
+        1) 생성자 : SPI 객체명(mosi_pin, miso_pin, sclk_pin, ssel_pin) // SPI
+            - mosi_pin : master output 핀 // PinName
+            - miso_pin : master input 핀 // PinName
+            - sclk_pin : clock 핀 // PinName
+            - ssel_pin : slave select 핀 // PinName
+        2) 설정
+            (1) format 설정 : 객체명.format(bits, mode) // void
+                - bits : 데이터 bit수 // int
+                    bit : 6 ~ 15
+                    default : 8
+                - mode : SPI의 모드 // int
+                    모드 : 0 ~ 3
+            (2) clock 주파수 설정 : 객체명.frequency(hz) // void
+                - hz : SPI clock 주파수 설정
+                    default : 1MHz // int
+        3) 쓰기 & 읽기
+            - 레지스터 주소에 따라 읽기/쓰기 결정
+            (1) 쓰기 : 객체명.write(data)
+                - data : 전송하고자 하는 데이터 // int
+            (2) 읽기 : int data = 객체명.write(아무거나)
+                - 아무거나 : master가 slave에 아무 데이터나 넣으면 slave의 응답 반환
+                - return : slave의 응답
+        4) SPI 사용 순서
+            (1) 객체 생성
+                1] SPI 객체 생성 : SPI spi(MOSI, MISO, SCK);
+                2] SS용 객체 생성 : DigitalOut ss(D6);
+            (2) SPI 설정
+                1] Slave 선택 : ss = 1;
+                2] bit수, SPI모드 설정 : spi.format(bits, mode);
+                3] clock 주파수 설정 : spi.frequency(hz);
+            (3) slave 선택 : ss = 0;
+            (4) 주소 쓰기 : spi.write(addr);
+                - addr : 레지스터 주소. 상위비트는 강제로 1로 만들어야함
+            (5) 데이터 읽기 : data = spi.write(아무거나);
+            (6) slave 선택 해제 : ss = 1;
+    2. 실습 센서
+        1) MPU9250
+            (1) 특징
+                1] 구조
+                    [1] 관성센서(IMU) : 6축
+                        1]] 가속도 센서 : 3축(x, y, z)
+                        2]] 각속도 센서 : 3축(x, y, z)
+                        - roll, pitch 측정
+                    [2] 지자기 센서 : 3축(x, y, z)
+                        - yaw 측정
+                2] 인터페이스
+                    - I2C, SPI 가능
+                3] 자세 추정
+                    가속도 센서 -> a_x, a_y, a_z ->
+                    자이로 센서 -> w_x, w_y, w_z -> 센서 융합 -> θ_x, θ_y, θ_z(roll, pitch, yaw) -> Filter
+                    지자기 센서 -> m_x, m_y, m_z -> 
+            (2) 활용
+                1] 비행기 자세 제어
+                    - 이동좌표계 x, y, z 각각 회전각
+                    - roll, pitch, yaw
+
+
+● Bus
+    0. BusOut, BusIn 개요
+        1) 개념 : 여러 개 핀 그룹화. 한꺼번에 입력 or 출력
+    1. BusOut Class
+        1) 생성자 : BusOut 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣♣ 명령어
+            - Pin_name : 버스로 사용하려는 핀 ♣♣♣
+                Pin_name0 : 최하위 비트 // PinName
+                Pin_name15 : 최상위 비트 // PinName
+                생략 : No Connection
+        2) 쓰기 ♣♣♣
+            (1) 메소드 : 객체명.write(value)
+                - value : 출력값(0~65535) // int
+            (2) 연산자 오버로딩 : 객체명 = value
+                - value : 출력값(0~65535) // int
+        3) 읽기 ♣♣♣
+            (1) 메소드 : int value = 객체명.read()
+                - return : 출력값(0~65535) // int
+            (2) 연산자 오버로딩 : int value = 객체명
+                - return : 출력값(0~65535) // int
+        4) 비트 단위 개별핀 접근 쓰기 : 객체명[idx] = value ♣♣♣ 명령어
+            - idx : bus 비트 번호(0~15)
+        5) 비트 단위 개별핀 접근 읽기 : int value = 객체명[idx] ♣♣♣ 명령어
+            - idx : bus 비트 번호(0~15)
+    2. BusIn Class
+        1) 생성자 : BusIn 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣♣ 명령어
+            - Pin_name : 버스로 사용하려는 핀 ♣♣♣
+                Pin_name0 : 최하위 비트 // PinName
+                Pin_name15 : 최상위 비트 // PinName
+                생략 : No Connection
+        2) 입력모드 설정 : 객체명.mode(Pin_mode) ♣♣♣
+            - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
+                PullUp
+                PullDown
+                PullNone
+        3) 읽기 ♣♣♣
+            (1) 메소드 : int value = 객체명.read()
+                - return : 출력값(0~65535) // int
+            (2) 연산자 오버로딩 : int value = 객체명
+                - return : 출력값(0~65535) // int
+        4) 비트 단위 개별핀 접근 읽기 : int value = 객체명[idx]
+            - idx : bus 비트 번호(0~15)
+    +a)
+        1) RGB LED ♣♣♣
+            (1) 공통 음극(Common Cathode)
+                - MCU -> GND : MCU가 high되면 켜짐
+            (2) 공통 양극(Common Anode)
+                - VCC -> MCU : MCU가 low되면 켜짐
+        2) 7segment = Flexible Numeric Display ♣♣♣
+            (1) 공통 음극(Common Cathode)
+                - MCU -> GND : MCU가 high되면 켜짐
+            (2) 공통 양극(Common Anode)
+                - VCC -> MCU : MCU가 low되면 켜짐
 
 
 ● RTOS
@@ -1069,6 +1264,144 @@
             (2) Queue : 주소 관리
 
 
+● 초음파 거리 센서
+    0. 초음파 센서 개요
+        1) 초음파(Ultrasonic)
+            (1) 개념 : 가청 주파수보다 높은 20kHz 이상 고음
+            (2) 활용 : 거리측정 센서, 메디컬 영상, 비파괴 검사 등
+            (3) 자연계 활용 : 돌고래, 박쥐의 방향, 거리 감지
+        2) 초음파 거리 센서
+            (1) 개념 : 초음파 발생 -> 체공 시간 = 반향(echo)까지의 시간 측정 -> 거리 계산
+                1] 소리 체공시간 = 소리 왕복시간
+                    dt = t_R - t_r
+
+                    t_R : 수신 시간
+                    t_r : 송신 시간
+                    V_s : 음속(343.5m/s in 20도)
+                2] 소리 왕복거리
+                    2d = V_s x dt
+                3] 측정 물체까지 거리
+                    d = V_s x dt / 2
+            (2) 활용 : 수중 거리 측정, 자동차 장애물 감지, 공장 자동화 등
+            (3) 장점 : 열악한 환경 측정(수중, 연기, 분진, 안개, 어두운 밤 등) 가능 better than 광학식 거리 측정 센서
+            (4) 실습용 센서 - HC-SR04
+                1] 장점
+                    - 쉬운 사용
+                    - 싼 가격
+                2] 구성
+                    - 송신 스피커
+                    - 수신 스피커
+                3] 작동 방법
+                    [1] [Trigger Pin 10us 동안 high 유지 -> low 되돌림] = 초음파 발사 = echo Pin high 유지
+                    [2] 반향 돌아오면 echo Pin low 되돌림
+                        - 반향 돌아오기 전까지 초음파 센서 blocking
+
+● CircularBuffer
+    0. CircularBuffer 개요
+        1) 특징
+            (1) 동의어 : CircularBuffer = RingBuffer
+            (2) 도입 전 : 데이터 생산자 vs 데이터 소비자 처리 속도 차이 -> overrun -> 데이터 소실
+            (3) 도입 후 : 일정 분량 데이터 저장 -> 데이터 소실 없이 완충
+            (4) 구조 : 적당한 자료형의 1차원 배열
+        2) 구조
+            (1) Push : 데이터 넣기
+                head에 데이터 저장 -> 저장 후 head 1 증가
+            (2) Pop : 데이터 빼기
+                tail에서 데이터 읽기 -> 읽기 후 tail 1 증가
+            (3) 순환 구조
+                head, tail 모두 마지막 원소 인덱스 도달 시, 인덱스 0으로 변화
+        3) 데이터 속도 & OverRun
+            (1) 소비속도 > 생산속도
+                - 항상 : 버퍼에 데이터 거의 없음
+            (2) 소비속도 < 생산속도
+                - 일정 시간 이하 : 버퍼링
+                - 일정 시간 이후 : OverRun
+    1. CircularBuffer Class
+        1) 생성자 : CircularBuffer<buf_typ, buf_sz, cnt_typ> 객체명 // template
+            - buf_typ : 버퍼 데이터 자료형 // typename
+            - buf_sz : 버퍼 크기 // uint32_t
+            - cnt_typ : 유효한 데이터 개수 반환하는 size 멤버 함수 자료형 // typename
+        2) 데이터 관리
+            (1) 데이터 넣기 : 객체명.push(data) // void
+                - data : push할 데이터 // const T
+            (2) 데이터 빼기 : 객체명.pop(data) // bool
+                - data : pop할 데이터 // const T
+                - return : 성공 여부
+                    성공 : true
+                    실패 : false
+            (3) 데이터 값 읽기 : 객체명.peek(data) // bool
+                - data : peek할 데이터 // const T
+                - return : 성공 여부
+                    성공 : true
+                    실패 : false
+        3) 상태 확인
+            (1) empty() : if(객체명.empty()) // bool
+                - return : 버퍼 empty 여부
+                    비어있는 버퍼 : true
+                    비어있지 않은 버퍼 : false
+            (2) full() : if(객체명.full()) // bool
+                - return : 버퍼 full 여부
+                    꽉차있는 버퍼 : true
+                    꽉차있지 않은 버퍼 : false
+            (3) 버퍼에 유효한 데이터 개수 : int 변수명 = 객체명.size() // CounterType
+                - return : 버퍼에 저장된 유효한 데이터 개수
+
+
+● StepMotor
+    0. StepMotor 개요
+        1) 특징
+            (1) 장점 : 쉽고 정밀한 위치, 속도 제어
+            (2) 활용 : 프린터, 스캐너, 복사기 등 사무기기, 산업용 기기
+            (3) 방식 // ♣♣
+                1] PM 방식
+                2] Variable Reluctance 방식
+                3] 하이브리드 방식
+            (4) 코일 수 : 2상, 3상, 5상 등
+        2) 구조
+            (1) 2상 StepMotor
+                1] 회전 : A, B코일의 전류 방향 조합 -> 1step 단위 회전
+                2] 제어 : 2개 코일 각각 H-bridge 회로 제어
+                3] Step 각
+                    - 산업용 하이브리드 : 0.9도(400step) or 1.8도(200step)
+                4] step 종류
+                    [1] Full Step : Step각 = 90도
+                        1]] 구동 순서
+                            A -> B -> A' -> B' -> 반복
+                    [2] Half Step : Step각 = 45도
+                        1]] 구동 순서
+                            A -> AB -> B -> BA' -> A' -> A'B' -> B' -> B'A
+                        2]] 토크 리플
+                            [[1]] 발생 이유 : 각 코일 사이에 회전자 위치 시, 양 코일이 반응하여 토크 크기 증가
+                            [[2]] 해결 방안 : 토크 크기 일정화를 위해 전류를 더 약하게 흘려, 자기력의 합력 일정하게 맞춤
+                    [3] Micro Step
+                        1]] 구동 순서 : Step각 = 잘게 쪼갬
+                            Half Step 이상으로 쪼개서 sin파처럼 움직임
+                        2]] 토크 리플
+                            [[1]] 발생 이유 : 각 코일 사이에 회전자 위치 시, 양 코일이 반응하여 토크 크기 증가
+                            [[2]] 해결 방안 : 토크 크기 일정화를 위해 전류를 더 약하게 흘려, 자기력의 합력 일정하게 맞춤
+        3) 실습용 모터 드라이버 - DRV8825
+            (1) 특징
+                1] Logic 전압 : 2.5V ~ 5.25V
+                1] 최대 전류 : 2.2A
+
+                2] 모터 구동 전압 : 8.2V ~ 45V
+                2] 최대 1/32 MicroStep 지원
+            (2) 핀
+                1] Pulse핀 : 1pulse = 1MicroStep
+                1] Direction핀 : 모터 회전 방향
+
+                2] 제어핀
+                    - 교수님 설명x. 이것도 해야되나??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+                3] MicroStep핀
+                    MS1 MS2 MS3 resolution
+                     0   0   0      1
+                     1   0   0      1/2
+                     0   1   0      1/4
+                     1   1   0      1/8
+                     0   0   1      1/16
+                     그 외          1/32
+
+
 ● Encoder Sensor Project
     0. Encoder Sensor 개요
         1) Encoder 원리
@@ -1152,4 +1485,10 @@
                 - name : 스레드의 이름
                     default : NULL
 
+
+● DC Motor Drive    // 마이컨과 겹침. 강의자료 참조 ♣♣♣
+    1) H-bridge 회로
+        (1) 원리
+        (2) 종류
+        (3) 제품
 */

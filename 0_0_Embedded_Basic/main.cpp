@@ -661,7 +661,7 @@
 ● UART
     0. UART 통신 개요
         1) 특징
-            - 양방향 통신 ♣♣♣
+            - 전이중 양방향 통신 ♣
             - 비동기(Asynchronous) 통신 : 동기 신호x. Baud Rate 의존
         2) UART 전송 프레임 정의 : 보드 간 UART 설정 같아야한다
             (1) BaudRate : 1초당 통신 bit 수(bps)
@@ -762,12 +762,12 @@
         4) atof(alphabet to float) : atof(배열)
 
 
-● I2C
+● I2C = TWI
     0. I2C 개요
         1) 특징
             (1) 회로
                 1] 2개 선(SDA, SCL)
-                    - SDA, SCL line : 2kΩ ~ 10kΩ로 PullUp
+                    - SDA, SCL line : 2kΩ ~ 10kΩ로 PullUp ♣♣♣
                         SDA : Serial Data
                         SCL : Serial Clock
                     - master, slave 모두 open drain 회로로 0으로 만들 수 있음 ♣♣♣
@@ -776,14 +776,18 @@
                     - master가 각 slave에 고유 주소 부여
                     - 2개 선으로 복수개 장치와 통신 가능
                 2] 동기 통신 : clock 신호에 동기
+                    - clock 기준으로 bit 구별 ♣♣
                 3] 반이중 양방향 통신
                     - 보내기, 받기 동시 불가 but 각각 따로는 가능
-                    - 1:N 반이중 양방향 통신
+                    - 1(master):N(slave) 반이중 양방향 통신
                     ex. 무전기
+            (3) 통신 속도 ♣♣
+                1] 과거 : 클럭 최대 속도 400kHz
+                2] 현재 : 클럭 최대 속도 3.4MHz
         2) 작동 원리
             (0) Basic
                 1] clock 신호 : master만 출력 가능
-                2] SDA : SCL이 low인 시점만 변경 가능
+                2] SDA : SCL이 low인 시점만 변경 가능 ♣♣
                     - 예외 : 시작 or 정지 조건
                 3] 데이터 전송 : 항상 2개 데이터 전송
                     [1] master 쓰기
@@ -808,12 +812,12 @@
                         - master : SCL를 high로 유지, SDA를 high로 올림
             (2) 쓰기 Master -> Slave
                 1] 시작 조건 생성 of master
-                2] 주소/데이터 송신 of master
+                2] 주소/데이터 송신 of master ♣♣
                     - address : A6~A0(7bit)
                     - R/W : 0(마지막 1bit)
                         R : high
                         W : low
-                3] 주소/데이터 수신 여부 of slave
+                3] 주소/데이터 수신 여부 of slave ♣♣
                     - 수신 성공 : ACK = 0
                     - 수신 실패 : NACK = 1
             (3) 읽기 Slave -> Master
@@ -826,21 +830,21 @@
                 3] 주소 수신 여부 of slave
                     - 수신 성공 : ACK = 0
                     - 수신 실패 : NACK = 1
-                4] 정지 조건 생성 of master
-                    - 데이터 수신 완료 시, NACK의 의미로 SDA를 high(1)로 만듦 ♣♣♣
+                4] 정지 조건 생성 of master ♣♣♣
+                    - 데이터 수신 완료 시, NACK의 의미로 SDA를 high(1)로 만듦
     1. I2C Class
-        1) 생성자 : I2C 객체명(SDA_Pin_name, SCL_Pin_name) // I2C
+        1) 생성자 : I2C 객체명(SDA_Pin_name, SCL_Pin_name) // I2C ♣♣♣ 함수 사용법
             - SDA_Pin_name : I2C data 핀이름 // PinName
             - SCL_Pin_name : I2C clock 핀이름 // PinName
         2) 주파수 설정 : 객체명.frequency(hz) // void
             - hz : Hz단위의 I2C clock 주파수 // int
-                default : 40kHz
+                default : 40kHz ♣♣
         3) 쓰기 & 읽기
-            (1) 여러 바이트 쓰기 : 객체명.write(address, data, length, repeat)
-                - address : slave device의 I2C 주소 // int
+            (1) 여러 바이트 쓰기 : 객체명.write(address, data, length, repeat) ♣♣♣ 함수 사용법
+                - address : slave device의 I2C 주소 // int ♣♣
                     쓰기 : 마지막 byte 1로 수동 지정
-                - data : 전송할 char 배열 // const char*
-                - length : 전송 byte 수 // int
+                - data : 전송할 char 배열 // const char* ♣♣
+                - length : 전송 byte 수 // int ♣♣
                 - repeat : 반복 여부 // bool
                     default : false
                     반복 x. Stop o : false
@@ -848,11 +852,11 @@
                 - return : slave 수신 여부
                     성공(ACK) : 0
                     실패(NACK) : 1
-            (2) 여러 바이트 읽기 : 객체명.read(address, data, length, repeat)
-                - address : slave device의 I2C 주소 // int
+            (2) 여러 바이트 읽기 : 객체명.read(address, data, length, repeat) ♣♣♣ 함수 사용법
+                - address : slave device의 I2C 주소 // int ♣♣
                     읽기 : 마지막 byte 0으로 수동 지정
-                - data : 수신 데이터 저장할 char 배열 // const char*
-                - length : 수신 byte 수 // int
+                - data : 수신 데이터 저장할 char 배열 // const char* ♣♣
+                - length : 수신 byte 수 // int ♣♣
                 - repeat : 반복 여부 // bool
                     default : false
                     반복 x. Stop o : false
@@ -872,7 +876,7 @@
             (2) 제품
                 1] 제품명 : PCF8563
                     - NXP사 real time clock
-                2] 사용법
+                2] 사용법 ♣♣
                     - 레지스터 table 참조
                         BCD 데이터 사용 in 레지스터
                         레지스터에 맞는 마스크 사용
@@ -880,7 +884,7 @@
         2) OLED 모듈 개요
             (1) 특징
                 1] 용도 : 디스플레이
-                2] 구조 : 유기발광 다이오드의 매트릭스 구조
+                2] 구조 : 유기발광 다이오드의 매트릭스 구조 ♣♣
             (2) 제품
                 1] 제품명 : SSD1306
                     - Size : 최대 128x64
@@ -889,42 +893,42 @@
                 2] Adafruit_SSD1306_I2c Class
                     [0] 라이브러리 다운
                         import -> I2C_SSD1306_Helloworld
-                    [1] 생성자 : Adafruit_SSD1306_I2c 객체명(i2c, rst_pin, i2c_adr, height, width)
+                    [1] 생성자 : Adafruit_SSD1306_I2c 객체명(i2c, rst_pin, i2c_adr, height, width) ♣♣♣ 함수 명령어
                         - i2c : OLED 모듈 연결된 I2C 객체 // I2C
                         - rst_pin : mbed보드의 모듈 reset용 Pin // PinName
                         - i2c_adr : OLED 모듈 I2C 주소 // int
                         - height : 디스플레이 높이 // int
                         - width : 디스플레이 폭 // int
-                    [2] 디스플레이 초기화 : 객체명.begin()
+                    [2] 디스플레이 초기화 : 객체명.begin() ♣♣♣ 함수 명령어
                     [3] 디스플레이 표시 of 버퍼
                         객체명.printf(~~~)
                         객체명.display()
-                    [4] 텍스트 사이즈 변경
-                        Adafruit_GFX_config.h에 있는 "GFX_SIZABLE_TEXT"의 주석 해제
+                    [4] 텍스트 사이즈 변경 ♣♣♣ 함수 명령어
+                        Adafruit_GFX_config.h에 있는 "GFX_SIZABLE_TEXT"의 주석 해제 ♣♣♣
 
                         객체명.setTextSize(size)
                             - size : 텍스트 사이즈 // uint8_t
                     [5] 그리기
-                        Adafruit_GFX_config.h에 있는 "GFX_WANT_ABSTRACTS"의 주석 해제
-                        1]] 선 그리기 : 객체명.drawLine(x0, y0, x1, y1, color)
+                        Adafruit_GFX_config.h에 있는 "GFX_WANT_ABSTRACTS"의 주석 해제 ♣♣♣
+                        1]] 선 그리기 : 객체명.drawLine(x0, y0, x1, y1, color) ♣♣♣ 함수 명령어
                             - x0, y0 : 시작점 좌표 // int16_t
                             - x1, y1 : 끝점 좌표 // int16_t
                             - color : 색 // uint16_t
                                 0 : 흰색
                                 1 : 배경색(파란색)
-                        2]] 직사각형 외곽선 그리기 : 객체명.drawRect(x, y, w, h, color)
+                        2]] 직사각형 외곽선 그리기 : 객체명.drawRect(x, y, w, h, color) ♣♣♣ 함수 명령어
                             - x, y : 직사각형 좌측 상단 좌표 // int16_t
                             - w, h : 직사각형 폭, 넓이 // int16_t
                             - color : 색 // uint16_t
                                 0 : 흰색
                                 1 : 배경색(파란색)
-                        3]] 꽉찬 직사각형 그리기 : 객체명.fillRect(x, y, w, h, color)
+                        3]] 꽉찬 직사각형 그리기 : 객체명.fillRect(x, y, w, h, color) ♣♣♣ 함수 명령어
                             - x, y : 직사각형 좌측 상단 좌표 // int16_t
                             - w, h : 직사각형 폭, 넓이 // int16_t
                             - color : 색 // uint16_t
                                 0 : 흰색
                                 1 : 배경색(파란색)
-                        4]] 원 그리기 : 객체명.drawCircle(x, y, r, color)
+                        4]] 원 그리기 : 객체명.drawCircle(x, y, r, color) ♣♣♣ 함수 명령어
                             - x, y : 원 중심 좌표 // int16_t
                             - r : 원 반경 // int16_t
                             - color : 색 // uint16_t
@@ -933,10 +937,10 @@
     +a)
         1) 제품별 고유 I2C 주소
             (1) 8비트 주소 제공
-                - 하위 R/W비트 포함
+                - 하위 R/W비트 포함 주소 제공
                 - 읽기/쓰기 주소 별도 제공
             (2) 7비트 주소 제공
-                - 하위 R/W비트 미포함
+                - 하위 R/W비트 미포함 주소 제공
         2) BCD <-> 10진수
             16진수의 4비트씩 자른 단위에서 0~9만 사용(1바이트 = 최대 99까지 표현 가능)
             ex. 39(H) -> 57(D)
@@ -955,21 +959,21 @@
                     - 장치 개수 증가 >> SS선 증가
             (2) 통신 방식
                 1] master-slave
-                    - master가 각 slave에 고유 주소 부여x
+                    - master가 각 slave에 고유 주소 부여x ♣♣
                     - SS핀 활용해서 장치 선택o
                     - 4개 이상 선으로 복수개 장치와 통신 가능
                 2] 동기 통신 : clock 신호에 동기
                     - I2C에 비해 훨씬 빠른 속도(최대 10Mbps)
                 3] 전이중 양방향 통신
                     - 보내기, 받기 동시 가능
-                    - 1:N 전이중 양방향 통신
+                    - 1(master):N(slave) 전이중 양방향 통신
         2) 작동 원리
             (1) SPI 모드 설정
                 1] clock 극성, 데이터 읽기 위상 결정
-                    [1] CPOL : Clock 시작 상태 지정
+                    [1] CPOL : Clock 시작 상태 지정 ♣♣
                         - 0 : clock이 0에서 시작
                         - 1 : clock이 1에서 시작
-                    [2] CPHA : 데이터 읽는 엣지 지점 지정
+                    [2] CPHA : 데이터 읽는 엣지 지점 지정 ♣♣
                         - 0 : CPOL 지정 상태의 반대가 될 때
                         - 1 : CPOL 지정 상태가 될 때
 
@@ -977,11 +981,11 @@
                         2]] SPI_MODE1 : CPOL 0 / CPHA 1 / Data Capture Falling
                         3]] SPI_MODE2 : CPOL 1 / CPHA 0 / Data Capture Falling
                         4]] SPI_MODE3 : CPOL 1 / CPHA 1 / Data Capture Rising
-                2] 데이터 전송 bit 순서
+                2] 데이터 전송 bit 순서 ♣♣
                     [1] MSBFIRST : MSB 먼저 보냄
                     [2] LSBFIRST : LSB 먼저 보냄
-                    - mbed : MSBFIRST 사용
-            (2) 쓰기 Master -> Slave
+                    - mbed : MSBFIRST 사용 ♣♣♣
+            (2) 쓰기 Master -> Slave ♣♣
                 1] Slave 선택 of master
                     - 해당 Slave SS핀 Low로 내림
                 2] 쓰기모드 지정 of master
@@ -991,7 +995,7 @@
                     - master가 레지스터에 데이터 전송
                 4] Slave 선택 해제 of master
                     - 해당 Slave SS핀 High로 올림
-            (3) 읽기 Slave -> Master
+            (3) 읽기 Slave -> Master ♣♣
                 1] Slave 선택 of master
                     - 해당 Slave SS핀 Low로 내림
                 2] 읽기모드 지정 of master
@@ -1003,39 +1007,44 @@
                 4] Slave 선택 해제 of master
                     - 해당 Slave SS핀 High로 올림
     1. SPI Class
-        1) 생성자 : SPI 객체명(mosi_pin, miso_pin, sclk_pin, ssel_pin) // SPI
+        1) 생성자 : SPI 객체명(mosi_pin, miso_pin, sclk_pin, ssel_pin) // SPI ♣♣ 함수 사용법
             - mosi_pin : master output 핀 // PinName
             - miso_pin : master input 핀 // PinName
             - sclk_pin : clock 핀 // PinName
             - ssel_pin : slave select 핀 // PinName
         2) 설정
-            (1) format 설정 : 객체명.format(bits, mode) // void
+            (1) format 설정 : 객체명.format(bits, mode) // void ♣♣ 함수 사용법
                 - bits : 데이터 bit수 // int
                     bit : 6 ~ 15
                     default : 8
                 - mode : SPI의 모드 // int
                     모드 : 0 ~ 3
-            (2) clock 주파수 설정 : 객체명.frequency(hz) // void
+                    
+                    0] SPI_MODE0 : CPOL 0 / CPHA 0 / Data Capture Rising
+                    1] SPI_MODE1 : CPOL 0 / CPHA 1 / Data Capture Falling
+                    2] SPI_MODE2 : CPOL 1 / CPHA 0 / Data Capture Falling
+                    3] SPI_MODE3 : CPOL 1 / CPHA 1 / Data Capture Rising
+            (2) clock 주파수 설정 : 객체명.frequency(hz) // void ♣♣ 함수 사용법
                 - hz : SPI clock 주파수 설정
                     default : 1MHz // int
         3) 쓰기 & 읽기
             - 레지스터 주소에 따라 읽기/쓰기 결정
-            (1) 쓰기 : 객체명.write(data)
+            (1) 쓰기 : 객체명.write(data) ♣♣ 함수 사용법
                 - data : 전송하고자 하는 데이터 // int
-            (2) 읽기 : int data = 객체명.write(아무거나)
+            (2) 읽기 : int data = 객체명.write(아무거나) ♣♣ 함수 사용법
                 - 아무거나 : master가 slave에 아무 데이터나 넣으면 slave의 응답 반환
                 - return : slave의 응답
         4) SPI 사용 순서
             (1) 객체 생성
                 1] SPI 객체 생성 : SPI spi(MOSI, MISO, SCK);
-                2] SS용 객체 생성 : DigitalOut ss(D6);
+                2] SS용 객체 생성 : DigitalOut ss(D6); ♣♣
             (2) SPI 설정
-                1] Slave 선택 : ss = 1;
-                2] bit수, SPI모드 설정 : spi.format(bits, mode);
+                1] Slave 선택 해제 : ss = 0;
+                2] bit수, SPI모드 설정 : spi.format(bits, mode); ♣♣
                 3] clock 주파수 설정 : spi.frequency(hz);
             (3) slave 선택 : ss = 0;
             (4) 주소 쓰기 : spi.write(addr);
-                - addr : 레지스터 주소. 상위비트는 강제로 1로 만들어야함
+                - addr : 레지스터 주소. 최상위비트는 강제로 1로 만들어야함 ♣♣
             (5) 데이터 읽기 : data = spi.write(아무거나);
             (6) slave 선택 해제 : ss = 1;
     2. 실습 센서
@@ -1064,37 +1073,37 @@
     0. BusOut, BusIn 개요
         1) 개념 : 여러 개 핀 그룹화. 한꺼번에 입력 or 출력
     1. BusOut Class
-        1) 생성자 : BusOut 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣♣ 명령어
-            - Pin_name : 버스로 사용하려는 핀 ♣♣♣
+        1) 생성자 : BusOut 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣ 함수 사용법
+            - Pin_name : 버스로 사용하려는 핀 ♣♣
                 Pin_name0 : 최하위 비트 // PinName
                 Pin_name15 : 최상위 비트 // PinName
                 생략 : No Connection
-        2) 쓰기 ♣♣♣
+        2) 쓰기 ♣♣ 함수 사용법
             (1) 메소드 : 객체명.write(value)
-                - value : 출력값(0~65535) // int
+                - value : 출력값(0~65535 = 2^16) // int
             (2) 연산자 오버로딩 : 객체명 = value
-                - value : 출력값(0~65535) // int
-        3) 읽기 ♣♣♣
+                - value : 출력값(0~65535 = 2^16) // int
+        3) 읽기 ♣♣ 함수 사용법
             (1) 메소드 : int value = 객체명.read()
-                - return : 출력값(0~65535) // int
+                - return : 출력값(0~65535 = 2^16) // int
             (2) 연산자 오버로딩 : int value = 객체명
-                - return : 출력값(0~65535) // int
-        4) 비트 단위 개별핀 접근 쓰기 : 객체명[idx] = value ♣♣♣ 명령어
+                - return : 출력값(0~65535 = 2^16) // int
+        4) 비트 단위 개별핀 접근 쓰기 : 객체명[idx] = value ♣♣ 함수 사용법
             - idx : bus 비트 번호(0~15)
-        5) 비트 단위 개별핀 접근 읽기 : int value = 객체명[idx] ♣♣♣ 명령어
+        5) 비트 단위 개별핀 접근 읽기 : int value = 객체명[idx] ♣♣ 함수 사용법
             - idx : bus 비트 번호(0~15)
     2. BusIn Class
-        1) 생성자 : BusIn 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣♣ 명령어
-            - Pin_name : 버스로 사용하려는 핀 ♣♣♣
+        1) 생성자 : BusIn 객체명(Pin_name0, Pin_name1, ..., Pin_name15) ♣♣ 함수 사용법
+            - Pin_name : 버스로 사용하려는 핀 ♣♣
                 Pin_name0 : 최하위 비트 // PinName
                 Pin_name15 : 최상위 비트 // PinName
                 생략 : No Connection
-        2) 입력모드 설정 : 객체명.mode(Pin_mode) ♣♣♣
+        2) 입력모드 설정 : 객체명.mode(Pin_mode) ♣♣ 함수 사용법
             - Pin_mode : 입력핀 내부 Pull회로 지정 // Pinmode
                 PullUp
                 PullDown
                 PullNone
-        3) 읽기 ♣♣♣
+        3) 읽기 ♣♣ 함수 사용법
             (1) 메소드 : int value = 객체명.read()
                 - return : 출력값(0~65535) // int
             (2) 연산자 오버로딩 : int value = 객체명
@@ -1102,22 +1111,22 @@
         4) 비트 단위 개별핀 접근 읽기 : int value = 객체명[idx]
             - idx : bus 비트 번호(0~15)
     +a)
-        1) RGB LED ♣♣♣
+        1) RGB LED
             (1) 공통 음극(Common Cathode)
-                - MCU -> GND : MCU가 high되면 켜짐
+                - MCU -> GND : MCU가 high되면 켜짐 ♣♣♣
             (2) 공통 양극(Common Anode)
-                - VCC -> MCU : MCU가 low되면 켜짐
-        2) 7segment = Flexible Numeric Display ♣♣♣
+                - VCC -> MCU : MCU가 low되면 켜짐 ♣♣♣
+        2) 7segment = Flexible Numeric Display
             (1) 공통 음극(Common Cathode)
-                - MCU -> GND : MCU가 high되면 켜짐
+                - MCU -> GND : MCU가 high되면 켜짐 ♣♣♣
             (2) 공통 양극(Common Anode)
-                - VCC -> MCU : MCU가 low되면 켜짐
+                - VCC -> MCU : MCU가 low되면 켜짐 ♣♣♣
 
 
 ● RTOS
     0. RTOS 개요
         1) RTOS(Real Time OS) : 작업 실시간 운영 지원
-        2) RTOS APIs
+        2) RTOS APIs ♣♣♣
             (1) Thread : 병렬 실행 작업 제어
             (2) Mutex(mutual exclusive = 상호 배제) : thread간 공유 데이터 동시 접근 관리
             (2) Semaphore : 공유하는 자료 접근 관리
@@ -1132,54 +1141,54 @@
             
     1. Thread Class
         1) 생성자
-            (1) Thread 생성 (자동 실행x) : Thread 객체명(pri, stk_sz, stk_mem, thr_name)
-                - pri : 우선순위
+            (1) Thread 생성 (자동 실행x) : Thread 객체명(pri, stk_sz, stk_mem, name) ♣♣♣
+                - pri : 우선순위 // osPriority
                     default : osPriorityNormal
-                    1]] osPriorityIdle : value = -3
-                    2]] osPriorityLow : value = -2
-                    3]] osPriorityBelowNormal : value = -1
-                    4]] osPriorityNormal : value = 0
-                    5]] osPriorityAboveNormal : value = 1
-                    6]] osPriorityHigh : value = 2
-                    7]] osPriorityRealtime : value = 3
-                - stk_sz : 스택 사이즈
+                    -3]] osPriorityIdle : value = -3
+                    -2]] osPriorityLow : value = -2
+                    -1]] osPriorityBelowNormal : value = -1
+                    0]] osPriorityNormal : value = 0
+                    1]] osPriorityAboveNormal : value = 1
+                    2]] osPriorityHigh : value = 2
+                    3]] osPriorityRealtime : value = 3
+                - stk_sz : 스택 사이즈 // uint32_t
                     default : OS_STACK_SIZE
-                - stk_mem : 스택 메모리의 포인터
+                - stk_mem : 스택 메모리의 포인터 // uint8_t
                     default : NULL
-                - name : 스레드의 이름
+                - name : 스레드의 이름 // const int8_t
                     default : NULL
-            (2) Thread 생성 (자동 실행o) : Thread 객체명(&task, pri, stk_sz, stk_mem, thr_name)
-                - &task : 실행시키고자 하는 함수 절대 주소
-                - pri : 우선순위
+            (2) Thread 생성 (자동 실행o) : Thread 객체명(&task, pri, stk_sz, stk_mem, name) ♣♣♣
+                - &task : 실행시키고자 하는 함수 절대 주소 // Callback<void()>
+                - pri : 우선순위 // osPriority
                     default : osPriorityNormal
-                    1]] osPriorityIdle : value = -3
-                    2]] osPriorityLow : value = -2
-                    3]] osPriorityBelowNormal : value = -1
-                    4]] osPriorityNormal : value = 0
-                    5]] osPriorityAboveNormal : value = 1
-                    6]] osPriorityHigh : value = 2
-                    7]] osPriorityRealtime : value = 3
-                - stk_sz : 스택 사이즈
+                    -3]] osPriorityIdle : value = -3
+                    -2]] osPriorityLow : value = -2
+                    -1]] osPriorityBelowNormal : value = -1
+                    0]] osPriorityNormal : value = 0
+                    1]] osPriorityAboveNormal : value = 1
+                    2]] osPriorityHigh : value = 2
+                    3]] osPriorityRealtime : value = 3
+                - stk_sz : 스택 사이즈 // uint32_t
                     default : OS_STACK_SIZE
-                - stk_mem : 스택 메모리의 포인터
+                - stk_mem : 스택 메모리의 포인터 // uint8_t
                     default : NULL
-                - name : 스레드의 이름
+                - name : 스레드의 이름 // const int8_t
                     default : NULL
 
-        2) Thread 제어
-            (1) Thread start : 객체명.start(&task)
-                - &task : 실행시키고자 하는 함수 절대 주소
-            (1) Thread start : 객체명.start(Callback(this, &myClass::task))
-                - this : 객체가 생성된 주소
+        2) Thread 제어 ♣♣♣
+            (1) Thread start : 객체명.start(&task) // osStatus
+                - &task : 실행시키고자 하는 함수 절대 주소 // Callback<void()>
+            (1) Thread start : 객체명.start(Callback(this, &myClass::task)) // osStatus
+                - this : 객체가 생성된 주소 // T
                 - myClass : 객체가 있는 class 주소
-                - task : Thread로 시작할 함수
-            (2) Thread join : 객체명.join()
+                - task : Thread로 시작할 함수 // M
+            (2) Thread join : 객체명.join() // osStatus
                 - sub Thread 종료까지 main Thread가 종료하지 않고 기다림
                 - return : Thread 명령 실행 상태
-            (3) Thread terminate : 객체명.terminate()
+            (3) Thread terminate : 객체명.terminate() // osStatus
                 - return : Thread 명령 실행 상태
             (4) Thread 우선순위 설정 : 객체명.set_priority(pri)
-                - pri : 우선순위
+                - pri : 우선순위 // osPriority
             (5) Thread 우선순위 읽기 : 객체명.get_priority()
                 - return : Thread 우선순위
 
@@ -1201,25 +1210,25 @@
             - 항상 최신 상태 유지
                 mbed-os 폴더 우클릭 - update 클릭
 
-    1. Mutex Class
+    1. Mutex Class ♣♣♣
         0) mutex 개념 : 2개의 Thread가 1개 자원 공유할때, 동시 접근으로 발생하는 문제 해결
             ex. 식당 화장실 열쇠
                 - 열쇠가 하나라 열쇠가 돌아올때까지 대기. 사용했으면 바로 반환 
         1) 생성자
             (1) Mutex 생성 : Mutex 객체명
         2) 자료 접근 권한 제어
-            (1) 권한 획득 : 객체명.lock()
+            (1) 권한 획득 : 객체명.lock() // osStatus
                 - return : 성공시 osOK
                 - lock이 풀릴때까지 blocking(대기해야 함)
-            (2) 권한 반환 : 객체명.unlock()
+            (2) 권한 반환 : 객체명.unlock() // osStatus
                 - return : 성공시 osOK
-            (3) 권한 획득 시도 for ms : 객체명.trylock_for(ms)
-                - ms : ms초 동안 권한 획득 시도
+            (3) 권한 획득 시도 for ms : 객체명.trylock_for(ms) // bool
+                - ms : ms초 동안 권한 획득 시도 // uint32_t
                 - return : 성공시 true, 실패시 false
 
-    1. Queue Class
+    1. Queue Class ♣♣♣
         1) 생성자
-            (1) Queue 생성 : Queue<T, queue_sz> 객체명 //template
+            (1) Queue 생성 : Queue<T, queue_sz> 객체명 // template
                 - T : 메시지 자료형 in Queue // typename
                 - queue_sz : 메시지 최대 개수 in Queue // uint32_t
         2) Queue 제어
@@ -1240,11 +1249,11 @@
                     - return : 찼으면 true, 아니면 false
 
             - Thread가 Queue를 통해 데이터 제때 읽지 못할 가능성
-                >> Overflow로 데이터 손실 가능성
-                >> Queue의 크기 적당히 크게 잡기
+                -> Queue의 크기가 너무 작으면 Overflow로 데이터 손실 가능성
+                -> Queue의 크기 적당히 크게 잡기
                 
     +a)
-        1) MemoryPool, Queue 예시
+        1) MemoryPool, Queue 예시 ♣♣♣
             (1) 구조체 생성
                 typedef struct {
                     osStatus status;
@@ -1259,7 +1268,7 @@
                     } def;
                 } osEvent;
 
-        2) MemoryPool, Queue 동작 원리
+        2) MemoryPool, Queue 동작 원리 ♣♣♣
             (1) MemoryPool : 실제 메시지가 저장된 메모리
             (2) Queue : 주소 관리
 
@@ -1292,7 +1301,8 @@
                     - 송신 스피커
                     - 수신 스피커
                 3] 작동 방법
-                    [1] [Trigger Pin 10us 동안 high 유지 -> low 되돌림] = 초음파 발사 = echo Pin high 유지
+                    [1] [Trigger Pin 10us 동안 high 유지 -> low 되돌림] = 초음파 발사
+                        이때부터 echo Pin high 유지
                     [2] 반향 돌아오면 echo Pin low 되돌림
                         - 반향 돌아오기 전까지 초음파 센서 blocking
 
@@ -1300,7 +1310,7 @@
     0. CircularBuffer 개요
         1) 특징
             (1) 동의어 : CircularBuffer = RingBuffer
-            (2) 도입 전 : 데이터 생산자 vs 데이터 소비자 처리 속도 차이 -> overrun -> 데이터 소실
+            (2) 도입 전 : 데이터 생산자 vs 데이터 소비자 처리 속도 차이 -> overrun -> 데이터 소실 ♣♣♣
             (3) 도입 후 : 일정 분량 데이터 저장 -> 데이터 소실 없이 완충
             (4) 구조 : 적당한 자료형의 1차원 배열
         2) 구조
@@ -1311,9 +1321,9 @@
             (3) 순환 구조
                 head, tail 모두 마지막 원소 인덱스 도달 시, 인덱스 0으로 변화
         3) 데이터 속도 & OverRun
-            (1) 소비속도 > 생산속도
+            (1) 소비속도 > 생산속도(소비속도가 생산속도보다 빠르다)
                 - 항상 : 버퍼에 데이터 거의 없음
-            (2) 소비속도 < 생산속도
+            (2) 소비속도 < 생산속도(생산속도가 소비속도보다 빠르다)
                 - 일정 시간 이하 : 버퍼링
                 - 일정 시간 이후 : OverRun
     1. CircularBuffer Class
@@ -1324,12 +1334,12 @@
         2) 데이터 관리
             (1) 데이터 넣기 : 객체명.push(data) // void
                 - data : push할 데이터 // const T
-            (2) 데이터 빼기 : 객체명.pop(data) // bool
+            (2) 데이터 빼기 : 객체명.pop(data) // bool ♣♣ return이 data여야되는거 아닌가???
                 - data : pop할 데이터 // const T
                 - return : 성공 여부
                     성공 : true
                     실패 : false
-            (3) 데이터 값 읽기 : 객체명.peek(data) // bool
+            (3) 데이터 값 읽기 : 객체명.peek(data) // bool ♣♣ return이 data여야되는거 아닌가???
                 - data : peek할 데이터 // const T
                 - return : 성공 여부
                     성공 : true
@@ -1352,13 +1362,13 @@
         1) 특징
             (1) 장점 : 쉽고 정밀한 위치, 속도 제어
             (2) 활용 : 프린터, 스캐너, 복사기 등 사무기기, 산업용 기기
-            (3) 방식 // ♣♣
+            (3) 방식 ♣♣♣
                 1] PM 방식
                 2] Variable Reluctance 방식
                 3] 하이브리드 방식
             (4) 코일 수 : 2상, 3상, 5상 등
         2) 구조
-            (1) 2상 StepMotor
+            (1) 2상 StepMotor ♣♣
                 1] 회전 : A, B코일의 전류 방향 조합 -> 1step 단위 회전
                 2] 제어 : 2개 코일 각각 H-bridge 회로 제어
                 3] Step 각
@@ -1369,17 +1379,17 @@
                             A -> B -> A' -> B' -> 반복
                     [2] Half Step : Step각 = 45도
                         1]] 구동 순서
-                            A -> AB -> B -> BA' -> A' -> A'B' -> B' -> B'A
-                        2]] 토크 리플
+                            A -> AB -> B -> BA' -> A' -> A'B' -> B' -> B'A -> 반복
+                        2]] 토크 리플 ♣♣
                             [[1]] 발생 이유 : 각 코일 사이에 회전자 위치 시, 양 코일이 반응하여 토크 크기 증가
                             [[2]] 해결 방안 : 토크 크기 일정화를 위해 전류를 더 약하게 흘려, 자기력의 합력 일정하게 맞춤
                     [3] Micro Step
                         1]] 구동 순서 : Step각 = 잘게 쪼갬
-                            Half Step 이상으로 쪼개서 sin파처럼 움직임
+                            Half Step 이상으로 쪼개서 sin파처럼 움직임 ♣♣
                         2]] 토크 리플
                             [[1]] 발생 이유 : 각 코일 사이에 회전자 위치 시, 양 코일이 반응하여 토크 크기 증가
                             [[2]] 해결 방안 : 토크 크기 일정화를 위해 전류를 더 약하게 흘려, 자기력의 합력 일정하게 맞춤
-        3) 실습용 모터 드라이버 - DRV8825
+        3) 실습용 모터 드라이버 - DRV8825 ♣♣♣
             (1) 특징
                 1] Logic 전압 : 2.5V ~ 5.25V
                 1] 최대 전류 : 2.2A
@@ -1404,7 +1414,7 @@
 
 ● Encoder Sensor Project
     0. Encoder Sensor 개요
-        1) Encoder 원리
+        1) Encoder 종류
             (1) Single track encoder : 한방향 속도
             (2) Multi track encoder : 양방향 속도
 
@@ -1426,7 +1436,7 @@
                     [2] 펄스 개수 : 각도 파악
                 2] 자기식(Magnetic) : 자기력
                     - 회전축 : 영구자석
-                    - 보드 : Hall센서 120도 각도. 2개
+                    - 보드 : Hall센서 120도 각도(= 위상차 90도 정도의 각도와 위치). 2개
 
                     [1] A, B상 위상차 : 방향 파악
                     [2] 펄스 개수 : 각도 파악
@@ -1465,25 +1475,6 @@
                 - 원 : 상태
                 - 화살표 : 상태 천이
                 - 사각형 : 해야할 일
-            
-    1. Thread Class
-        1) 생성자
-            (1) Thread 생성 (자동 실행x) : Thread 객체명(pri, stk_sz, stk_mem, thr_name)
-                - pri : 우선순위
-                    default : osPriorityNormal
-                    1]] osPriorityIdle : value = -3
-                    2]] osPriorityLow : value = -2
-                    3]] osPriorityBelowNormal : value = -1
-                    4]] osPriorityNormal : value = 0
-                    5]] osPriorityAboveNormal : value = 1
-                    6]] osPriorityHigh : value = 2
-                    7]] osPriorityRealtime : value = 3
-                - stk_sz : 스택 사이즈
-                    default : OS_STACK_SIZE
-                - stk_mem : 스택 메모리의 포인터
-                    default : NULL
-                - name : 스레드의 이름
-                    default : NULL
 
 
 ● DC Motor Drive    // 마이컨과 겹침. 강의자료 참조 ♣♣♣

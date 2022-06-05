@@ -1,6 +1,3 @@
-// Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
-
-// [라이브러리]
 #include "mbed.h"
 #include "GP2A.h"
 
@@ -9,21 +6,15 @@
 Thread snr;
 
 // psd센서
-GP2A psdl(PA_5, 30, 150, 60, 0);
-GP2A psdf(PA_6, 30, 150, 60, 0);
-GP2A psdr(PA_7, 30, 150, 60, 0);
-
-double psdl_val;
-double psdf_val;
-double psdr_val;
+GP2A psd(A0, 7, 80, 24.6, -0.297);
+double psd_val;
 
 // AC서보 모터
 PwmOut Servo(PA_8);
-
 PwmOut ServoL(PB_8);
 PwmOut ServoR(PC_9);
 
-float ang=90.0, inc_min = 1.5, inc=3;
+float ang=90.0, inc_min = 1.5, inc=2.2;
 float angL=90.0, incL=0.015;
 float angR=90.0, incR=0.015;
 
@@ -38,6 +29,7 @@ PwmOut PwmR(PB_5);
 // 통신
 RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
 RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+RawSerial ard(PC_10, PC_11, 115200);
 
 // 통신 - ras_com
 volatile bool All_move = false;
@@ -60,6 +52,9 @@ volatile float ras_data[3];
 // 통신 - DC_chk
 volatile bool gotPacket2 = false;
 volatile float pc_data[3];
+
+// 통신 - ard_com
+char ardIn = '0';
 
 // 기타
 int mode = 0;
@@ -102,23 +97,24 @@ int main(){
     while(1){
         in_SerialRx_main(); // interrupt 전용
         if(All_move == true){
+            // char ardIn = ard.getc(); // 확인용 코드
+            // pc.printf("c", ardIn); // 확인용 코드
+            // ard.putc('1'); // 확인용 코드
             // 서보 움직임
             servo_move(Servo);
 
             // 센서값
-            psdl_val = psdl.getDistance();
-            psdf_val = psdf.getDistance();
-            psdr_val = psdr.getDistance();
-            // sensor_print();
+            psd_val = psd.getDistance();
+            sensor_print();
 
             if(mode == 0){
                 pc.printf("mode = 0\n");
             }
 
-            else if(mode == 1){
+            else if(mode == 1){     // 접근 모드 
                 pc.printf("mode = 1\n");
                 // DC 모터 움직임
-                if(ras_data[1] == 0){
+                if(ras_data[1] == 0){               // 물체 크기가 작으면
                     if(ang < 70){
                         DC_move(0, 1, 0.20, 0.20);
                     }
@@ -129,50 +125,78 @@ int main(){
                         DC_move(1, 0, 0.20, 0.20);
                     } 
                 }
-
-                else if(ras_data[1] == 1){
+                
+                else if(ras_data[1] == 1){          // 물체 크기가 중간이면
                     if(ang < 85){
-                        DC_move(0, 1, 0.08, 0.08);
+                        DC_move(0, 1, 0.10, 0.10);
                     }
                     else if(85 <= ang && ang < 95){
-                        DC_move(1, 1, 0.08, 0.08);
+                        DC_move(1, 1, 0.10, 0.10);
                     }
                     else if(95 <= ang){
-                        DC_move(1, 0, 0.08, 0.08);
+                        DC_move(1, 0, 0.10, 0.10);
                     }
                 }
-
-                else if(ras_data[1] == 2){
-                    if(ang < 85){
-                        DC_move(0, 1, 0.08, 0.08);
+                
+                else if(ras_data[1] == 2){          // 물체 크기가 크면
+                    if(ang < 87){
+                        DC_move(0, 1, 0.10, 0.10);
                     }
-                    else if(85 <= ang && ang < 95){
+                    else if(87 <= ang && ang < 93){
                         DC_move(1, 1, 0, 0);
                         mode = 2;
                     }
-                    else if(95 <= ang){
-                        DC_move(1, 0, 0.08, 0.08);
+                    else if(93 <= ang){
+                        DC_move(1, 0, 0.10, 0.10);
                     }
                 }
-
-                else if(ras_data[1] == 9){
+                
+                else if(ras_data[1] == 9){      // 너무 멀면
                     DC_move(1, 1, 0.20, 0.20);
                 }
             }
-
-            else if(mode == 2){
+            
+            else if(mode == 2){                 // 물체 잡기
                 pc.printf("mode = 2\n");
                 // AC 서보모터 움직임
                 // servo_chk(Servo); // Test 코드
-                servo_moveLR(ServoL, ServoR);
-                if(psdf_val <= 30){
-                    ras.putc('1');
-                    mode = 3;
+                
+                if(psd_val>10.5){
+                        DC_move(1, 1, 0.10, 0.10);
+                    }
+                    
+                else{                           // psd가 10.5이하값이면 모드 3으로 넘어감
+                    // 잡아
+                    ard.putc('1');
+
+                    pc.printf("%c\n", ardIn);   // 확인용 코드
+
+                    // 못잡았으면, 잡을 때까지 대기
+                    if(ardIn == '0'){
+                        if(ard.readable() > 0){
+                            char ardIn = ard.getc();
+                        }
+                    }
+
+                    // 잡았으면, pi에 잡았다고 전송 + mode 변환
+                    else{
+                        ras.putc('1');
+                        // pc.printf("hihi %c\n", ardIn);  // 확인용 코드
+                        ardIn = '0';
+
+                        // DC 모터 반바퀴 회전 = 2초 0.2, 0.2 회전
+                        DC_move(1, 0, 0.00, 0.00);
+                        wait_ms(2000);
+                        DC_move(1, 0, 0.20, 0.20);
+                        wait_ms(3000);
+                        mode = 3;
+                    }
                 }
             }
-
-            else if(mode == 3){
+            
+            else if(mode == 3){                 // 복귀 모드
                 pc.printf("mode = 3\n");
+
                 // DC 모터 움직임
                 if(ras_data[1] == 0){
                     if(ang < 70){
@@ -188,31 +212,34 @@ int main(){
 
                 else if(ras_data[1] == 1){
                     if(ang < 85){
-                        DC_move(0, 1, 0.08, 0.08);
+                        DC_move(0, 1, 0.10, 0.10);
                     }
                     else if(85 <= ang && ang < 95){
-                        DC_move(1, 1, 0.08, 0.08);
+                        DC_move(1, 1, 0.10, 0.10);
                     }
                     else if(95 <= ang){
-                        DC_move(1, 0, 0.08, 0.08);
+                        DC_move(1, 0, 0.10, 0.10);
                     }
                 }
 
                 else if(ras_data[1] == 2){
                     if(ang < 85){
-                        DC_move(0, 1, 0.08, 0.08);
+                        DC_move(0, 1, 0.10, 0.10);
                     }
                     else if(85 <= ang && ang < 95){
                         DC_move(1, 1, 0, 0);
-                        mode = 1;
+                        mode = 4;
                     }
                     else if(95 <= ang){
-                        DC_move(1, 0, 0.08, 0.08);
+                        DC_move(1, 0, 0.10, 0.10);
                     }
                 }
                 else if(ras_data[1] == 9){
                     DC_move(1, 1, 0.20, 0.20);
                 }
+            }
+            else if(mode == 4){
+                pc.printf("mode = 4\n");
             }
             All_move = false;
         }
@@ -222,9 +249,7 @@ int main(){
 // [함수 정의]
 // ir + psd 센서
 void sensor_print(){
-    printf("psdl_val : | %lf |\n", psdl_val);
-    printf("psdf_val : | %lf |\n", psdf_val);
-    printf("psdr_val : | %lf |\n", psdr_val);
+    pc.printf("psd_val : | %lf |\n", psd_val);
 }
 
 // AC 서보 모터

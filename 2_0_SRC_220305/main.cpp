@@ -16,7 +16,8 @@ AnalogIn irmr(PA_4);
 AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
-GP2A psdb(PC_4, 30, 150, 60, 0);
+
+GP2A psdb(PC_4, 7, 80, 24.6, -0.297);
 
 uint16_t ir_val[6];
 // 0 : fl
@@ -37,8 +38,9 @@ int black = 40000;
 
 // AC서보 모터
 PwmOut Servo(PA_8);
+// PwmOut ServoTest(PA_5);
 
-float ang=90.0, inc = 5;
+float ang = 90.0, inc = 5;
 
 // DC 모터
 DigitalOut DirL(PC_7);
@@ -47,6 +49,8 @@ PwmOut PwmL(PB_4);
 PwmOut PwmR(PB_5);
 
 float speed = 0;
+float speedL = 0;
+float speedR = 0;
 
 template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max);
 
@@ -111,8 +115,10 @@ int main(){
     pc.format(8, SerialBase::Even, 1);
 
     Servo.period_ms(10);
+    // ServoTest.period_ms(10);
     DC_set();
     servo_set(Servo);
+    // servo_set(ServoTest);
     ras.attach(&in_SerialRx); // interrupt 전용
 
     // com_th.start(&th_SerialRx); // thread 전용
@@ -122,7 +128,7 @@ int main(){
         if(All_move == true){
             sensor_read();
             sensor_cal();
-            // sensor_print();
+            sensor_print(); // 확인용 코드
 
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
@@ -149,9 +155,10 @@ int main(){
             // 중간 동작 : 상대 탐색 + 원 회전 + 공격
             else if(mode == 1){
                 servo_move(Servo);
+                // servo_move(ServoTest);
 
                 if(ras_data[0] == 9){
-                    if(pre_data0 == 1) DC_move(0, 1, 0.40, 0.40);
+                    if(pre_data0 == 1) DC_move(0, 1, 0.40, 40.0);
                     else if(pre_data0 == 2) DC_move(1, 0, 0.40, 0.40);
                     else if(pre_data0 == 3) DC_move(1, 0, 0.40, 0.40);
                     else DC_move(1, 0, 0.40, 0.40);
@@ -160,15 +167,33 @@ int main(){
                     // 90 == 0
                     // 0 == 40
                     if(ang <= 75){
-                        speed = map<float>(ang, 75.0, 0.0, 0.15, 0.40);
-                        DC_move(0, 1, speed, speed);
+                        // speed = map<float>(ang, 75.0, 0.0, 0.20, 0.35);
+                        // DC_move(0, 1, speed, speed);
+
+                        if(ang <= 30){
+                            speedL = map<float>(ang, 30.0, 0.0, 0.15, 0.50);
+                            DC_move(0, 1, speedL, 0.5);
+                        }
+                        else{
+                            speedL = map<float>(ang, 75.0, 30.0, 0.35, 0.15);
+                            DC_move(1, 1, speedL, 0.5);
+                        }
                     }
                     else if(75 < ang && ang < 105){
-                        DC_move(1, 1, 0.40, 0.40);
+                        DC_move(1, 1, 0.50, 0.50);
                     }
                     else if(105 <= ang){
-                        speed = map<float>(ang, 180.0, 0.0, 0.40, 0.15);
-                        DC_move(1, 0, speed, speed);
+                        // speed = map<float>(ang, 180.0, 105.0, 0.35, 0.20);
+                        // DC_move(1, 0, speed, speed);
+
+                        if(150 <= ang){
+                            speedR = map<float>(ang, 180.0, 150.0, 0.50, 0.15);
+                            DC_move(1, 0, 0.5, speedR);
+                        }
+                        else{
+                            speedR = map<float>(ang, 150.0, 105.0, 0.15, 0.35);
+                            DC_move(1, 1, 0.5, speedR);
+                        }
                     }
                 }
             }
@@ -220,9 +245,9 @@ void sensor_cal(){
 }
 
 void sensor_print(){
-    printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5]);
-    printf("ir_res : | %d | %d | %d | %d | %d | %d |", ir_res[0], ir_res[1], ir_res[2], ir_res[3], ir_res[4], ir_res[5]);
-    printf("psd_val : | %lf |\n", psdb_val);
+    pc.printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5]);
+    pc.printf("ir_res : | %d | %d | %d | %d | %d | %d |\n", ir_res[0], ir_res[1], ir_res[2], ir_res[3], ir_res[4], ir_res[5]);
+    pc.printf("psd_val : | %lf |\n", psdb_val);
 }
 
 // AC 서보 모터

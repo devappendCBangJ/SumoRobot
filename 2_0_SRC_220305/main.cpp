@@ -27,7 +27,7 @@ uint16_t ir_val[6];
 // 3 : br
 // 4 : bl
 // 5 : ml
-bool ir_res[6];
+bool ir_WhCol[6];
 // 0 : fl + fr
 // 1 : bl + br
 // 2 : ml + fl
@@ -63,15 +63,16 @@ volatile bool All_move = false;
 volatile bool gotPacket = false;
 volatile float ras_data[3];
 // ras_data[0] : 상대 방향 + 보임 유무
-    // 없음 : 0
-    // 왼쪽 : 1
-    // 가운데 : 2
-    // 오른쪽 : 3
+    // 왼쪽 : 0/11 ~ 4/11 (1 ~ 145)
+    // 가운데 : 4/11 ~ 7/11 (146 ~ 254)
+    // 오른쪽 : 7/11 ~ 11/11 (255 ~ 400)
+    // 없음 : 999
 // ras_data[1] : 상대 크기
     // 작음 : 1
     // 보통 : 2
     // 큼 : 3
     // 매우 큼 : 4
+    // 없음 : 9
 // ras_data[2] : 빨간영역 좌표 vs 상대 좌표 비교(거리, 영역)
     // 빨간 영역 안 : 0(상대 가까울 때만 공격)
     // 빨간 영역 밖 : 1(무조건 공격)
@@ -88,10 +89,12 @@ int pre_data0 = 0;
 volatile bool gotPacket2 = false;
 volatile float pc_data[3];
 
+// 기타
+Timer tmr;
 Mutex mutex;
 
-// 기타
 int mode = 0;
+int width = 400;
 
 // [함수정의]
 void sensor_read();
@@ -134,14 +137,14 @@ int main(){
             // mutex.lock();
             // 초기 동작 : 상대 탐색
             if(mode == 0){
-                if(ras_data[0] == 9) DC_move(0.20, -0.20);
-                else if(ras_data[0] == 1) DC_move(-0.20, 0.20);
-                else if(ras_data[0] == 2){
+                if(ras_data[0] == 999) DC_move(0.20, -0.20);
+                else if(ras_data[0] < (4.0 / 11.0) * width) DC_move(-0.20, 0.20);
+                else if((4.0 / 11.0) * width <= ras_data[0] && ras_data[0] < (7.0 / 11.0) * width){
                     DC_move(0.0, 0.0);
                     mode = 1;
                     // pc.printf("mode = 1"); // 확인용 코드
                 }
-                else if(ras_data[0] == 3) DC_move(0.20, -0.20);
+                else if((7.0 / 11.0) * width <= ras_data[0]) DC_move(0.20, -0.20);
             }
             
             // 중간 동작 : 상대 탐색 + 원 회전 + 공격
@@ -157,7 +160,7 @@ int main(){
 
                     if(ang <= 75){ // 서보 왼쪽
                         // if(ras_data[1] == '1'){ // 화면 원통 작음
-                            if(ras_data[0] == 9){ // 상대 안보임
+                            if(ras_data[0] == 999){ // 상대 안보임
                                 pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1) DC_move(-0.40, 40.0);
@@ -165,36 +168,55 @@ int main(){
                                 else if(pre_data0 == 3) DC_move(0.40, -0.40);
                                 else DC_move(0.40, -0.40);
                             }
-                            else if(ras_data[0] != 9){ // 상대 보임
+                            else if(ras_data[0] != 999){ // 상대 보임
                                 pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 왼쪽 앞 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
+                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 우회 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    while(ir_WhCol[4] == true || ir_WhCol[5] == true){
+                                        DC_move(-0.40, -0.30);
+                                    }
                                 }
-                                else if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.20);
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 뒷 바퀴 : 왼쪽 전진
-                                    DC_move(0.10, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == false && ir_res[5] == false){ // 오른쪽 앞 바퀴 : 왼쪽 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.15, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 뒷 바퀴 : 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.20);
-                                }
-                                else if(ir_res[1] == true){ // 왼쪽 앞 부분 + 오른쪽 앞 부분 : 왼쪽 회전
+                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전
                                     DC_move(-0.20, 0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 모두 검은색 : 자유롭게 공격
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
+                                    DC_move(-0.20, 0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
+                                    DC_move(0.20, 0.20);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.15);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.15);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
+                                    DC_move(0.20, 0.20);
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     if(ang <= 30){
                                         speedL = map<float>(ang, 30.0, 0.0, 0.15, 0.50);
                                         DC_move(-speedL, 0.5);
                                     }
-                                    else{
+                                    else if(ang > 30){
                                         speedL = map<float>(ang, 75.0, 30.0, 0.35, 0.15);
                                         DC_move(speedL, 0.5);
                                     }
@@ -208,41 +230,65 @@ int main(){
 
                     else if(75 < ang && ang < 105){ // 서보 중간
                         // if(ras_data[1] == '1'){ // 화면 원통 작음
-                            if(ras_data[0] == 9){ // 상대 안보임
+                            if(ras_data[0] == 999){ // 상대 안보임
                                 pc.printf("상대 안보임 \n"); // 확인용 코드
+
                                 if(pre_data0 == 1) DC_move(-0.40, 40.0);
                                 else if(pre_data0 == 2) DC_move(0.40, -0.40);
                                 else if(pre_data0 == 3) DC_move(0.40, -0.40);
                                 else DC_move(0.40, -0.40);
                             }
-                            else if(ras_data[0] != 9){ // 상대 보임
+                            else if(ras_data[0] != 999){ // 상대 보임
                                 pc.printf("상대 보임 \n"); // 확인용 코드
-                                if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 왼쪽 앞 바퀴 : 오른쪽 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.10);
+
+                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    while(ir_WhCol[4] == true || ir_WhCol[5] == true){
+                                        DC_move(-0.35, -0.35);
+                                    }
                                 }
-                                else if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.20);
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(-0.20, 0.20);
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 뒷 바퀴 : 왼쪽 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.10, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == false && ir_res[5] == false){ // 오른쪽 앞 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 뒷 바퀴 : 오른쪽 전진
-                                    DC_move(0.20, 0.10);
-                                }
-                                else if(ir_res[1] == true){ // 왼쪽 앞 부분 + 오른쪽 앞 부분 : 오른쪽 회전
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
                                     DC_move(0.20, -0.20);
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 모두 검은색 : 자유롭게 공격
+                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
+                                    DC_move(0.20, -0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.15);
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 전진
+                                    DC_move(0.20, 0.10);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
+                                    DC_move(-0.15, 0.20);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 오른쪽 전진
+                                    DC_move(0.10, 0.20);
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     DC_move(0.50, 0.50);
                                 }
-                                else{ // 그 외 : 오른쪽 전진
-                                    DC_move(0.20, 0.10);
+                                else{ // 그 외 : 전진
+                                    DC_move(0.20, 0.20);
                                 }
                             }
                         // }
@@ -250,7 +296,7 @@ int main(){
 
                     else if(105 <= ang){ // 서보 오른쪽
                         // if(ras_data[1] == '1'){ // 화면 원통 작음
-                            if(ras_data[0] == 9){ // 상대 안보임
+                            if(ras_data[0] == 999){ // 상대 안보임
                                 pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1) DC_move(-0.40, 40.0);
@@ -258,36 +304,55 @@ int main(){
                                 else if(pre_data0 == 3) DC_move(0.40, -0.40);
                                 else DC_move(0.40, -0.40);
                             }
-                            else if(ras_data[0] != 9){ // 상대 보임
+                            else if(ras_data[0] != 999){ // 상대 보임
                                 pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 왼쪽 앞 바퀴 : 오른쪽 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.10);
+                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 왼쪽 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    while(ir_WhCol[4] == true || ir_WhCol[5] == true){
+                                        DC_move(-0.30, -0.40);
+                                    }
                                 }
-                                else if(ir_res[2] == true && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.20, 0.20);
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
+                                    DC_move(-0.20, 0.20);
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == true){ // 왼쪽 뒷 바퀴 : 왼쪽 전진 // ● 불가능한 경우. 필요 없다
-                                    // DC_move(1, 1, 0.10, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == false && ir_res[5] == false){ // 오른쪽 앞 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == true && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                    DC_move(0.20, 0.20);
-                                }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == true && ir_res[5] == false){ // 오른쪽 뒷 바퀴 : 오른쪽 전진
-                                    DC_move(0.20, 0.10);
-                                }
-                                else if(ir_res[1] == true){ // 왼쪽 앞 부분 + 오른쪽 앞 부분 : 오른쪽 회전
+                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                     DC_move(0.20, -0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
                                 }
-                                else if(ir_res[2] == false && ir_res[3] == false && ir_res[4] == false && ir_res[5] == false){ // 모두 검은색 : 자유롭게 공격
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    DC_move(0.20, -0.20);
+                                    // tmr.start();
+                                    // while(1){
+                                    //     if(tmr.read_us() > 500000){
+                                    //         tmr.reset();
+                                    //         tmr.stop();
+                                    //     }
+                                    // }
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
+                                    DC_move(0.20, 0.20);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
+                                    DC_move(-0.15, 0.20);
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
+                                    DC_move(-0.15, 0.20);
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
+                                    DC_move(0.20, 0.20);
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     if(150 <= ang){
                                         speedR = map<float>(ang, 180.0, 150.0, 0.50, 0.15);
                                         DC_move(0.5, -speedR);
                                     }
-                                    else{
+                                    else if(ang < 150){
                                         speedR = map<float>(ang, 150.0, 105.0, 0.15, 0.35);
                                         DC_move(0.5, speedR);
                                     }
@@ -302,7 +367,7 @@ int main(){
 
                 // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 바깥에 위치
                 else if(ras_data[2] == 1){ // 상대방이 빨간색 끝좌표 바깥에 위치
-                    if(ras_data[0] == 9){ // 상대 안보임
+                    if(ras_data[0] == 999){ // 상대 안보임
                         pc.printf("상대 안보임 \n"); // 확인용 코드
 
                         if(pre_data0 == 1) DC_move(-0.40, 40.0);
@@ -310,7 +375,7 @@ int main(){
                         else if(pre_data0 == 3) DC_move(0.40, -0.40);
                         else DC_move(0.40, -0.40);
                     }
-                    else if(ras_data[0] != 9){ // 상대 보임
+                    else if(ras_data[0] != 999){ // 상대 보임
                         pc.printf("상대 보임 \n"); // 확인용 코드
 
                         if(ang <= 75){ // 서보 왼쪽
@@ -371,34 +436,34 @@ void sensor_read(){
 
 void sensor_cal(){
     if(ir_val[0] < black && ir_val[1] < black){
-        ir_res[0] = true;
+        ir_WhCol[0] = true;
     }
-    else ir_res[0] = false;
+    else ir_WhCol[0] = false;
     if(ir_val[3] < black && ir_val[4] < black){
-        ir_res[1] = true;
+        ir_WhCol[1] = true;
     }
-    else ir_res[1] = false;
+    else ir_WhCol[1] = false;
     if(ir_val[5] < black && ir_val[0] < black){
-        ir_res[2] = true;
+        ir_WhCol[2] = true;
     }
-    else ir_res[2] = false;
+    else ir_WhCol[2] = false;
     if(ir_val[1] < black && ir_val[2] < black){
-        ir_res[3] = true;
+        ir_WhCol[3] = true;
     }
-    else ir_res[3] = false;
+    else ir_WhCol[3] = false;
     if(ir_val[2] < black && ir_val[3] < black){
-        ir_res[4] = true;
+        ir_WhCol[4] = true;
     }
-    else ir_res[4] = false;
+    else ir_WhCol[4] = false;
     if(ir_val[4] < black && ir_val[5] < black){
-        ir_res[5] = true;
+        ir_WhCol[5] = true;
     }
-    else ir_res[5] = false;
+    else ir_WhCol[5] = false;
 }
 
 void sensor_print(){
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5]);
-    pc.printf("ir_res : | %d | %d | %d | %d | %d | %d |\n", ir_res[0], ir_res[1], ir_res[2], ir_res[3], ir_res[4], ir_res[5]);
+    pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]);
     pc.printf("psd_val : | %lf |\n", psdb_val);
 }
 
@@ -413,9 +478,14 @@ void servo_set(PwmOut &rc){
 }
 
 void servo_move(PwmOut &rc){
+    if(ras_data[0] < 200) inc = map<float>(ang, 200.0, 0.0, 3.5, 6.0);
+    else if(ras_data[0] <= 400) inc = map<float>(ang, 200.0, 400.0, 3.5, 6.0);
+
     // 중간 동작 : 화면 상대방 안보임
-    if(ras_data[0] == 9){
+    if(ras_data[0] == 999){
         // pc.printf("1");
+        inc = 6;
+
         if(pre_data0 == 1) ang = ang - inc;
         else if(pre_data0 == 2) ang = ang + inc;
         else if(pre_data0 == 3) ang = ang + inc;
@@ -423,7 +493,7 @@ void servo_move(PwmOut &rc){
     }
 
     // 중간 동작 : 화면 상대방 보임
-    else if(ras_data[0] == 1){
+    else if(ras_data[0] < (4.0 / 11.0) * width){
         // pc.printf("2");
         if(ras_data[1] == 1) ang = ang - inc;
         else if(ras_data[1] == 2) ang = ang - inc;
@@ -431,12 +501,12 @@ void servo_move(PwmOut &rc){
         else if(ras_data[1] == 4) ang = ang - inc;
         pre_data0 = 1;
     }
-    else if(ras_data[0] == 2){
+    else if((4.0 / 11.0) * width <= ras_data[0] && ras_data[0] < (7.0 / 11.0) * width){
         // pc.printf("3");
         ang = ang;
         pre_data0 = 2;
     }
-    else if(ras_data[0] == 3){
+    else if((7.0 / 11.0) * width <= ras_data[0]){
         // pc.printf("4");
         if(ras_data[1] == 1) ang = ang + inc;
         else if(ras_data[1] == 2) ang = ang + inc;
@@ -477,7 +547,7 @@ void DC_move(float _PwmL, float _PwmR){
     if(_PwmL < 0) DirL = 0;
     else DirL = 1;
 
-    if(_PwmR < 0) DirL = 0;
+    if(_PwmR < 0) DirR = 0;
     else DirR = 1;
 
     PwmL = abs(_PwmL);
@@ -517,8 +587,6 @@ void DC_chk(){
 
     DirR = 1;
     DirL = 1;
-    // PwmL = 0.3f;
-    // PwmR = 0.3f;
 }
 
 // 통신(pc, ras, mbed)

@@ -98,6 +98,8 @@ int width = 400;
 int width_l = width * 4.5 / 11.0;
 int width_r = width * 6.5 / 11.0;
 
+int escape_time = 25000;
+
 // [함수정의]
 void sensor_read();
 void sensor_cal();
@@ -115,7 +117,7 @@ void in_SerialRx();
 void in_SerialRx_main();
 void th_SerialRx();
 
-void while_bundle();
+void whl_bundle();
 
 // [main문]
 int main(){
@@ -190,27 +192,45 @@ int main(){
                                 pc.printf("상대 보임 \n"); // 확인용 코드
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 우회 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    tmr.start();
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
                                         speedL = -0.40; speedR = -0.30;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
                                     speedL = 0.20; speedR = -0.20;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전
-                                    while(ir_whCol[2] == true){
-                                        speedL = -0.20; speedR = 0.20;
-
-                                        while_bundle();
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
+                                    tmr.start();
                                     while(ir_WhCol[2] == true){
                                         speedL = -0.20; speedR = 0.20;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
+                                    }
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
+                                    tmr.start();
+                                    while(ir_WhCol[2] == true){
+                                        speedL = -0.20; speedR = 0.20;
+
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
@@ -268,17 +288,23 @@ int main(){
                                 pc.printf("상대 보임 \n"); // 확인용 코드
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    tmr.start();
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
                                         speedL = -0.35; speedR = -0.35;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
                                     speedL = -0.20; speedR = 0.20;
 
                                     tmr.start();
-                                    while(tmr.read_us() < 250000);
+                                    while(tmr.read_us() < escape_time);
                                     tmr.reset();
                                     tmr.stop();
                                 }
@@ -286,29 +312,41 @@ int main(){
                                     speedL = 0.20; speedR = -0.20;
 
                                     tmr.start();
-                                    while(tmr.read_us() < 250000);
+                                    while(tmr.read_us() < escape_time);
                                     tmr.reset();
                                     tmr.stop();
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
+                                    tmr.start();
                                     while(ir_WhCol[3] == true){
                                         speedL = 0.20; speedR = -0.20;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    tmr.start();
                                     while(ir_WhCol[3] == true){
                                         speedL = 0.20; speedR = -0.20;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     speedL = 0.20; speedR = -0.15;
 
                                     tmr.start();
-                                    while(tmr.read_us() < 250000);
+                                    while(tmr.read_us() < escape_time);
                                     tmr.reset();
                                     tmr.stop();
                                 }
@@ -319,7 +357,7 @@ int main(){
                                     speedL = -0.15; speedR = 0.20;
 
                                     tmr.start();
-                                    while(tmr.read_us() < 250000);
+                                    while(tmr.read_us() < escape_time);
                                     tmr.reset();
                                     tmr.stop();
                                 }
@@ -362,27 +400,45 @@ int main(){
                                 pc.printf("상대 보임 \n"); // 확인용 코드
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 왼쪽 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
+                                    tmr.start();
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
                                         speedL = -0.30; speedR = -0.40;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
                                     speedL = -0.20; speedR = 0.20;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
+                                    tmr.start();
                                     while(ir_WhCol[3] == true){
                                         speedL = 0.20; speedR = -0.20;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
+                                    tmr.start();
                                     while(ir_WhCol[3] == true){
                                         speedL = 0.20; speedR = -0.20;
 
-                                        while_bundle();
+                                        whl_bundle();
+                                        if(tmr.read_us() > escape_time){
+                                            tmr.reset();
+                                            tmr.stop();
+                                            break;
+                                        }
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
@@ -741,7 +797,7 @@ void th_SerialRx(){ // thread 전용
     }
 }
 
-void while_bundle(){
+void whl_bundle(){
     in_SerialRx_main(); // interrupt 전용
 
     sensor_read();

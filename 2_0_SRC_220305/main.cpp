@@ -115,6 +115,8 @@ void in_SerialRx();
 void in_SerialRx_main();
 void th_SerialRx();
 
+void while_bundle();
+
 // [main문]
 int main(){
     pc.format(8, SerialBase::Even, 1);
@@ -189,38 +191,27 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 우회 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
-                                        in_SerialRx_main(); // interrupt 전용
-
-                                        sensor_read();
-                                        sensor_cal();
-                                        sensor_print(); // 확인용 코드
-
-                                        servo_move(Servo);
-
                                         speedL = -0.40; speedR = -0.30;
-                                        DC_move(speedL, speedR);
+
+                                        while_bundle();
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
                                     speedL = 0.20; speedR = -0.20;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전
-                                    speedL = -0.20; speedR = 0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_whCol[2] == true){
+                                        speedL = -0.20; speedR = 0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
-                                    speedL = -0.20; speedR = 0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_WhCol[2] == true){
+                                        speedL = -0.20; speedR = 0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
                                     speedL = 0.20; speedR = 0.20;
@@ -278,16 +269,9 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
-                                        in_SerialRx_main(); // interrupt 전용
-
-                                        sensor_read();
-                                        sensor_cal();
-                                        sensor_print(); // 확인용 코드
-
-                                        servo_move(Servo);
-
                                         speedL = -0.35; speedR = -0.35;
-                                        DC_move(speedL, speedR);
+
+                                        while_bundle();
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
@@ -307,22 +291,18 @@ int main(){
                                     tmr.stop();
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
-                                    speedL = 0.20; speedR = -0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_WhCol[3] == true){
+                                        speedL = 0.20; speedR = -0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
-                                    speedL = 0.20; speedR = -0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_WhCol[3] == true){
+                                        speedL = 0.20; speedR = -0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     speedL = 0.20; speedR = -0.15;
@@ -383,38 +363,27 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴 : 왼쪽 후진 (ir 뒤 바퀴 중 하나가 검은색 될때까지)
                                     while(ir_WhCol[4] == true || ir_WhCol[5] == true){
-                                        in_SerialRx_main(); // interrupt 전용
-
-                                        sensor_read();
-                                        sensor_cal();
-                                        sensor_print(); // 확인용 코드
-
-                                        servo_move(Servo);
-
                                         speedL = -0.30; speedR = -0.40;
-                                        DC_move(speedL, speedR);
+
+                                        while_bundle();
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
                                     speedL = -0.20; speedR = 0.20;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
-                                    speedL = 0.20; speedR = -0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_WhCol[3] == true){
+                                        speedL = 0.20; speedR = -0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
-                                    speedL = 0.20; speedR = -0.20;
-                                    DC_move(speedL, speedR);
+                                    while(ir_WhCol[3] == true){
+                                        speedL = 0.20; speedR = -0.20;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < 500000);
-                                    tmr.reset();
-                                    tmr.stop();
+                                        while_bundle();
+                                    }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
                                     speedL = 0.20; speedR = 0.20;
@@ -451,6 +420,8 @@ int main(){
                 }
 
                 // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 바깥에 위치
+                // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 2개만 출력 + 상대방이 빨간색 끝좌표 안에 위치
+                // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 빨간색 안보임
                 else if(ras_data[2] == 1){ // 상대방이 빨간색 끝좌표 바깥에 위치
                     if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
                         if(ras_data[0] == 999){ // 상대 안보임
@@ -768,4 +739,16 @@ void th_SerialRx(){ // thread 전용
 
         // mutex.unlock();
     }
+}
+
+void while_bundle(){
+    in_SerialRx_main(); // interrupt 전용
+
+    sensor_read();
+    sensor_cal();
+    sensor_print(); // 확인용 코드
+
+    servo_move(Servo);
+
+    DC_move(speedL, speedR);
 }

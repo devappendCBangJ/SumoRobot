@@ -41,6 +41,10 @@ int black = 40000;
 PwmOut Servo(PA_8);
 
 float ang = 90.0, inc = 3.5;
+float angLL = 30;
+float angML = 78;
+float angMR = 102;
+float angRR = 150;
 
 // DC 모터
 DigitalOut DirL(PC_7);
@@ -51,11 +55,6 @@ PwmOut PwmR(PB_5);
 float speed = 0;
 float speedL = 0;
 float speedR = 0;
-
-float angLL = 30;
-float angML = 78;
-float angMR = 102;
-float angRR = 150;
 
 template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max);
 
@@ -105,8 +104,8 @@ Mutex mutex;
 int mode = 0;
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
-int turn_escape_time = 60000;
-int back_escape_time = 100000;
+int turn_escape_time = 10000000;
+int back_escape_time = 10000000;
 
 // [함수정의]
 void sensor_read();
@@ -181,7 +180,7 @@ int main(){
                     // pc.printf("상대방이 빨간색 안에 위치,   "); // 확인용 코드
 
                     if(ang <= angML){ // 서보 왼쪽
-                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4 || ras_data[1] == 9){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼 or 안보임
                             if(ras_data[0] == 999){ // 상대 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
@@ -219,7 +218,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전
                                     tmr.start();
-                                    while(ir_val[0] == true){
+                                    while(ir_val[0] < black){
                                         speedL = -0.20; speedR = 0.20;
 
                                         whl_bundle();
@@ -228,11 +227,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
                                     tmr.start();
-                                    while(ir_val[0] == true){
+                                    while(ir_val[0] < black){
                                         speedL = -0.20; speedR = 0.20;
 
                                         whl_bundle();
@@ -241,6 +241,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
@@ -248,7 +249,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.15;
 
                                         whl_bundle();
@@ -257,11 +258,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
-                                    while(ir_val[0] == true){
+                                    while(ir_val[0] < black){
                                         speedL = -0.15; speedR = 0.20;
 
                                         whl_bundle();
@@ -270,6 +272,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
@@ -297,7 +300,7 @@ int main(){
                     }
 
                     else if(angML < ang && ang < angMR){ // 서보 중간
-                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4 || ras_data[1] == 9){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼 or 안보임
                             if(ras_data[0] == 999){ // 상대 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
@@ -348,7 +351,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.20;
 
                                         whl_bundle();
@@ -357,11 +360,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.20;
 
                                         whl_bundle();
@@ -370,11 +374,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.15;
 
                                         whl_bundle();
@@ -383,6 +388,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 전진
@@ -390,7 +396,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
-                                    while(ir_val[0] == true){
+                                    while(ir_val[0] < black){
                                         speedL = -0.15; speedR = 0.20;
 
                                         whl_bundle();
@@ -399,6 +405,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 오른쪽 전진
@@ -428,7 +435,7 @@ int main(){
                     }
 
                     else if(angMR <= ang){ // 서보 오른쪽
-                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4 || ras_data[1] == 9){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼 or 안보임
                             if(ras_data[0] == 999){ // 상대 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
@@ -466,7 +473,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.20;
 
                                         whl_bundle();
@@ -475,11 +482,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.20;
 
                                         whl_bundle();
@@ -488,6 +496,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
@@ -495,7 +504,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
-                                    while(ir_val[1] == true){
+                                    while(ir_val[1] < black){
                                         speedL = 0.20; speedR = -0.15;
 
                                         whl_bundle();
@@ -504,11 +513,12 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
-                                    while(ir_val[0] == true){
+                                    while(ir_val[0] < black){
                                         speedL = -0.15; speedR = 0.20;
 
                                         whl_bundle();
@@ -517,6 +527,7 @@ int main(){
                                             tmr.stop();
                                             break;
                                         }
+                                        // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
@@ -548,7 +559,7 @@ int main(){
                 // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 2개만 출력 + 상대방이 빨간색 끝좌표 안에 위치
                 // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 빨간색 안보임
                 else if(ras_data[2] == 1){ // 상대방이 빨간색 끝좌표 바깥에 위치
-                    if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                    if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4 || ras_data[1] == 9){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼 or 안보임
                         if(ras_data[0] == 999){ // 상대 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
@@ -606,12 +617,16 @@ int main(){
                 }
             }
             // mutex.unlock();
+            
             DC_move(speedL, speedR);
 
             all_print();
 
             All_move = false;
         }
+
+        speedL = 0.18; speedR = 0.40;
+        DC_move(speedL, speedR);
     }
 }
 
@@ -672,13 +687,13 @@ void servo_set(PwmOut &rc){
 }
 
 void servo_move(PwmOut &rc){
-    if(0 < ras_data[0] && ras_data[0] < 200) inc = map<float>(ang, 200.0, 1.0, 3.5, 5.5);
-    else if(ras_data[0] <= 400) inc = map<float>(ang, 200.0, 400.0, 3.5, 5.5);
+    if(0 <= ras_data[0] && ras_data[0] < 200) inc = map<float>(ras_data[0], 200.0, 1.0, 3.5, 5.5);
+    else if(ras_data[0] <=200 && ras_data[0] <= 400) inc = map<float>(ras_data[0], 200.0, 400.0, 3.5, 5.5);
 
     // 중간 동작 : 화면 상대방 안보임
     if(ras_data[0] == 999){
         // pc.printf("1"); // 확인용 코드
-        inc = 6;
+        inc = 5.5;
 
         if(pre_data0 == 1) ang = ang - inc;
         else if(pre_data0 == 2) ang = ang + inc;
@@ -879,12 +894,12 @@ void whl_bundle(){
 
 void all_print(){
     pc.printf("ㅡㅡㅡㅡㅡ총합ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
-    pc.printf("mode = %f \n", mode); // 확인용 코드
+    pc.printf("mode = %d \n", mode); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ통신ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     pc.printf("ras_data = %.3f, %.3f, %.3f\n", ras_data[0], ras_data[1], ras_data[2]); // 확인용 코드
-    pc.printf("ㅡㅡㅡㅡㅡ모터ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
-    pc.printf("ang = %f, speedL = %f, speedR = %f\n", ang, speedL, speedR); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ센서ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     sensor_print(); // 확인용 코드
+    pc.printf("ㅡㅡㅡㅡㅡ모터ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
+    pc.printf("ang = %f, inc = %f, speedL = %f, speedR = %f\n", ang, inc, speedL, speedR); // 확인용 코드
     pc.printf("=======================\n"); // 확인용 코드
 }

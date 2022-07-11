@@ -152,19 +152,19 @@ int main(){
             // mutex.lock();
             // 초기 동작 : 상대 탐색
             if(mode == 0){
-                if(ras_data[0] == 999){
-                    speedL = 0.20; speedR = -0.20;
+                if(ras_data[0] == 999){ // 상대 안보임
+                    speedL = 0.30; speedR = -0.30;
                 }
-                else if(ras_data[0] < width_l){
-                    speedL = -0.20; speedR = 0.20;
+                else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
+                    speedL = -0.30; speedR = 0.30;
                 }
-                else if(width_l <= ras_data[0] && ras_data[0] < width_r){
+                else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
                     speedL = 0.0; speedR = 0.0;
                     mode = 1;
                     // pc.printf("mode = 1"); // 확인용 코드
                 }
-                else if(width_r <= ras_data[0]){
-                    speedL = 0.20; speedR = -0.20;
+                else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
+                    speedL = 0.30; speedR = -0.30;
                 }
             }
             
@@ -213,13 +213,10 @@ int main(){
                                         }
                                     }
                                 }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
-                                    speedL = 0.20; speedR = -0.20;
-                                }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전
                                     tmr.start();
                                     while(ir_val[0] < black){
-                                        speedL = -0.20; speedR = 0.20;
+                                        speedL = -0.30; speedR = 0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -233,7 +230,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 좌회전
                                     tmr.start();
                                     while(ir_val[0] < black){
-                                        speedL = -0.20; speedR = 0.20;
+                                        speedL = -0.30; speedR = 0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -245,12 +242,12 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
-                                    speedL = 0.20; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.15;
+                                        speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -264,7 +261,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
                                     while(ir_val[0] < black){
-                                        speedL = -0.15; speedR = 0.20;
+                                        speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -276,7 +273,7 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                    speedL = 0.20; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     if(ang <= angLL){
@@ -289,7 +286,7 @@ int main(){
                                     }
                                 }
                                 else{ // 그 외 : 왼쪽 전진
-                                    speedL = 0.10; speedR = 0.20;
+                                    speedL = 0.135; speedR = 0.30;
                                 }
                             }
                         }
@@ -333,26 +330,26 @@ int main(){
                                         }
                                     }
                                 }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 제자리 우회전
-                                    speedL = -0.20; speedR = 0.20;
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 오른쪽 전진
+                                    speedL = 0.30; speedR = 0.135;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < turn_escape_time){}
-                                    tmr.reset();
-                                    tmr.stop();
+                                    // tmr.start();
+                                    // while(tmr.read_us() < turn_escape_time){}
+                                    // tmr.reset();
+                                    // tmr.stop();
                                 }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
-                                    speedL = 0.20; speedR = -0.20;
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 왼쪽 전진
+                                    speedL = 0.135; speedR = 0.30;
 
-                                    tmr.start();
-                                    while(tmr.read_us() < turn_escape_time){}
-                                    tmr.reset();
-                                    tmr.stop();
+                                    // tmr.start();
+                                    // while(tmr.read_us() < turn_escape_time){}
+                                    // tmr.reset();
+                                    // tmr.stop();
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.20;
+                                        speedL = 0.30; speedR = -0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -366,7 +363,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.20;
+                                        speedL = 0.30; speedR = -0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -380,7 +377,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.15;
+                                        speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -392,12 +389,12 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 전진
-                                    speedL = 0.20; speedR = 0.10;
+                                    speedL = 0.135; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
                                     while(ir_val[0] < black){
-                                        speedL = -0.15; speedR = 0.20;
+                                        speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -409,7 +406,7 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 오른쪽 전진
-                                    speedL = 0.10; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.135;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     ///////////////////////////////////////////////////////
@@ -418,7 +415,7 @@ int main(){
                                     speedL = 0.30; speedR = 0.30;
                                 }
                                 else{ // 그 외 : 전진
-                                    speedL = 0.20; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.30;
                                 }
                             }
                         }
@@ -468,13 +465,13 @@ int main(){
                                         }
                                     }
                                 }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 제자리 좌회전
-                                    speedL = -0.20; speedR = 0.20;
-                                }
+                                // else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 왼쪽 전진
+                                //     speedL = -0.30; speedR = 0.30;
+                                // }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.20;
+                                        speedL = 0.30; speedR = -0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -488,7 +485,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.20;
+                                        speedL = 0.30; speedR = -0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -500,12 +497,12 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                    speedL = 0.20; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                     tmr.start();
                                     while(ir_val[1] < black){
-                                        speedL = 0.20; speedR = -0.15;
+                                        speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -519,7 +516,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전
                                     tmr.start();
                                     while(ir_val[0] < black){
-                                        speedL = -0.15; speedR = 0.20;
+                                        speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
                                         if(tmr.read_us() > turn_escape_time){
@@ -531,7 +528,7 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                    speedL = 0.20; speedR = 0.20;
+                                    speedL = 0.30; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                     if(angRR <= ang){
@@ -544,7 +541,7 @@ int main(){
                                     }
                                 }
                                 else{ // 그 외 : 오른쪽 전진
-                                    speedL = 0.20; speedR = 0.10;
+                                    speedL = 0.30; speedR = 0.135;
                                 }
                             }
                         }
@@ -888,7 +885,6 @@ void whl_bundle(){
     all_print();
 
     servo_move(Servo);
-
     DC_move(speedL, speedR);
 }
 

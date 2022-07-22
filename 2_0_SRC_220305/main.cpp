@@ -83,11 +83,11 @@ volatile float ras_data[3];
 // ras_data[3] : 파란영역 좌표 vs 상대 좌표 비교(거리, 영역)
     // 파란 영역 안 : 0(그대로 밀면 됨)
     // 파란 영역 밖 : 1(파란 영역 안으로 넣으면 best)
-int pre_data0 = 0;
-// 상대 최근 위치 없음 : 0
+int pre_data0 = 9;
 // 상대 최근 위치 왼쪽 : 1
 // 상대 최근 위치 가운데 : 2
 // 상대 최근 위치 오른쪽 : 3
+// 상대 최근 위치 없음 : 9
 
 int width = 400;
 int width_l = width * 4.5 / 11.0; // 세부조정 필요!!!
@@ -150,6 +150,7 @@ int main(){
             // DC_chk(); // Test 코드
 
             // mutex.lock();
+
             // 초기 동작 : 상대 탐색
             if(mode == 0){
                 if(ras_data[0] == 999){ // 상대 안보임
@@ -272,8 +273,8 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 전진
-                                speedL = 0.30; speedR = 0.30;
+                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 조금 왼쪽 전진
+                                speedL = 0.15; speedR = 0.30;
                             }
                             else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                 tmr.start();
@@ -303,8 +304,8 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                speedL = 0.30; speedR = 0.30;
+                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 아주 조금 왼쪽 전진
+                                speedL = 0.225; speedR = 0.30;
                             }
                             else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                 if(ang <= angLL){
@@ -361,19 +362,9 @@ int main(){
                             }
                             else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 : 오른쪽 전진
                                 speedL = 0.30; speedR = 0.135;
-
-                                // tmr.start();
-                                // while(tmr.read_us() < turn_escape_time){}
-                                // tmr.reset();
-                                // tmr.stop();
                             }
                             else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 왼쪽 전진
                                 speedL = 0.135; speedR = 0.30;
-
-                                // tmr.start();
-                                // while(tmr.read_us() < turn_escape_time){}
-                                // tmr.reset();
-                                // tmr.stop();
                             }
                             else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                 tmr.start();
@@ -492,9 +483,6 @@ int main(){
                                     }
                                 }
                             }
-                            // else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 : 왼쪽 전진
-                            //     speedL = -0.30; speedR = 0.30;
-                            // }
                             else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전
                                 tmr.start();
                                 while(ir_val[0] < black){
@@ -523,8 +511,8 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                speedL = 0.30; speedR = 0.30;
+                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 조금 오른쪽 전진
+                                speedL = 0.30; speedR = 0.15;
                             }
                             else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전
                                 tmr.start();
@@ -554,8 +542,8 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 전진
-                                speedL = 0.30; speedR = 0.30;
+                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 아주 조금 오른쪽 전진
+                                speedL = 0.30; speedR = 0.225;
                             }
                             else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                 if(angRR <= ang){
@@ -609,6 +597,14 @@ int main(){
                                 speedL = map<float>(ang, angML, angLL, 0.35, 0.15);
                                 speedR = 0.5;
                             }
+
+
+
+
+
+
+
+                            
                             else if(ang <= angLL){
                                 speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
                                 speedR = 0.5;

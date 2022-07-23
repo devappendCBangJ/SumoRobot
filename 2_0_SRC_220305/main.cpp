@@ -17,6 +17,7 @@ AnalogIn irmr(PA_4);
 AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
+AnalogIn irtest(PC_2);
 
 GP2A psdb(PB_1, 10, 80, 22.5, 0.1606);
 
@@ -27,6 +28,8 @@ uint16_t ir_val[6];
 // 3 : br
 // 4 : bl
 // 5 : ml
+uint16_t ir_test;
+// 6 : fm
 bool ir_WhCol[6];
 // 0 : fl + fr
 // 1 : bl + br
@@ -741,6 +744,7 @@ void sensor_read(){
     ir_val[3] = irbr.read_u16();
     ir_val[4] = irbl.read_u16();
     ir_val[5] = irml.read_u16();
+    ir_test = irtest.read_u16();
 
     psdb_val = psdb.getDistance();
 }
@@ -773,7 +777,7 @@ void sensor_cal(){
 }
 
 void sensor_print(){
-    pc.printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5]); // 확인용 코드
+    pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_test); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
     pc.printf("psd_val : | %lf |\n", psdb_val); // 확인용 코드
 }

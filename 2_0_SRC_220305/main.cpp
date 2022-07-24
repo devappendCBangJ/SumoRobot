@@ -107,8 +107,8 @@ Mutex mutex;
 int mode = 0;
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
-int turn_escape_time = 10000000; // 세부조정 필요!!!
-int back_escape_time = 10000000; // 세부조정 필요!!!
+int turn_escape_time = 1000000; // 세부조정 필요!!!
+int back_escape_time = 1000000; // 세부조정 필요!!!
 
 // [함수정의]
 void sensor_read();
@@ -185,7 +185,7 @@ int main(){
                     // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                     // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
                     //     tmr.start();
-                    //     while(ir_val[0] < black){
+                    //     while(ir_val[6] < black){
                     //         speedL = -0.40; speedR = 0.40;
 
                     //         whl_bundle();
@@ -201,7 +201,7 @@ int main(){
                     // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                     // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
                     //     tmr.start();
-                    //     while(ir_val[1] < black){
+                    //     while(ir_val[6] < black){
                     //         speedL = -0.40; speedR = 0.40;
 
                     //         whl_bundle();
@@ -321,10 +321,9 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 아주 조금 왼쪽 전진
-                                speedL = 0.225; speedR = 0.30;
+                            else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 매우 왼쪽 전진
+                                speedL = 0.08; speedR = 0.30; // 0.225;
                             }
-
                             else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                 if(ang <= angLL){
                                     speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
@@ -494,7 +493,7 @@ int main(){
                             }
                         }
                     }
-
+                    
                     else if(angMR <= ang){ // 서보 오른쪽
                         if(ras_data[1] == 9){ // 화면 원통 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
@@ -601,8 +600,8 @@ int main(){
                                     // if(ras_data[1] == 4) break;
                                 }
                             }
-                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 아주 조금 오른쪽 전진
-                                speedL = 0.30; speedR = 0.225;
+                            else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 매우 오른쪽 전진
+                                speedL = 0.30; speedR = 0.08; // 0.225;
                             }
                             else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
                                 if(angRR <= ang){
@@ -901,6 +900,10 @@ int main(){
                 }
             }
             // mutex.unlock();
+            if(abs(speedL) < 0.40 && abs(speedR) < 0.40){
+                speedL = speedL * 1.50;
+                speedR = speedR * 1.50;
+            }
             
             DC_move(speedL, speedR);
 

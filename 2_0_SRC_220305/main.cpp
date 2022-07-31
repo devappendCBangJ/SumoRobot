@@ -7,6 +7,12 @@
 #include "GP2A.h"
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
+// 모드
+DigitalOut led1(LED1);
+InterruptIn btn(BUTTON1);
+
+int mode = 0;
+
 // thread
 Thread com_th;
 
@@ -19,7 +25,8 @@ AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
 AnalogIn irfm(PC_2);
 
-GP2A psdb(PB_1, 10, 80, 22.5, 0.1606);
+AnalogIn psdf(PA_6);
+GP2A psdb(PA_7, 10, 80, 22.5, 0.1606);
 
 uint16_t ir_val[7];
 // 0 : fl
@@ -36,13 +43,22 @@ bool ir_WhCol[7];
 // 3 : fr + mr
 // 4 : mr + br
 // 5 : bl + ml
+
+double psdf_volts;
+double psdf_val;
 double psdb_val;
 int black = 40000;
 
 // AC서보 모터
 PwmOut Servo(PA_8);
 
-float ang = 90.0, inc = 3.5;
+float ang = 90.0; 
+float inc = 3.5;
+// float small_inc = 3.5;
+// float big_inc = 5.5;
+float small_inc = 2.5;
+float big_inc = 4.2;
+
 float angLL = 30;
 float angML = 78;
 float angMM = 90;
@@ -100,11 +116,10 @@ int width_r = width * 6.5 / 11.0; // 세부조정 필요!!!
 volatile bool gotPacket2 = false;
 volatile float pc_data[3];
 
-// 기타
+// 타이머
 Timer tmr;
 Mutex mutex;
 
-int mode = 0;
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
@@ -157,10 +172,10 @@ int main(){
             // 초기 동작 : 상대 탐색
             if(mode == 0){
                 if(ras_data[0] == 999){ // 상대 안보임
-                    speedL = 0.30; speedR = -0.30;
+                    speedL = 0.40; speedR = -0.40;
                 }
                 else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
-                    speedL = -0.30; speedR = 0.30;
+                    speedL = -0.40; speedR = 0.40;
                 }
                 else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
                     speedL = 0.0; speedR = 0.0;
@@ -168,7 +183,7 @@ int main(){
                     // pc.printf("mode = 1"); // 확인용 코드
                 }
                 else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
-                    speedL = 0.30; speedR = -0.30;
+                    speedL = 0.40; speedR = -0.40;
                 }
             }
             
@@ -897,6 +912,13 @@ int main(){
                         }
                     }
                     if(ras_data[1] == 4){
+                        if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 큼 : 매우 빠른 후진
+                            speedL = -1.0; speedR = -1.0;
+                        }
+                        else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 큼 : 매우 빠른 후진
+                            speedL = -1.0; speedR = -1.0;
+                        }
+
                         if(abs(speedL) <= 0.55 && abs(speedR) <= 0.55){
                             speedL = speedL * (1.50);
                             speedR = speedR * (1.50);
@@ -906,8 +928,8 @@ int main(){
             }
             // mutex.unlock();
             if(abs(speedL) < 0.40 && abs(speedR) < 0.40){
-                speedL = speedL * 1.50;
-                speedR = speedR * 1.50;
+                speedL = speedL * 2.00;
+                speedR = speedR * 2.00;
             }
             
             DC_move(speedL, speedR);
@@ -932,6 +954,10 @@ void sensor_read(){
     ir_val[4] = irbl.read_u16();
     ir_val[5] = irml.read_u16();
     ir_val[6] = irfm.read_u16();
+
+    psdf_volts = psdf.read() * 3.3;
+    psdf_val = 13 * pow(psdf_volts, -1.0);
+    if(psdf_val > 30) psdf_val = 30;
 
     psdb_val = psdb.getDistance();
 }
@@ -966,7 +992,7 @@ void sensor_cal(){
 void sensor_print(){
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
-    pc.printf("psd_val : | %lf |\n", psdb_val); // 확인용 코드
+    pc.printf("psdf_val : | %lf |, psdb_val : | %lf |\n", psdf_val, psdb_val); // 확인용 코드
 }
 
 // AC 서보 모터
@@ -975,18 +1001,19 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 }
 
 void servo_set(PwmOut &rc){
-    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    // uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
 }
 
 void servo_move(PwmOut &rc){
-    if(0 <= ras_data[0] && ras_data[0] < 200) inc = map<float>(ras_data[0], 200.0, 1.0, 3.5, 5.5);
-    else if(ras_data[0] <=200 && ras_data[0] <= 400) inc = map<float>(ras_data[0], 200.0, 400.0, 3.5, 5.5);
+    if(0 <= ras_data[0] && ras_data[0] < 200) inc = map<float>(ras_data[0], 200.0, 1.0, small_inc, big_inc);
+    else if(ras_data[0] <=200 && ras_data[0] <= 400) inc = map<float>(ras_data[0], 200.0, 400.0, small_inc, big_inc);
 
     // 중간 동작 : 화면 상대방 안보임
     if(ras_data[0] == 999){
         // pc.printf("1"); // 확인용 코드
-        inc = 5.5;
+        inc = big_inc;
 
         if(pre_data0 == 1) ang = ang - inc;
         else if(pre_data0 == 2) ang = ang + inc;
@@ -1024,7 +1051,8 @@ void servo_move(PwmOut &rc){
     else if (ang < 0.0f){
         ang = 0.0;
     }
-    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    // uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
 
     // pc.printf("%f \n", ang); // 확인용 코드

@@ -16,4 +16,14 @@ int main()
         }
         wait(0.1);
     }
+
+    btn.fall(&flip);
+    while(true){
+        led1 =! led1;
+        wait_ms(100);
+    }
+}
+
+void flip(){
+    led2 =! led2;
 }

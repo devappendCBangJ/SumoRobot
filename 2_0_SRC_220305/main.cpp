@@ -172,10 +172,10 @@ int main(){
             // 초기 동작 : 상대 탐색
             if(mode == 0){
                 if(ras_data[0] == 999){ // 상대 안보임
-                    speedL = 0.40; speedR = -0.40;
+                    speedL = 0.50; speedR = -0.50;
                 }
                 else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
-                    speedL = -0.40; speedR = 0.40;
+                    speedL = -0.50; speedR = 0.50;
                 }
                 else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
                     speedL = 0.0; speedR = 0.0;
@@ -183,7 +183,7 @@ int main(){
                     // pc.printf("mode = 1"); // 확인용 코드
                 }
                 else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
-                    speedL = 0.40; speedR = -0.40;
+                    speedL = 0.50; speedR = -0.50;
                 }
             }
             
@@ -240,16 +240,16 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.40; speedR = 0.40;
+                                speedL = -0.50; speedR = 0.50;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else{
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                         }
                         else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
@@ -371,16 +371,16 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.40; speedR = 0.40;
+                                speedL = -0.50; speedR = 0.50;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else{
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                         }
                         else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
@@ -519,16 +519,16 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.40; speedR = 0.40;
+                                speedL = -0.50; speedR = 0.50;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                             else{
-                                speedL = 0.40; speedR = -0.40;
+                                speedL = 0.50; speedR = -0.50;
                             }
                         }
                         else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
@@ -654,16 +654,16 @@ int main(){
                         // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                         if(pre_data0 == 1){
-                            speedL = -0.40; speedR = 0.40;
+                            speedL = -0.50; speedR = 0.50;
                         }
                         else if(pre_data0 == 2){
-                            speedL = 0.40; speedR = -0.40;
+                            speedL = 0.50; speedR = -0.50;
                         }
                         else if(pre_data0 == 3){
-                            speedL = 0.40; speedR = -0.40;
+                            speedL = 0.50; speedR = -0.50;
                         }
                         else{
-                            speedL = 0.40; speedR = -0.40;
+                            speedL = 0.50; speedR = -0.50;
                         }
                     }
                     else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
@@ -912,11 +912,31 @@ int main(){
                         }
                     }
                     if(ras_data[1] == 4){
-                        if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 큼 : 매우 빠른 후진
-                            speedL = -1.0; speedR = -1.0;
+                        if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
+                            tmr.start();
+                            while(psdf_val < 20){
+                                speedL = -1.0; speedR = -0.6;
+
+                                whl_bundle();
+                                if(tmr.read_us() > back_escape_time){
+                                    tmr.reset();
+                                    tmr.stop();
+                                    break;
+                                }
+                            }
                         }
-                        else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 큼 : 매우 빠른 후진
-                            speedL = -1.0; speedR = -1.0;
+                        else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
+                            tmr.start();
+                            while(psdf_val < 20){
+                                speedL = -0.6; speedR = -1.0;
+
+                                whl_bundle();
+                                if(tmr.read_us() > back_escape_time){
+                                    tmr.reset();
+                                    tmr.stop();
+                                    break;
+                                }
+                            }
                         }
 
                         if(abs(speedL) <= 0.55 && abs(speedR) <= 0.55){
@@ -931,7 +951,7 @@ int main(){
                 speedL = speedL * 2.00;
                 speedR = speedR * 2.00;
             }
-            
+
             DC_move(speedL, speedR);
 
             all_print();

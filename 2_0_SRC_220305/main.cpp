@@ -62,10 +62,10 @@ PwmOut Servo(PA_8);
 
 float ang = 90.0; 
 float inc = 3.5;
-// float small_inc = 3.5;
-// float big_inc = 5.5;
-float small_inc = 2.5;
-float big_inc = 4.2;
+float small_inc = 3.5;
+float big_inc = 5.5;
+// float small_inc = 2.5;
+// float big_inc = 4.2;
 
 float angLL = 30;
 float angML = 78;
@@ -2039,8 +2039,8 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 }
 
 void servo_set(PwmOut &rc){
-    // uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
-    uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
+    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    // uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
 }
 
@@ -2089,8 +2089,8 @@ void servo_move(PwmOut &rc){
     else if (ang < 0.0f){
         ang = 0.0;
     }
-    // uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
-    uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
+    uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
+    // uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
 
     // pc.printf("%f \n", ang); // 확인용 코드

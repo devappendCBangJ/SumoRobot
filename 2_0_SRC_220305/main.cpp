@@ -62,8 +62,8 @@ PwmOut Servo(PA_8);
 
 float ang = 90.0; 
 float inc = 3.5;
-// float small_inc = 3.5;
-// float big_inc = 5.5;
+float small_inc = 3.5;
+float big_inc = 5.5;
 // float small_inc = 2.5;
 // float big_inc = 4.2;
 
@@ -2168,8 +2168,8 @@ void in_SerialRx(){ // interrupt 전용
         // ',' : 단어 자르기
         if(byteIn == ','){
             // pc.printf("byteIn == ',' : %c\n", byteIn); // 확인용 코드
-            ras_serialInBuffer[ras_buff_cnt]='\0';
-            ras_data[ras_data_cnt++]=atof(ras_serialInBuffer);
+            ras_serialInBuffer[ras_buff_cnt] = '\0';
+            ras_data[ras_data_cnt++] = atof(ras_serialInBuffer);
             ras_buff_cnt = 0;
         }
         // '/' : 시리얼 완료
@@ -2177,13 +2177,13 @@ void in_SerialRx(){ // interrupt 전용
             // pc.printf("byteIn == '/' : %c \n", byteIn); // 확인용 코드
             ras_serialInBuffer[ras_buff_cnt] = '\0';
             ras_data[ras_data_cnt]=atof(ras_serialInBuffer);
-            ras_buff_cnt=0; ras_data_cnt=0;
+            ras_buff_cnt=0; ras_data_cnt = 0;
             gotPacket = true;
         }
         // 이외 : 시리얼 저장
         else{
             // pc.printf("byteIn == '나머지' : %c\n", byteIn); // 확인용 코드
-            ras_serialInBuffer[ras_buff_cnt++]=byteIn;
+            ras_serialInBuffer[ras_buff_cnt++] = byteIn;
         }
     }
 }

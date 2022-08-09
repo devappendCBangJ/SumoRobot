@@ -62,8 +62,8 @@ PwmOut Servo(PA_8);
 
 float ang = 90.0; 
 float inc = 3.5;
-float small_inc = 3.5;
-float big_inc = 5.5;
+// float small_inc = 3.5;
+// float big_inc = 5.5;
 // float small_inc = 2.5;
 // float big_inc = 4.2;
 
@@ -2046,7 +2046,7 @@ void servo_set(PwmOut &rc){
 
 void servo_move(PwmOut &rc){
     if(0 <= ras_data[0] && ras_data[0] < width/2) inc = map<float>(ras_data[0], width/2, 1.0, small_inc, big_inc);
-    else if(ras_data[0] <= width/2 && ras_data[0] <= width) inc = map<float>(ras_data[0], width/2, width, small_inc, big_inc);
+    else if(width/2 <= ras_data[0] && ras_data[0] <= width) inc = map<float>(ras_data[0], width/2, width, small_inc, big_inc);
 
     // 중간 동작 : 화면 상대방 안보임
     if(ras_data[0] == 999){

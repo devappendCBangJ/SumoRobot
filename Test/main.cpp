@@ -1,36 +1,17 @@
 #include "mbed.h"
 
-InterruptIn btn(BUTTON1);
-DigitalOut led1(LED1);
+AnalogIn ir_new(PA_0);
+AnalogIn ir_old(PA_1);
 
 RawSerial pc(USBTX, USBRX, 9600);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
 
-Ticker tic;
-int led_cnt = 0;
-int tic_cnt = 0;
-int tic_even_cnt = 0;
-
-void flip();
-void led_flash();
-
 // main() runs in its own thread in the OS
 int main(){
-    btn.fall(&flip);
-    tic.attach(&led_flash, 0.10);
     while(true){
-        pc.printf("| led : %d | led_cnt : %d | tic_cnt : %d | tic_even_cnt : %d | \n", led1.read(), led_cnt, tic_cnt, tic_even_cnt);
+        int ir_new_val = ir_new.read_u16();
+        int ir_old_val = ir_old.read_u16();
+        pc.printf("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n");
+        pc.printf("ir_new_val : %d \n", ir_new_val);
+        pc.printf("ir_old_val : %d \n", ir_old_val);
     }
-}
-
-void flip(){
-    led_cnt++;
-}
-
-void led_flash(){
-    tic_cnt++;
-    if(tic_cnt % 2 == 0){
-        tic_even_cnt++;
-        if(led_cnt > (tic_even_cnt % 10)) led1 = 1;
-    }
-    else led1 = 0;
 }

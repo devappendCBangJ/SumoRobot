@@ -275,7 +275,7 @@ int main(){
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         if(angLL < ang){ // 서보 보통 왼쪽
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                                 speedR = -0.50;
 
@@ -289,7 +289,7 @@ int main(){
                                         }
                                         else if(ang <= angLL){ // 서보 매우 왼쪽
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                                 speedR = -0.50;
 
@@ -315,7 +315,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.48; speedR = -0.30;
 
                                         whl_bundle();
@@ -422,7 +422,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL =-0.70; speedR = -0.70;
 
                                             whl_bundle();
@@ -442,7 +442,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
@@ -565,7 +565,7 @@ int main(){
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         if(ang < angRR){ // 서보 보통 오른쪽
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
@@ -579,7 +579,7 @@ int main(){
                                         }
                                         else if(angRR <= ang){ // 서보 매우 오른쪽
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
@@ -605,7 +605,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.48;
 
                                         whl_bundle();
@@ -721,7 +721,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                                 speedR = -0.50;
 
@@ -745,7 +745,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                             speedR = -0.50;
 
@@ -766,7 +766,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                                 speedR = -0.50;
 
@@ -790,7 +790,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                             speedR = -0.50;
 
@@ -812,7 +812,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.70;
                                             speedR = -0.70;
 
@@ -836,7 +836,7 @@ int main(){
                                     (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                 ){
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.50;
                                         speedR = -0.50;
 
@@ -861,7 +861,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
@@ -885,7 +885,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.50;
                                             speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
@@ -906,7 +906,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
@@ -930,7 +930,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.50;
                                             speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
@@ -1118,7 +1118,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.80; speedR = -0.50;
 
                                             whl_bundle();
@@ -1155,7 +1155,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.65; speedR = -0.65;
 
                                             whl_bundle();
@@ -1192,7 +1192,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.50; speedR = -0.80;
 
                                             whl_bundle();
@@ -1293,7 +1293,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.80; speedR = -0.50;
 
                                             whl_bundle();
@@ -1317,7 +1317,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.40; speedR = -0.30;
 
                                         whl_bundle();
@@ -1424,7 +1424,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.65; speedR = -0.65;
 
                                             whl_bundle();
@@ -1444,7 +1444,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
@@ -1572,7 +1572,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.50; speedR = -0.80;
 
                                             whl_bundle();
@@ -1596,7 +1596,7 @@ int main(){
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.40;
 
                                         whl_bundle();
@@ -1712,7 +1712,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.65);
                                                 speedR = -0.5;
 
@@ -1737,7 +1737,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angML, angLL, 0.60, 0.65);
                                             speedR = -0.5;
 
@@ -1758,7 +1758,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.65, 0.70);
                                                 speedR = -0.5;
 
@@ -1783,7 +1783,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angLL, 0.0, 0.65, 0.70);
                                             speedR = -0.5;
 
@@ -1805,7 +1805,7 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.65;
                                             speedR = -0.65;
 
@@ -1831,7 +1831,7 @@ int main(){
                                     (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                 ){
                                     tmr.start();
-                                    while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                    while(ir_WhCol[0] == true){
                                         speedL = -0.65;
                                         speedR = -0.65;
 
@@ -1856,7 +1856,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.65);
 
@@ -1881,7 +1881,7 @@ int main(){
                                         (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 + 왼쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.5;
                                             speedR = -map<float>(ang, angMR, angRR, 0.60, 0.65);
 
@@ -1902,7 +1902,7 @@ int main(){
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             tmr.start();
-                                            while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                            while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.65, 0.70);
 
@@ -1927,7 +1927,7 @@ int main(){
                                         (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 + 왼쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         tmr.start();
-                                        while(ir_WhCol[2] == true || ir_WhCol[3] == true){
+                                        while(ir_WhCol[0] == true){
                                             speedL = -0.5;
                                             speedR = -map<float>(ang, angRR, 180.0, 0.65, 0.70);
 

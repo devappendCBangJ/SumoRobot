@@ -358,8 +358,41 @@ int main(){
                                         }
                                     }
                                 }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 : 조금 왼쪽 전진
-                                    speedL = 0.30; speedR = 0.60;
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
+                                        speedL = 0.30; speedR = 0.60;
+                                    }
+                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
+                                        tmr.start();
+                                        while(ir_WhCol[0] == true){
+                                            speedL = -0.45; speedR = -0.30;
+
+                                            whl_bundle();
+                                            if(tmr.read_us() > back_escape_time){
+                                                tmr.reset();
+                                                tmr.stop();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
+                                        speedL = 0.60; speedR = 0.30;
+                                    }
+                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
+                                        tmr.start();
+                                        while(ir_WhCol[0] == true){
+                                            speedL = -0.45; speedR = -0.30;
+
+                                            whl_bundle();
+                                            if(tmr.read_us() > back_escape_time){
+                                                tmr.reset();
+                                                tmr.stop();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
@@ -532,6 +565,27 @@ int main(){
                                         }
                                     }
                                 }
+                                else if(
+                                    (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+                                    (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                ){
+                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 전진
+                                        speedL = 0.35; speedR = 0.35;
+                                    }
+                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
+                                        tmr.start();
+                                        while(ir_WhCol[0] == true){
+                                            speedL = -0.35; speedR = -0.35;
+
+                                            whl_bundle();
+                                            if(tmr.read_us() > back_escape_time){
+                                                tmr.reset();
+                                                tmr.stop();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();
                                     while(ir_WhCol[0] == true){
@@ -689,8 +743,41 @@ int main(){
                                         }
                                     }
                                 }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 조금 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.30;
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
+                                        speedL = 0.30; speedR = 0.60;
+                                    }
+                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
+                                        tmr.start();
+                                        while(ir_WhCol[0] == true){
+                                            speedL = -0.30; speedR = -0.45;
+
+                                            whl_bundle();
+                                            if(tmr.read_us() > back_escape_time){
+                                                tmr.reset();
+                                                tmr.stop();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
+                                        speedL = 0.60; speedR = 0.30;
+                                    }
+                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
+                                        tmr.start();
+                                        while(ir_WhCol[0] == true){
+                                            speedL = -0.30; speedR = -0.45;
+
+                                            whl_bundle();
+                                            if(tmr.read_us() > back_escape_time){
+                                                tmr.reset();
+                                                tmr.stop();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     tmr.start();

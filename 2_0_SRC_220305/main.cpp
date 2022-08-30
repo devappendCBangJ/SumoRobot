@@ -125,7 +125,8 @@ volatile bool gotPacket2 = false;
 volatile float pc_data[3];
 
 // 타이머
-Timer tmr;
+Timer brk_tmr;
+Timer cam_tmr;
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
@@ -176,7 +177,7 @@ int main(){
         sensor_cal();
         // sensor_print(); // 확인용 코드
 
-        if(All_move == true){
+        if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
 
@@ -215,14 +216,14 @@ int main(){
 
                         // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -231,14 +232,14 @@ int main(){
 
                         // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -274,29 +275,29 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         if(angLL < ang){ // 서보 보통 왼쪽
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
                                         }
                                         else if(ang <= angLL){ // 서보 매우 왼쪽
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -314,27 +315,27 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.45; speedR = -0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = -0.45; speedR = 0.45;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -345,14 +346,14 @@ int main(){
                                         speedL = 0.60; speedR = 0.10;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.45; speedR = -0.30;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -363,14 +364,14 @@ int main(){
                                         speedL = 0.30; speedR = 0.60;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.45; speedR = -0.30;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -381,41 +382,41 @@ int main(){
                                         speedL = 0.60; speedR = 0.30;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.45; speedR = -0.30;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.45; speedR = -0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.45; speedR = -0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -467,14 +468,14 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL =-0.70; speedR = -0.70;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -487,42 +488,42 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
                                     if(ang >= 90){ // 서보 조금이라도 오른쪽 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_val[6] < black){
                                             speedL = 0.45; speedR = -0.45;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > turn_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > turn_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                             // if(ras_data[1] == 4) break;
                                         }
                                     }
                                     else if(ang < 90){ // 서보 조금이라도 왼쪽 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_val[6] < black){
                                             speedL = -0.45; speedR = 0.45;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > turn_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > turn_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                             // if(ras_data[1] == 4) break;
@@ -534,14 +535,14 @@ int main(){
                                         speedL = 0.60; speedR = 0.10;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.35; speedR = -0.35;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -552,14 +553,14 @@ int main(){
                                         speedL = 0.10; speedR = 0.60;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.35; speedR = -0.35;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -573,41 +574,41 @@ int main(){
                                         speedL = 0.35; speedR = 0.35;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.35; speedR = -0.35;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -659,29 +660,29 @@ int main(){
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         if(ang < angRR){ // 서보 보통 오른쪽
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
                                         }
                                         else if(angRR <= ang){ // 서보 매우 오른쪽
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -699,27 +700,27 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.45;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = 0.45; speedR = -0.45;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -730,14 +731,14 @@ int main(){
                                         speedL = 0.10; speedR = 0.60;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.30; speedR = -0.45;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -748,14 +749,14 @@ int main(){
                                         speedL = 0.30; speedR = 0.60;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.30; speedR = -0.45;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -766,41 +767,41 @@ int main(){
                                         speedL = 0.60; speedR = 0.30;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.30; speedR = -0.45;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.45;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.45;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -861,15 +862,15 @@ int main(){
                                 if(angLL < ang){ // 서보 보통 왼쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -885,15 +886,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                             speedR = -0.50;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -904,15 +905,15 @@ int main(){
                                             speedR = 0.60;
                                         }
                                         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -926,15 +927,15 @@ int main(){
                                 else if(ang <= angLL){ // 서보 매우 왼쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -950,15 +951,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                             speedR = -0.50;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -969,15 +970,15 @@ int main(){
                                             speedR = 0.50;
                                         }
                                         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
                                                 speedR = -0.50;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -992,15 +993,15 @@ int main(){
                             else if(angML < ang && ang < angMR){ // 서보 중간
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.70;
                                             speedR = -0.70;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1016,15 +1017,15 @@ int main(){
                                     (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                 ){
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.50;
                                         speedR = -0.50;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -1038,15 +1039,15 @@ int main(){
                                         speedR = 0.60;
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.50;
                                             speedR = -0.50;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1064,15 +1065,15 @@ int main(){
                                 if(ang < angRR){ // 서보 보통 오른쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -1088,15 +1089,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.50;
                                             speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1107,15 +1108,15 @@ int main(){
                                             speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
                                         }
                                         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -1129,15 +1130,15 @@ int main(){
                                 else if(angRR <= ang){ // 서보 매우 오른쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -1153,15 +1154,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.50;
                                             speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1172,15 +1173,15 @@ int main(){
                                             speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
                                         }
                                         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.50;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -1194,27 +1195,27 @@ int main(){
                             }
 
                             if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                tmr.start();
+                                brk_tmr.start();
                                 while(psdf_val < 20){
                                     speedL = -1.0; speedR = -0.6;
 
                                     whl_bundle();
-                                    if(tmr.read_us() > back_escape_time){
-                                        tmr.reset();
-                                        tmr.stop();
+                                    if(brk_tmr.read_us() > back_escape_time){
+                                        brk_tmr.reset();
+                                        brk_tmr.stop();
                                         break;
                                     }
                                 }
                             }
                             else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                tmr.start();
+                                brk_tmr.start();
                                 while(psdf_val < 20){
                                     speedL = -0.6; speedR = -1.0;
 
                                     whl_bundle();
-                                    if(tmr.read_us() > back_escape_time){
-                                        tmr.reset();
-                                        tmr.stop();
+                                    if(brk_tmr.read_us() > back_escape_time){
+                                        brk_tmr.reset();
+                                        brk_tmr.stop();
                                         break;
                                     }
                                 }
@@ -1297,14 +1298,14 @@ int main(){
 
                         // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -1313,14 +1314,14 @@ int main(){
 
                         // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -1361,14 +1362,14 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.80; speedR = -0.50;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1398,14 +1399,14 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.65; speedR = -0.65;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1435,14 +1436,14 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.50; speedR = -0.80;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1478,14 +1479,14 @@ int main(){
 
                         // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -1494,14 +1495,14 @@ int main(){
 
                         // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
                         // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     tmr.start();
+                        //     brk_tmr.start();
                         //     while(ir_val[6] < black){
                         //         speedL = -0.40; speedR = 0.40;
 
                         //         whl_bundle();
-                        //         if(tmr.read_us() > turn_escape_time){
-                        //             tmr.reset();
-                        //             tmr.stop();
+                        //         if(brk_tmr.read_us() > turn_escape_time){
+                        //             brk_tmr.reset();
+                        //             brk_tmr.stop();
                         //             break;
                         //         }
                         //         // if(ras_data[1] == 4) break;
@@ -1536,14 +1537,14 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.80; speedR = -0.50;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1560,14 +1561,14 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.40; speedR = -0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -1576,14 +1577,14 @@ int main(){
                                     speedL = 0.30; speedR = 0.08;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = -0.30; speedR = 0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1593,28 +1594,28 @@ int main(){
                                     speedL = 0.15; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1667,14 +1668,14 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.65; speedR = -0.65;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1687,14 +1688,14 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.35; speedR = -0.35;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -1707,28 +1708,28 @@ int main(){
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
                                     if(ang >= 90){ // 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_val[6] < black){
                                             speedL = 0.30; speedR = -0.30;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > turn_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > turn_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                             // if(ras_data[1] == 4) break;
                                         }
                                     }
                                     else if(ang < 90){ // 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_val[6] < black){
                                             speedL = -0.30; speedR = 0.30;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > turn_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > turn_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                             // if(ras_data[1] == 4) break;
@@ -1736,14 +1737,14 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1753,14 +1754,14 @@ int main(){
                                     speedL = 0.135; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1815,14 +1816,14 @@ int main(){
 
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.50; speedR = -0.80;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -1839,14 +1840,14 @@ int main(){
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.30; speedR = -0.40;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -1855,14 +1856,14 @@ int main(){
                                     speedL = 0.08; speedR = 0.30;
                                 }
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = 0.30; speedR = -0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1872,28 +1873,28 @@ int main(){
                                     speedL = 0.30; speedR = 0.15;
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = 0.30; speedR = -0.225;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
                                     }
                                 }
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_val[6] < black){
                                         speedL = -0.225; speedR = 0.30;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > turn_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > turn_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                         // if(ras_data[1] == 4) break;
@@ -1955,15 +1956,15 @@ int main(){
                                 if(angLL < ang){ // 서보 보통 왼쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angML, angLL, 0.60, 0.65);
                                                 speedR = -0.5;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -1980,15 +1981,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angML, angLL, 0.60, 0.65);
                                             speedR = -0.5;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -2001,15 +2002,15 @@ int main(){
                                 else if(ang <= angLL){ // 서보 매우 왼쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -map<float>(ang, angLL, 0.0, 0.65, 0.70);
                                                 speedR = -0.5;
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -2026,15 +2027,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -map<float>(ang, angLL, 0.0, 0.65, 0.70);
                                             speedR = -0.5;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -2048,15 +2049,15 @@ int main(){
                             else if(angML < ang && ang < angMR){ // 서보 중간
                                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.65;
                                             speedR = -0.65;
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -2074,15 +2075,15 @@ int main(){
                                     (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                 ){
-                                    tmr.start();
+                                    brk_tmr.start();
                                     while(ir_WhCol[0] == true){
                                         speedL = -0.65;
                                         speedR = -0.65;
 
                                         whl_bundle();
-                                        if(tmr.read_us() > back_escape_time){
-                                            tmr.reset();
-                                            tmr.stop();
+                                        if(brk_tmr.read_us() > back_escape_time){
+                                            brk_tmr.reset();
+                                            brk_tmr.stop();
                                             break;
                                         }
                                     }
@@ -2099,15 +2100,15 @@ int main(){
                                 if(ang < angRR){ // 서보 보통 오른쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.65);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -2124,15 +2125,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 + 왼쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.5;
                                             speedR = -map<float>(ang, angMR, angRR, 0.60, 0.65);
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -2145,15 +2146,15 @@ int main(){
                                 else if(angRR <= ang){ // 서보 매우 오른쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            tmr.start();
+                                            brk_tmr.start();
                                             while(ir_WhCol[0] == true){
                                                 speedL = -0.5;
                                                 speedR = -map<float>(ang, angRR, 180.0, 0.65, 0.70);
 
                                                 whl_bundle();
-                                                if(tmr.read_us() > back_escape_time){
-                                                    tmr.reset();
-                                                    tmr.stop();
+                                                if(brk_tmr.read_us() > back_escape_time){
+                                                    brk_tmr.reset();
+                                                    brk_tmr.stop();
                                                     break;
                                                 }
                                             }
@@ -2170,15 +2171,15 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 + 왼쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        tmr.start();
+                                        brk_tmr.start();
                                         while(ir_WhCol[0] == true){
                                             speedL = -0.5;
                                             speedR = -map<float>(ang, angRR, 180.0, 0.65, 0.70);
 
                                             whl_bundle();
-                                            if(tmr.read_us() > back_escape_time){
-                                                tmr.reset();
-                                                tmr.stop();
+                                            if(brk_tmr.read_us() > back_escape_time){
+                                                brk_tmr.reset();
+                                                brk_tmr.stop();
                                                 break;
                                             }
                                         }
@@ -2192,27 +2193,27 @@ int main(){
                         }
                         if(ras_data[1] == 4){ // 화면 원통 매우 큼
                             if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                tmr.start();
+                                brk_tmr.start();
                                 while(psdf_val < 20){
                                     speedL = -1.0; speedR = -0.6;
 
                                     whl_bundle();
-                                    if(tmr.read_us() > back_escape_time){
-                                        tmr.reset();
-                                        tmr.stop();
+                                    if(brk_tmr.read_us() > back_escape_time){
+                                        brk_tmr.reset();
+                                        brk_tmr.stop();
                                         break;
                                     }
                                 }
                             }
                             else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                tmr.start();
+                                brk_tmr.start();
                                 while(psdf_val < 20){
                                     speedL = -0.6; speedR = -1.0;
 
                                     whl_bundle();
-                                    if(tmr.read_us() > back_escape_time){
-                                        tmr.reset();
-                                        tmr.stop();
+                                    if(brk_tmr.read_us() > back_escape_time){
+                                        brk_tmr.reset();
+                                        brk_tmr.stop();
                                         break;
                                     }
                                 }
@@ -2237,6 +2238,9 @@ int main(){
             all_print();
 
             All_move = false;
+        }
+        else if(All_move == false){ // 통신 못받음
+            
         }
 
         // speedL = 0.18; speedR = 0.40;

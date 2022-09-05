@@ -126,12 +126,14 @@ volatile float pc_data[3];
 
 // 타이머
 Timer brk_tmr;
+Timer fight_back_tmr;
 Timer cam_tmr;
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
+int fight_back_time = 500000; // 세부조정 필요!!!
 
 // [함수정의]
 void sensor_read();
@@ -876,6 +878,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
+                                                speedR = -0.50;
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                         else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
                                             speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
@@ -900,6 +912,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
+                                            speedR = -0.50;
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
@@ -919,6 +941,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
+                                                speedR = -0.50;
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                     }
                                     else{ // 그 외 : 자유롭게 공격
@@ -941,6 +973,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
+                                                speedR = -0.50;
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                         else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
                                             speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
@@ -965,6 +1007,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
+                                            speedR = -0.50;
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
@@ -984,6 +1036,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -map<float>(ang, angLL, 0.0, 0.85, 0.95);
+                                                speedR = -0.50;
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                     }
                                     else{ // 그 외 : 자유롭게 공격
@@ -997,8 +1059,8 @@ int main(){
                                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                         brk_tmr.start();
                                         while(ir_WhCol[0] == true){
-                                            speedL = -0.70;
-                                            speedR = -0.70;
+                                            speedL = -0.50;
+                                            speedR = -0.50;
 
                                             whl_bundle();
                                             if(brk_tmr.read_us() > back_escape_time){
@@ -1007,6 +1069,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -0.50;
+                                            speedR = -0.50;
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                     else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
                                         speedL = 0.60;
@@ -1031,6 +1103,16 @@ int main(){
                                             break;
                                         }
                                     }
+
+                                    fight_back_tmr.start();
+                                    while(fight_back_tmr.read_us() < fight_back_time){
+                                        speedL = -0.50;
+                                        speedR = -0.50;
+
+                                        whl_bundle();
+                                    }
+                                    fight_back_tmr.reset();
+                                    fight_back_tmr.stop();
                                 }
                                 else if(
                                     (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴
@@ -1053,6 +1135,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -0.50;
+                                            speedR = -0.50;
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                 }
                                 else{ // 그 외 : 자유롭게 공격
@@ -1069,7 +1161,7 @@ int main(){
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                                             brk_tmr.start();
                                             while(ir_WhCol[0] == true){
-                                                speedL = -0.5;
+                                                speedL = -0.50;
                                                 speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
 
                                                 whl_bundle();
@@ -1079,6 +1171,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -0.50;
+                                                speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                         else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
                                             speedL = 0.60;
@@ -1103,6 +1205,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -0.50;
+                                            speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
@@ -1122,6 +1234,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -0.50;
+                                                speedR = -map<float>(ang, angMR, angRR, 0.60, 0.85);
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                     }
                                     else{ // 그 외 : 자유롭게 공격
@@ -1144,6 +1266,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -0.50;
+                                                speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                         else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
                                             speedL = 0.50;
@@ -1168,6 +1300,16 @@ int main(){
                                                 break;
                                             }
                                         }
+
+                                        fight_back_tmr.start();
+                                        while(fight_back_tmr.read_us() < fight_back_time){
+                                            speedL = -0.50;
+                                            speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
+
+                                            whl_bundle();
+                                        }
+                                        fight_back_tmr.reset();
+                                        fight_back_tmr.stop();
                                     }
                                     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
@@ -1187,6 +1329,16 @@ int main(){
                                                     break;
                                                 }
                                             }
+
+                                            fight_back_tmr.start();
+                                            while(fight_back_tmr.read_us() < fight_back_time){
+                                                speedL = -0.50;
+                                                speedR = -map<float>(ang, angRR, 180.0, 0.85, 0.95);
+
+                                                whl_bundle();
+                                            }
+                                            fight_back_tmr.reset();
+                                            fight_back_tmr.stop();
                                         }
                                     }
                                     else{ // 그 외 : 자유롭게 공격
@@ -2680,6 +2832,19 @@ void DC_chk(){
     DirR = 1;
     DirL = 1;
 }
+
+// // 타이머 움직임
+// void fight_tmr_move(){
+//     fight_back_tmr.start();
+//     while(fight_back_tmr.read_us() < fight_back_time){
+//         speedL = -map<float>(ang, angML, angLL, 0.60, 0.85);
+//         speedR = -0.50;
+
+//         whl_bundle();
+//     }
+//     fight_back_tmr.reset();
+//     fight_back_tmr.stop();
+// }
 
 // 통신(pc, ras, mbed)
 void in_SerialRx(){ // interrupt 전용

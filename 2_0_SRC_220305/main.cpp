@@ -185,7 +185,7 @@ int main(){
 
             // mutex.lock();
 
-            pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
+            // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
 
             if(tot_mode == 0){
                 // 초기 동작 : 상대 탐색
@@ -2787,7 +2787,7 @@ void whl_bundle(){
     servo_move(Servo);
     DC_move(speedL, speedR);
 
-    // all_print();
+    all_print();
 }
 
 void all_print(){

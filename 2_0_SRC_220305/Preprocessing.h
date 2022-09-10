@@ -1,11 +1,14 @@
+# ifndef PREPROCESSING_H
+# define PREPROCESSING_H
+
 // Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
 
 // [라이브러리]
 #include "mbed.h"
 #include <stdlib.h>
-// #include <stdarg.h> // va_list, va_start, va_arg, va_end가 정의된 헤더파일
 #include "Servo.h"
 #include "GP2A.h"
+// #include <stdarg.h> // va_list, va_start, va_arg, va_end가 정의된 헤더파일
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -164,3 +167,4 @@ void normal_tmr_move(bool* _while_brk_sensor, const char* _inequality, bool _sen
 void normal_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t  _sensor_val, double _speedL, double _speedR);
 void normal_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR);
 
+# endif

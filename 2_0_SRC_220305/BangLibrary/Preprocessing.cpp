@@ -1,4 +1,4 @@
-// Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
+// cpp 파일 : 정의
 
 // [라이브러리]
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"

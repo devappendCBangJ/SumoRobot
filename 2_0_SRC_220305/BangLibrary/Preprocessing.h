@@ -1,10 +1,11 @@
 # ifndef PREPROCESSING_H
 # define PREPROCESSING_H
+// 헤더파일 : 선언
 
 // [라이브러리]
 #include "mbed.h"
 #include <stdlib.h>
-#include "Servo.h"
+#include "Servo.h" // Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
 #include "GP2A.h"
 // #include <stdarg.h> // va_list, va_start, va_arg, va_end가 정의된 헤더파일
 

@@ -1,6 +1,134 @@
 // Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
 
-#include "Preprocessing.h"  // 헤더파일 전처리
+// [라이브러리]
+#include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
+
+// [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
+// 모드
+extern DigitalOut led1;
+extern InterruptIn btn;
+
+extern Ticker mode_tic;
+
+extern int mode;
+
+extern int tot_mode;
+extern int tic_cnt;
+extern int tic_even_cnt;
+
+// thread
+// Thread com_th;
+
+// Mutex mutex;
+
+// // ir센서 + psd센서
+extern AnalogIn irfl;
+extern AnalogIn irfr;
+extern AnalogIn irmr;
+extern AnalogIn irbr;
+extern AnalogIn irbl;
+extern AnalogIn irml;
+extern AnalogIn irfm;
+
+extern AnalogIn psdf;
+extern GP2A psdb;
+
+extern uint16_t ir_val[7];
+// 0 : fl
+// 1 : fr
+// 2 : mr
+// 3 : br
+// 4 : bl
+// 5 : ml
+// 6 : fm
+extern bool ir_WhCol[7];
+// 0 : fl + fr
+// 1 : bl + br
+// 2 : ml + fl
+// 3 : fr + mr
+// 4 : mr + br
+// 5 : bl + ml
+
+extern double psdf_volts;
+extern double psdf_val;
+extern double psdb_val;
+extern uint16_t black;
+
+// AC서보 모터
+extern PwmOut Servo;
+
+extern float ang;
+extern float inc;
+extern float small_inc;
+extern float big_inc;
+// float small_inc = 2.5;
+// float big_inc = 4.2;
+
+extern float angLL;
+extern float angML;
+extern float angMM;
+extern float angMR;
+extern float angRR;
+
+// DC 모터
+extern DigitalOut DirL;
+extern DigitalOut DirR;
+extern PwmOut PwmL;
+extern PwmOut PwmR;
+
+extern double speed;
+extern double speedL;
+extern double speedR;
+
+// 통신
+extern RawSerial ras;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
+extern RawSerial pc;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
+
+// 통신 - ras_com
+extern volatile bool All_move;
+extern volatile bool gotPacket;
+extern volatile float ras_data[3];
+// ras_data[0] : 상대 방향 + 보임 유무
+    // 왼쪽 : 0/11 ~ 4/11 (1 ~ 145)
+    // 가운데 : 4/11 ~ 7/11 (146 ~ 254)
+    // 오른쪽 : 7/11 ~ 11/11 (255 ~ 400)
+    // 없음 : 999
+// ras_data[1] : 상대 크기
+    // 작음 : 1
+    // 보통 : 2
+    // 큼 : 3
+    // 매우 큼 : 4
+    // 없음 : 9
+// ras_data[2] : 빨간영역 좌표 vs 상대 좌표 비교(거리, 영역)
+    // 빨간 영역 안 : 0(상대 가까울 때만 공격)
+    // 빨간 영역 밖 : 1(무조건 공격)
+// ras_data[3] : 파란영역 좌표 vs 상대 좌표 비교(거리, 영역)
+    // 파란 영역 안 : 0(그대로 밀면 됨)
+    // 파란 영역 밖 : 1(파란 영역 안으로 넣으면 best)
+extern int pre_data0;
+// 상대 최근 위치 왼쪽 : 1
+// 상대 최근 위치 가운데 : 2
+// 상대 최근 위치 오른쪽 : 3
+// 상대 최근 위치 없음 : 9
+
+extern int width;
+extern int width_l; // 세부조정 필요!!!
+extern int width_r; // 세부조정 필요!!!
+
+// 통신 - DC_chk
+extern volatile bool gotPacket2;
+extern volatile float pc_data[3];
+
+// 타이머
+extern Timer brk_tmr;
+extern Timer fight_back_tmr;
+extern Timer cam_tmr;
+
+// int turn_escape_time = 25000;
+// int back_escape_time = 100000;
+extern int turn_escape_time; // 세부조정 필요!!!
+extern int back_escape_time; // 세부조정 필요!!!
+extern int fight_back_time; // 세부조정 필요!!!
 
 // [main문]
 int main(){

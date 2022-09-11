@@ -28,6 +28,11 @@ void in_SerialRx();
 void in_SerialRx_main();
 void th_SerialRx();
 
+// template<class T> void normal_tmr_move(T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR);
+// void normal_tmr_move(bool* _while_brk_sensor, const char* _inequality, bool _sensor_val, double _speedL, double _speedR);
+// void normal_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t  _sensor_val, double _speedL, double _speedR);
+// void normal_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR);
+
 void btn_flip();
 void led_flash();
 
@@ -35,8 +40,48 @@ void whl_bundle();
 
 void all_print();
 
-void normal_tmr_move(bool* _while_brk_sensor, const char* _inequality, bool _sensor_val, double _speedL, double _speedR);
-void normal_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t  _sensor_val, double _speedL, double _speedR);
-void normal_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR);
+extern Timer brk_tmr;
+extern double speedL;
+extern double speedR;
+extern int back_escape_time;
+template<class T> void normal_tmr_move(T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR){
+    brk_tmr.start();
+    if(_inequality[0] == '='){
+        while(*_while_brk_sensor == _sensor_val){
+            speedL = _speedL; speedR = _speedR;
+
+            whl_bundle();
+            if(brk_tmr.read_us() > back_escape_time){
+                brk_tmr.reset();
+                brk_tmr.stop();
+                break;
+            }
+        }
+    }
+    else if(_inequality[0] == '>'){
+        while(*_while_brk_sensor > _sensor_val){
+            speedL = _speedL; speedR = _speedR;
+
+            whl_bundle();
+            if(brk_tmr.read_us() > back_escape_time){
+                brk_tmr.reset();
+                brk_tmr.stop();
+                break;
+            }
+        }
+    }
+    else if(_inequality[0] == '<'){
+        while(*_while_brk_sensor < _sensor_val){
+            speedL = _speedL; speedR = _speedR;
+
+            whl_bundle();
+            if(brk_tmr.read_us() > back_escape_time){
+                brk_tmr.reset();
+                brk_tmr.stop();
+                break;
+            }
+        }
+    }
+}
 
 # endif

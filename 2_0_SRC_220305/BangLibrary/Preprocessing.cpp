@@ -1,7 +1,7 @@
 // cpp 파일 : 정의
 
 // [라이브러리]
-#include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"
+#include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -304,127 +304,6 @@ void DC_chk(){
     DirL = 1;
 }
 
-// 타이머 움직임
-void normal_tmr_move(bool* _while_brk_sensor, const char* _inequality, bool _sensor_val, double _speedL, double _speedR){
-    brk_tmr.start();
-    if(_inequality[0] == '='){
-        while(*_while_brk_sensor == _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '>'){
-        while(*_while_brk_sensor > _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '<'){
-        while(*_while_brk_sensor < _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-}
-
-void normal_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t _sensor_val, double _speedL, double _speedR){
-    brk_tmr.start();
-    if(_inequality[0] == '='){
-        while(*_while_brk_sensor == _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '>'){
-        while(*_while_brk_sensor > _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '<'){
-        while(*_while_brk_sensor < _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-}
-
-void normal_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR){
-    brk_tmr.start();
-    if(_inequality[0] == '='){
-        while(*_while_brk_sensor == _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '>'){
-        while(*_while_brk_sensor > _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-    else if(_inequality[0] == '<'){
-        while(*_while_brk_sensor < _sensor_val){
-            speedL = _speedL; speedR = _speedR;
-
-            whl_bundle();
-            if(brk_tmr.read_us() > back_escape_time){
-                brk_tmr.reset();
-                brk_tmr.stop();
-                break;
-            }
-        }
-    }
-}
-
 // 통신(pc, ras, mbed)
 void in_SerialRx(){ // interrupt 전용
     static char ras_serialInBuffer[32];
@@ -506,6 +385,7 @@ void th_SerialRx(){ // thread 전용
     }
 }
 
+// 버튼 + LED
 void btn_flip(){
     tot_mode++;
 }
@@ -521,6 +401,7 @@ void led_flash(){
     else led1 = 0;
 }
 
+// while문 필수 함수
 void whl_bundle(){
     in_SerialRx_main(); // interrupt 전용
 
@@ -534,6 +415,7 @@ void whl_bundle(){
     all_print();
 }
 
+// print
 void all_print(){
     pc.printf("ㅡㅡㅡㅡㅡ총합ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     pc.printf("mode = %d \n", mode); // 확인용 코드

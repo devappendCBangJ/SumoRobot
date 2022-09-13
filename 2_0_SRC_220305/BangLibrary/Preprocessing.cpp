@@ -122,13 +122,22 @@ volatile float pc_data[3];
 // 타이머
 Timer brk_tmr;
 Timer fight_back_tmr;
+Timer rotate_back_tmr;
 Timer cam_tmr;
+
+// ///////////////////////////////////////////////////
+// Timer control_tmr;
+// ///////////////////////////////////////////////////
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_time = 500000; // 세부조정 필요!!!
+
+// ///////////////////////////////////////////////////
+// double control_time = 0;
+// ///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){

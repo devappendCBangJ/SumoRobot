@@ -2,6 +2,7 @@
 
 // [라이브러리]
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
+#include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -32,6 +33,7 @@ extern AnalogIn irfm;
 
 extern AnalogIn psdf;
 extern GP2A psdb;
+MPU9250 mpu9250;
 
 extern uint16_t ir_val[7];
 // 0 : fl
@@ -122,7 +124,12 @@ extern volatile float pc_data[3];
 // 타이머
 extern Timer brk_tmr;
 extern Timer fight_back_tmr;
+extern Timer rotate_back_tmr;
 extern Timer cam_tmr;
+
+// ///////////////////////////////////////////////////
+// extern Timer control_tmr;
+// ///////////////////////////////////////////////////
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
@@ -130,8 +137,16 @@ extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_time; // 세부조정 필요!!!
 
+// ///////////////////////////////////////////////////
+// extern double control_time;
+// ///////////////////////////////////////////////////
+
 // [main문]
 int main(){
+    // ///////////////////////////////////////////////////
+    // control_tmr.start();
+    // ///////////////////////////////////////////////////
+
     pc.format(8, SerialBase::Even, 1);
 
     Servo.period_ms(10);
@@ -142,15 +157,30 @@ int main(){
     btn.fall(&btn_flip);
     mode_tic.attach(&led_flash, 0.10);
 
+    ///////////////////////////////////////////////////
+    mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
+    mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
+    mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
+    //ThisThread::sleep_for(100);
+    mpu9250.initMPU9250();
+
+    mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+    mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
+    ///////////////////////////////////////////////////
+
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        all_print();
+        // all_print();
 
         in_SerialRx_main(); // interrupt 전용
 
         sensor_read();
         sensor_cal();
         // sensor_print(); // 확인용 코드
+
+    ///////////////////////////////////////////////////
+        mpu9250.get_data();
+    ///////////////////////////////////////////////////
 
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
@@ -1821,5 +1851,12 @@ int main(){
         }
         // speedL = 0.18; speedR = 0.40;
         // DC_move(speedL, speedR);
+
+        // ///////////////////////////////////////////////////
+        // control_time = control_tmr.read_us();
+        // pc.printf("control_time : %lf \n", control_time);
+        // control_tmr.reset();
+        // control_tmr.stop();
+        // ///////////////////////////////////////////////////
     }
 }

@@ -334,7 +334,7 @@ int main(){
         watch.reset();
         watch.start();
         printf("Print 15bytes!\n");
-        watch.stop();
+        // watch.stop();
         printf("It takes about %5u us.\n", watch.read_us());
         wait(1);
     }

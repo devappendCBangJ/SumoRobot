@@ -33,6 +33,8 @@ void th_SerialRx();
 // void normal_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t  _sensor_val, double _speedL, double _speedR);
 // void normal_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR);
 void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR);
+void tilt_tmr_move(Timer* _tmr, int* _time, float* _sensor, double _speedL, double _speedR);
+void tilt_tmr_reset(Timer* _tmr);
 
 void btn_flip();
 void led_flash();

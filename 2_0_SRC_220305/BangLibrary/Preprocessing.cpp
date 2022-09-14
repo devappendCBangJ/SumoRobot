@@ -121,23 +121,25 @@ volatile float pc_data[3];
 
 // 타이머
 Timer brk_tmr;
-Timer fight_back_tmr;
-Timer rotate_back_tmr;
-Timer cam_tmr;
+Timer rotate_tmr;
 
 // ///////////////////////////////////////////////////
 // Timer control_tmr;
 // ///////////////////////////////////////////////////
 
-// int turn_escape_time = 25000;
-// int back_escape_time = 100000;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
-int fight_back_time = 500000; // 세부조정 필요!!!
+int fight_back_escape_time = 500000; // 세부조정 필요!!!
+int rotate_back_escape_time = 3000000; // 세부조정 필요!!!
+int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
 
 // ///////////////////////////////////////////////////
 // double control_time = 0;
 // ///////////////////////////////////////////////////
+
+///////////////////////////////////////////////////
+extern float pitch_p;
+///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){
@@ -187,6 +189,7 @@ void sensor_print(){
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
     pc.printf("psdf_val : | %lf |, psdb_val : | %lf |\n", psdf_val, psdb_val); // 확인용 코드
+    pc.printf("mpu6050 pitch_p : %f\n", pitch_p); // 확인용 코드
 }
 
 // AC 서보 모터
@@ -402,6 +405,25 @@ void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR){
 
         whl_bundle();
     }
+    _tmr->reset();
+    _tmr->stop();
+}
+
+void tilt_tmr_move(Timer* _tmr, int* _time, float* _sensor, double _speedL, double _speedR){
+    if(*_sensor > 10.0){
+        _tmr->start();
+    }
+    else{
+        _tmr->reset();
+        _tmr->stop();
+    }
+
+    if(_tmr->read_us() > *_time){
+        speedL = _speedL; speedR = _speedR;
+    }
+}
+
+void tilt_tmr_reset(Timer* _tmr){
     _tmr->reset();
     _tmr->stop();
 }

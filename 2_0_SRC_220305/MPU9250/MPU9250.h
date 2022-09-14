@@ -984,8 +984,7 @@ void MPU9250SelfTest(float * destination) // Should return percent deviation fro
 
 ///////여기까지 주석
 void get_data(){
-        
-              //sensor1.refreshRangeVelocity();
+        //sensor1.refreshRangeVelocity();
         //pc.printf("range: %d cm, velocity: %d cm/s, rate: %.2f Hz\n", sensor1.getRange_cm(), sensor1.getVelocity_cms(), 1/dt.read());
         if(readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01) {  // On interrupt, check if data ready interrupt
 

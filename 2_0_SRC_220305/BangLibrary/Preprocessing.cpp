@@ -394,6 +394,18 @@ void th_SerialRx(){ // thread 전용
     }
 }
 
+// 타이머
+void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR){
+    _tmr->start(); // _tmr->start(); = *_tmr.start();
+    while(_tmr->read_us() < *_time){
+        speedL = _speedL; speedR = _speedR;
+
+        whl_bundle();
+    }
+    _tmr->reset();
+    _tmr->stop();
+}
+
 // 버튼 + LED
 void btn_flip(){
     tot_mode++;

@@ -224,7 +224,7 @@ float zeta = sqrt(3.0f / 4.0f) * GyroMeasDrift;  // compute zeta, the other free
 float pitch, yaw, roll;
 float pitch2, yaw2, roll2;
 float AcX, AcY, GyX, GyY;
-float roll_p,pitch_p;
+float roll_p, pitch_p;
 
 float deltat = 0.003f;                             // integration interval for both filter schemes
    // used to calculate integration interval                               // used to calculate integration interval

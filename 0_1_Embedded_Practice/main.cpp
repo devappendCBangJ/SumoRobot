@@ -324,7 +324,7 @@ int main(){
 */
 //     2. Timer 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*
+
 #include "mbed.h"
 
 Timer watch;
@@ -339,7 +339,7 @@ int main(){
         wait(1);
     }
 }
-*/
+
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include "mbed.h"

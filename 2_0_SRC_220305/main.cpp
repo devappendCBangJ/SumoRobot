@@ -4,12 +4,6 @@
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
 
-// ///////////////////////////////////////////////////
-// #include <iostream>
-// #include <fstream>
-// using namespace std;
-// ///////////////////////////////////////////////////
-
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
 extern DigitalOut led1;
@@ -157,11 +151,6 @@ int main(){
     // control_tmr.start();
     // ///////////////////////////////////////////////////
 
-    // ///////////////////////////////////////////////////
-    // ofstream fout;
-	// fout.open("a.txt");
-    // ///////////////////////////////////////////////////
-
     pc.format(8, SerialBase::Even, 1);
 
     Servo.period_ms(10);
@@ -173,19 +162,19 @@ int main(){
     mode_tic.attach(&led_flash, 0.10);
 
     ///////////////////////////////////////////////////
-    mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
-    mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
-    mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
-    //ThisThread::sleep_for(100);
-    mpu9250.initMPU9250();
+    // mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
+    // mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
+    // mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
+    // //ThisThread::sleep_for(100);
+    // mpu9250.initMPU9250();
 
-    mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
-    mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
+    // mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+    // mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
     ///////////////////////////////////////////////////
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        // all_print();
+        all_print();
 
         in_SerialRx_main(); // interrupt 전용
 
@@ -194,12 +183,8 @@ int main(){
         // sensor_print(); // 확인용 코드
 
         ///////////////////////////////////////////////////
-        mpu9250.get_data();
+        // mpu9250.get_data();
         ///////////////////////////////////////////////////
-
-        // ///////////////////////////////////////////////////
-        // fout << pitch_p << "\n";
-        // ///////////////////////////////////////////////////
 
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
@@ -377,8 +362,8 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 매우 큼
-                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                // rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
@@ -416,9 +401,6 @@ int main(){
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.70, -0.70);
                                     }
                                     else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격
-                                        ///////////////////////////////////////////////////////
-                                        // speedL = 0.50; speedR = 0.50;
-                                        ///////////////////////////////////////////////////////
                                         speedL = 0.60; speedR = 0.60;
                                     }
                                 }
@@ -473,9 +455,6 @@ int main(){
                                     speedL = 0.60; speedR = 0.27;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    ///////////////////////////////////////////////////////
-                                    // speedL = 0.50; speedR = 0.50;
-                                    ///////////////////////////////////////////////////////
                                     speedL = 0.60; speedR = 0.60;
                                 }
                                 else{ // 그 외 : 전진
@@ -484,8 +463,8 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                // rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
@@ -593,8 +572,8 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                // rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
@@ -844,7 +823,7 @@ int main(){
                         }
 
                         if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                            tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                            // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                             if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                 speedL = speedL * (1.50);
@@ -1238,9 +1217,6 @@ int main(){
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.70, -0.70);
                                     }
                                     else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격
-                                        ///////////////////////////////////////////////////////
-                                        // speedL = 0.50; speedR = 0.50;
-                                        ///////////////////////////////////////////////////////
                                         speedL = 0.60; speedR = 0.60;
                                     }
                                 }
@@ -1295,9 +1271,6 @@ int main(){
                                     speedL = 0.60; speedR = 0.27;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    ///////////////////////////////////////////////////////
-                                    // speedL = 0.50; speedR = 0.50;
-                                    ///////////////////////////////////////////////////////
                                     speedL = 0.60; speedR = 0.60;
                                 }
                                 else{ // 그 외 : 전진
@@ -1675,11 +1648,5 @@ int main(){
         // control_tmr.reset();
         // control_tmr.stop();
         // ///////////////////////////////////////////////////
-
-        // ///////////////////////////////////////////////////
-        // fout << endl;
-        // fout.close();
-        // ///////////////////////////////////////////////////
-
     }
 }

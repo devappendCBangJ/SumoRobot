@@ -16,6 +16,9 @@ int tot_mode = 0;
 int tic_cnt = 0;
 int tic_even_cnt = 0;
 
+char pre_rotate_dir = 'n';
+char rotate_dir = 'n';
+
 // thread
 // Thread com_th;
 
@@ -122,6 +125,7 @@ volatile float pc_data[3];
 // 타이머
 Timer brk_tmr;
 Timer rotate_tmr;
+Timer tilt_tmr;
 
 // ///////////////////////////////////////////////////
 // Timer control_tmr;
@@ -130,7 +134,7 @@ Timer rotate_tmr;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 500000; // 세부조정 필요!!!
-int rotate_back_escape_time = 3000000; // 세부조정 필요!!!
+int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
 
 // ///////////////////////////////////////////////////
@@ -399,31 +403,48 @@ void th_SerialRx(){ // thread 전용
 
 // 타이머
 void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR){
-    _tmr->start(); // _tmr->start(); = *_tmr.start();
-    while(_tmr->read_us() < *_time){
+    _tmr->start(); // _tmr->start(); = *_tmr.start(); // 타이머 시작
+    while(_tmr->read_us() < *_time){ // 타이머 일정 시간 이하 : 특정 움직임 유지
         speedL = _speedL; speedR = _speedR;
 
         whl_bundle();
     }
-    _tmr->reset();
+    _tmr->reset(); // 타이머 리셋
     _tmr->stop();
 }
 
-void tilt_tmr_move(Timer* _tmr, int* _time, float* _sensor, double _speedL, double _speedR){
-    if(*_sensor > 10.0){
-        _tmr->start();
+void rotate_tmr_move(){
+    if(
+        (rotate_dir == 'l' && rotate_dir == pre_rotate_dir) || // 원 회전 상황 O and 이전 회전 방향과 현재 회전 방향 같음 : 타이머 시작
+        (rotate_dir == 'r' && rotate_dir == pre_rotate_dir)
+    ){
+        rotate_tmr.start();
     }
-    else{
-        _tmr->reset();
-        _tmr->stop();
+    else{ // 원 회전 상황 X or 이전 회전 방향과 현재 회전 방향 다름 : 타이머 리셋
+        rotate_tmr.reset();
+        rotate_tmr.stop();
     }
 
-    if(_tmr->read_us() > *_time){
-        speedL = _speedL; speedR = _speedR;
+    if(rotate_tmr.read_us() > rotate_escape_time){
+        speedL = 0.60; speedR = 0.60;
     }
 }
 
-void tilt_tmr_reset(Timer* _tmr){
+void tilt_tmr_move(){
+    if(pitch_p > 10.0){ // IMU 일정 각도 이상 : 타이머 시작
+        tilt_tmr.start();
+    }
+    else{ // IMU 일정 각도 이하 : 타이머 리셋
+        tilt_tmr.reset();
+        tilt_tmr.stop();
+    }
+
+    if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+        speedL = -1.0; speedR = -1.0;
+    }
+}
+
+void tmr_reset(Timer* _tmr){ // 타이머 리셋
     _tmr->reset();
     _tmr->stop();
 }

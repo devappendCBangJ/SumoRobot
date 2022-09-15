@@ -23,6 +23,9 @@ extern int tot_mode;
 extern int tic_cnt;
 extern int tic_even_cnt;
 
+extern char pre_rotate_dir;
+extern char rotate_dir;
+
 // thread
 // Thread com_th;
 
@@ -141,7 +144,7 @@ extern Timer tilt_tmr;
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_escape_time; // 세부조정 필요!!!
-extern int rotate_back_escape_time; // 세부조정 필요!!!
+extern int rotate_escape_time; // 세부조정 필요!!!
 extern int tilt_back_escape_time; // 세부조정 필요!!!
 
 // ///////////////////////////////////////////////////
@@ -319,7 +322,7 @@ int main(){
                                 else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
                                 }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 ???
                                     if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 오른쪽 전진
                                         speedL = 0.60; speedR = 0.10;
                                     }
@@ -330,6 +333,8 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
                                     if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
                                         speedL = 0.30; speedR = 0.60;
+
+                                        rotate_dir = 'l';
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
@@ -338,6 +343,8 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
                                     if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
                                         speedL = 0.60; speedR = 0.30;
+
+                                        rotate_dir = 'l';
                                     }
                                     else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
@@ -349,7 +356,7 @@ int main(){
                                 else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
                                 }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 매우 왼쪽 전진
+                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 매우 왼쪽 전진 ???
                                     speedL = 0.10; speedR = 0.60; // 0.225;
                                 }
                                 else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
@@ -364,18 +371,24 @@ int main(){
                                 }
                                 else{ // 그 외 : 왼쪽 전진
                                     speedL = 0.27; speedR = 0.60;
+
+                                    rotate_dir = 'l';
                                 }
                             }
-                            
+
                             if(ras_data[1] == 4){ // 화면 매우 큼
-                                tilt_tmr_move(&tilt_tmr, &tilt_back_escape_time, &pitch_p, -1.0, -1.0); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
                                     speedR = speedR * (1.50);
                                 }
                             }
-                            else tilt_tmr_reset(&tilt_tmr); // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
                         }
 
                         else if(angML < ang && ang < angMR){ // 서보 중간
@@ -471,14 +484,18 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(&tilt_tmr, &tilt_back_escape_time, &pitch_p, -1.0, -1.0); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
                                     speedR = speedR * (1.50);
                                 }
                             }
-                            else tilt_tmr_reset(&tilt_tmr); // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
                         }
                         
                         else if(angMR <= ang){ // 서보 오른쪽
@@ -576,14 +593,18 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(&tilt_tmr, &tilt_back_escape_time, &pitch_p, -1.0, -1.0); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                rotate_tmr_move(); // 원 회전 상황 O + 이전 회전 방향과 현재 회전 방향 같음 + 타이머 일정 시간 이상 : 전진
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                                 if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                     speedL = speedL * (1.50);
                                     speedR = speedR * (1.50);
                                 }
                             }
-                            else tilt_tmr_reset(&tilt_tmr); // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
                         }
                     }
 
@@ -823,14 +844,17 @@ int main(){
                         }
 
                         if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                            tilt_tmr_move(&tilt_tmr, &tilt_back_escape_time, &pitch_p, -1.0, -1.0); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                            tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
                             if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
                                 speedL = speedL * (1.50);
                                 speedR = speedR * (1.50);
                             }
                         }
-                        else tilt_tmr_reset(&tilt_tmr); // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                        else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
+                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&rotate_tmr);
+                        }
                     }
                 }
                 // mutex.unlock();
@@ -1638,6 +1662,7 @@ int main(){
 
             // all_print();
 
+            pre_rotate_dir = rotate_dir;
             All_move = false;
         }
         // speedL = 0.18; speedR = 0.40;

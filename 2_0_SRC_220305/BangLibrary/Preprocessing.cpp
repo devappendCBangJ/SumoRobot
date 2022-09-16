@@ -57,6 +57,11 @@ double psdf_val;
 double psdb_val;
 uint16_t black = 10000;
 
+///////////////////////////////////////////////////
+extern float pitch_p;
+float tilt_deg;
+///////////////////////////////////////////////////
+
 // AC서보 모터
 PwmOut Servo(PA_8);
 
@@ -133,17 +138,13 @@ Timer tilt_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
-int fight_back_escape_time = 500000; // 세부조정 필요!!!
+int fight_back_escape_time = 750000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
 
 // ///////////////////////////////////////////////////
 // double control_time = 0;
 // ///////////////////////////////////////////////////
-
-///////////////////////////////////////////////////
-extern float pitch_p;
-///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){
@@ -431,7 +432,7 @@ void rotate_tmr_move(){
 }
 
 void tilt_tmr_move(){
-    if(pitch_p > 10.0){ // IMU 일정 각도 이상 : 타이머 시작
+    if(pitch_p > tilt_deg){ // IMU 일정 각도 이상 : 타이머 시작
         tilt_tmr.start();
     }
     else{ // IMU 일정 각도 이하 : 타이머 리셋

@@ -445,12 +445,14 @@ void tilt_tmr_move(){
             if(angLL < ang){ // 서보 보통 왼쪽
                 if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
-                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 오른쪽 후진
-                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
                     ){
-                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
+                    }
+                    else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -map<float>(ang, angML, angLL, 0.60, 0.85));
                     }
                 }
                 else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -461,12 +463,14 @@ void tilt_tmr_move(){
             else if(ang <= angLL){ // 서보 매우 왼쪽
                 if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
-                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 오른쪽 후진
-                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
                     ){
-                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
+                    }
+                    else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -map<float>(ang, angLL, 0.0, 0.85, 0.95));
                     }
                 }
                 else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -478,12 +482,14 @@ void tilt_tmr_move(){
         else if(angML < ang && ang < angMR){ // 서보 중간
             if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                 if(
-                    (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 후진
-                    (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 후진
+                    (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 후진
+                    (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 후진
+                    (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 후진
                 ){
-                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -0.50);
+                }
+                else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 후진
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -0.50);
                 }
             }
             else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -495,12 +501,14 @@ void tilt_tmr_move(){
             if(ang < angRR){ // 서보 보통 오른쪽
                 if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
-                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 왼쪽 후진
-                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                     ){
-                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
+                    }
+                    else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -map<float>(ang, angMR, angRR, 0.60, 0.85), -0.50);
                     }
                 }
                 else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -511,12 +519,14 @@ void tilt_tmr_move(){
             else if(angRR <= ang){ // 서보 매우 오른쪽
                 if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
-                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 왼쪽 후진
-                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                        (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                     ){
-                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
+                    }
+                    else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                        sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", 10.0, -map<float>(ang, angRR, 180.0, 0.85, 0.95), -0.50);
                     }
                 }
                 else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격

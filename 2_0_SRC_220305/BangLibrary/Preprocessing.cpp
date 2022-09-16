@@ -441,6 +441,90 @@ void tilt_tmr_move(){
 
     if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
         speedL = -1.0; speedR = -1.0;
+        if(angLL < ang){ // 서보 보통 왼쪽
+            if(angLL < ang){ // 서보 보통 왼쪽
+                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                    if(
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 오른쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                    ){
+                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
+
+                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
+                    }
+                }
+                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                    speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+                    speedR = 0.60;
+                }
+            }
+            else if(ang <= angLL){ // 서보 매우 왼쪽
+                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                    if(
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 오른쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
+                    ){
+                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
+
+                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
+                    }
+                }
+                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                    speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+                    speedR = 0.50;
+                }
+            }
+        }
+        else if(angML < ang && ang < angMR){ // 서보 중간
+            if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                if(
+                    (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 후진
+                    (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 후진
+                ){
+                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
+
+                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
+                }
+            }
+            else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                speedL = 0.60;
+                speedR = 0.60;
+            }
+        }
+        else if(angMR <= ang){ // 서보 오른쪽
+            if(ang < angRR){ // 서보 보통 오른쪽
+                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                    if(
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 왼쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                    ){
+                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
+
+                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
+                    }
+                }
+                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                    speedL = 0.60;
+                    speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+                }
+            }
+            else if(angRR <= ang){ // 서보 매우 오른쪽
+                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                    if(
+                        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 + ir 오른쪽 뒤 : 빠른 왼쪽 후진
+                        (ir_val[3] > black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
+                    ){
+                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
+
+                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
+                    }
+                }
+                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                    speedL = 0.50;
+                    speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
+                }
+            }
+        }
     }
 }
 

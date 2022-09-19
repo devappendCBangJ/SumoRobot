@@ -367,11 +367,11 @@ int main(){
                             }
 
                             if(ras_data[1] == 4){ // 화면 매우 큼
-                                // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                             else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
@@ -469,9 +469,9 @@ int main(){
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
                                 // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                             else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
@@ -577,9 +577,9 @@ int main(){
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
                                 // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
 
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                             else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
@@ -865,9 +865,9 @@ int main(){
                             // tilt_tmr_move(); // 1.5초 이상 로봇 각도 10도 이상 : 매우 빠른 후진
                             rotate_tmr_move(); // 3초 이상 빨간원 주위 회전 : 전진
 
-                            if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                speedL = speedL * (1.50);
-                                speedR = speedR * (1.50);
+                            if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                speedL = speedL * (1.666);
+                                speedR = speedR * (1.666);
                             }
                         }
                         else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
@@ -1225,9 +1225,9 @@ int main(){
                                 }
                             }
                             if(ras_data[1] == 4){ // 화면 매우 큼
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                         }
@@ -1318,9 +1318,9 @@ int main(){
                                 }
                             }
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                         }
@@ -1419,9 +1419,9 @@ int main(){
                                 }
                             }
                             if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                    speedL = speedL * (1.50);
-                                    speedR = speedR * (1.50);
+                                if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                    speedL = speedL * (1.666);
+                                    speedR = speedR * (1.666);
                                 }
                             }
                         }
@@ -1662,9 +1662,9 @@ int main(){
                             }
                         }
                         if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                            if(abs(speedL) <= 0.66 && abs(speedR) <= 0.66){
-                                speedL = speedL * (1.50);
-                                speedR = speedR * (1.50);
+                            if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
+                                speedL = speedL * (1.666);
+                                speedR = speedR * (1.666);
                             }
                         }
                     }

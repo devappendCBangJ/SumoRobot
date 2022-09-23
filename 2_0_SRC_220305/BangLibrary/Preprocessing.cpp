@@ -128,23 +128,17 @@ volatile bool gotPacket2 = false;
 volatile float pc_data[3];
 
 // 타이머
+Timer control_tmr;
 Timer brk_tmr;
 Timer rotate_tmr;
 Timer tilt_tmr;
 
-// ///////////////////////////////////////////////////
-// Timer control_tmr;
-// ///////////////////////////////////////////////////
-
+extern float deltat; // 세부조정 필요!!!
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 350000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
-
-// ///////////////////////////////////////////////////
-// double control_time = 0;
-// ///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){
@@ -203,6 +197,7 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 }
 
 void servo_set(PwmOut &rc){
+    Servo.period_ms(10);
     uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
     // uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
@@ -422,12 +417,16 @@ void rotate_tmr_move(){
         rotate_tmr.start();
     }
     else{ // 원 회전 상황 X or 이전 회전 방향과 현재 회전 방향 다름 : 타이머 리셋
-        rotate_tmr.reset();
-        rotate_tmr.stop();
+        tmr_reset(&rotate_tmr); 
     }
 
     if(rotate_tmr.read_us() > rotate_escape_time){
-        speedL = 0.60; speedR = 0.60;
+        if(rotate_dir == 'l' && rotate_dir == pre_rotate_dir){
+            speedL = 0.50; speedR = 0.60;
+        }
+        else if(rotate_dir == 'r' && rotate_dir == pre_rotate_dir){
+            speedL = 0.60; speedR = 0.50;
+        }
     }
 }
 
@@ -436,15 +435,14 @@ void tilt_tmr_move(){
         tilt_tmr.start();
     }
     else{ // IMU 일정 각도 이하 : 타이머 리셋
-        tilt_tmr.reset();
-        tilt_tmr.stop();
+        tmr_reset(&tilt_tmr); 
     }
 
     if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
         speedL = -1.0; speedR = -1.0;
         if(angLL < ang){ // 서보 보통 왼쪽
             if(angLL < ang){ // 서보 보통 왼쪽
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                // if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
                         (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
                         (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
@@ -455,14 +453,14 @@ void tilt_tmr_move(){
                     else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                         sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", tilt_deg, -0.50, -map<float>(ang, angML, angLL, 0.60, 0.85));
                     }
-                }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                    speedR = 0.60;
-                }
+                // }
+                // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                //     speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+                //     speedR = 0.60;
+                // }
             }
             else if(ang <= angLL){ // 서보 매우 왼쪽
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                // if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
                         (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
                         (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
@@ -473,15 +471,15 @@ void tilt_tmr_move(){
                     else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                         sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", tilt_deg, -0.50, -map<float>(ang, angLL, 0.0, 0.85, 0.95));
                     }
-                }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                    speedR = 0.50;
-                }
+                // }
+                // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                //     speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+                //     speedR = 0.50;
+                // }
             }
         }
         else if(angML < ang && ang < angMR){ // 서보 중간
-            if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+            // if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                 if(
                     (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 후진
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 후진
@@ -492,15 +490,15 @@ void tilt_tmr_move(){
                 else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 후진
                     sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", tilt_deg, -0.50, -0.50);
                 }
-            }
-            else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                speedL = 0.60;
-                speedR = 0.60;
-            }
+            // }
+            // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+            //     speedL = 0.60;
+            //     speedR = 0.60;
+            // }
         }
         else if(angMR <= ang){ // 서보 오른쪽
             if(ang < angRR){ // 서보 보통 오른쪽
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                // if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
                         (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                         (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
@@ -511,14 +509,14 @@ void tilt_tmr_move(){
                     else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                         sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", tilt_deg, -map<float>(ang, angMR, angRR, 0.60, 0.85), -0.50);
                     }
-                }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = 0.60;
-                    speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                }
+                // }
+                // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                //     speedL = 0.60;
+                //     speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+                // }
             }
             else if(angRR <= ang){ // 서보 매우 오른쪽
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
+                // if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상
                     if(
                         (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                         (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
@@ -529,11 +527,11 @@ void tilt_tmr_move(){
                     else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                         sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, "<", tilt_deg, -map<float>(ang, angRR, 180.0, 0.85, 0.95), -0.50);
                     }
-                }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = 0.50;
-                    speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                }
+                // }
+                // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
+                //     speedL = 0.50;
+                //     speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
+                // }
             }
         }
     }
@@ -576,7 +574,9 @@ void whl_bundle(){
 
 // print
 void all_print(){
-    pc.printf("ㅡㅡㅡㅡㅡ총합ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
+    pc.printf("ㅡㅡㅡㅡㅡ전략 모드ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
+    pc.printf("mode = %d \n", tot_mode); // 확인용 코드
+    pc.printf("ㅡㅡㅡㅡㅡ모드ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     pc.printf("mode = %d \n", mode); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ통신ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     pc.printf("ras_data = %.3f, %.3f, %.3f\n", ras_data[0], ras_data[1], ras_data[2]); // 확인용 코드

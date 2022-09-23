@@ -3,6 +3,7 @@
 // [라이브러리]
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
+// #include <math.h>
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -128,25 +129,23 @@ extern volatile bool gotPacket2;
 extern volatile float pc_data[3];
 
 // 타이머
+extern Timer control_tmr;
 extern Timer brk_tmr;
 extern Timer rotate_tmr;
 extern Timer tilt_tmr;
 
-// ///////////////////////////////////////////////////
-// extern Timer control_tmr;
-// ///////////////////////////////////////////////////
+///////////////////////////////////////////////////
+Timer temp_tmr;
+///////////////////////////////////////////////////
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
+extern float deltat; // 세부조정 필요!!!
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_escape_time; // 세부조정 필요!!!
 extern int rotate_escape_time; // 세부조정 필요!!!
 extern int tilt_back_escape_time; // 세부조정 필요!!!
-
-// ///////////////////////////////////////////////////
-// extern double control_time;
-// ///////////////////////////////////////////////////
 
 // [main문]
 int main(){
@@ -154,56 +153,68 @@ int main(){
     // control_tmr.start();
     // ///////////////////////////////////////////////////
 
-    pc.format(8, SerialBase::Even, 1);
-
-    Servo.period_ms(10);
     DC_set();
     servo_set(Servo);
+
+    pc.format(8, SerialBase::Even, 1);
     ras.attach(&in_SerialRx); // interrupt 전용
 
     btn.fall(&btn_flip);
     mode_tic.attach(&led_flash, 0.10);
 
-    ///////////////////////////////////////////////////
-    mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
-    mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
-    mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
-    //ThisThread::sleep_for(100);
-    mpu9250.initMPU9250();
+    control_tmr.start();
 
-    mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
-    mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
+    ///////////////////////////////////////////////////
+    temp_tmr.start();
+    ///////////////////////////////////////////////////
+
+    // ///////////////////////////////////////////////////
+    // mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
+    // mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
+    // mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
+    // //ThisThread::sleep_for(100);
+    // mpu9250.initMPU9250();
+
+    // mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+    // mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
+    // ///////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////
+    const double PI = 3.1415926;
+
+    int theta = 0;
+    double total_time = 1000000;
+    double for_time = total_time / 180;
+    double a = cos(theta * PI / 180);
     ///////////////////////////////////////////////////
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
+        /*
         // all_print();
 
-        // ///////////////////////////////////////////////////
-        // control_time = control_tmr.read_us();
-        // pc.printf("control_time : %lf \n", control_time);
-        // pc.printf("%.1f %.1f \n",roll_p,pitch_p);
-        // control_tmr.reset();
-        // control_tmr.stop();
-        // ///////////////////////////////////////////////////
+        ///////////////////////////////////////////////////
+        // pc.printf("control_tmr : %d \n", control_tmr.read_us());
+        if(control_tmr.read_us() >= deltat * 1000000){
+            mpu9250.get_data();
 
-        in_SerialRx_main(); // interrupt 전용
+            // pc.printf("control_tmr : %d \n", control_tmr.read_us());
+            pc.printf("%.1f %.1f \n", roll_p, pitch_p);
+
+            control_tmr.reset();
+        }
+        ///////////////////////////////////////////////////
 
         sensor_read();
         sensor_cal();
-        // sensor_print(); // 확인용 코드
 
-        // ///////////////////////////////////////////////////
-        mpu9250.get_data();
-        // ///////////////////////////////////////////////////
+        in_SerialRx_main(); // interrupt 전용
 
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
 
             // mutex.lock();
-
-            // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
 
             if(tot_mode == 0){
                 // 초기 동작 : 상대 탐색
@@ -1748,9 +1759,36 @@ int main(){
             // all_print();
 
             pre_rotate_dir = rotate_dir;
+            rotate_dir = 'n';
             All_move = false;
         }
-        // speedL = 0.18; speedR = 0.40;
-        // DC_move(speedL, speedR);
+        */
+
+        ///////////////////////////////////////////////////
+        if(temp_tmr.read_us() >= for_time){
+            theta++;
+            speedL = cos(theta * PI / 180); speedR = cos(theta * PI / 180);
+
+            if(speedL >= 0.95) for_time = total_time / 2880;
+            else if(speedL <= -0.95) for_time = total_time / 2880;
+            else if(speedL >= -0.05 && speedL <= 0.05) for_time = total_time / 90;
+
+            // for_time = total_time / 90;
+            // if(speedL >= 0.95) theta = 90;
+            // else if(speedL <= -0.95) theta = 270;
+
+            // pc.printf("%d, %lf, %lf \n", theta, speedL, speedR);
+            // pc.printf("%lf, %lf, %lf \n", speedL, speedR, for_time);
+
+            temp_tmr.reset();
+        }
+        ///////////////////////////////////////////////////
+
+        // 빠르게 뒤로 or 앞으로 전환
+        // 목표보다 작으면 : ++
+        // 목표보다 크면 : --
+        // 목표와 같으면 : 그대로
+
+        DC_move(speedL, speedR);
     }
 }

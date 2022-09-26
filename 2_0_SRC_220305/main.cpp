@@ -90,6 +90,7 @@ extern double speedR;
 // 통신
 extern RawSerial ras;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 extern RawSerial pc;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
+extern Serial blt;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 
 // 통신 - ras_com
 extern volatile bool All_move;
@@ -191,6 +192,8 @@ int main(){
         sensor_read();
         sensor_cal();
         // sensor_print(); // 확인용 코드
+
+        blt.printf("%.1f\n", pitch_p); // 확인용 코드
 
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드

@@ -97,6 +97,7 @@ double speedR = 0;
 // 통신
 RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다
+Serial blt(PC_10, PC_11, 9600);    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 
 // 통신 - ras_com
 volatile bool All_move = false;
@@ -144,8 +145,7 @@ int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 350000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
-double control_time = deltat * 1000000;
-
+double control_time = deltat * 1000000; // 세부조정 필요!!!
 
 // ir + psd 센서
 void sensor_read(){
@@ -550,6 +550,8 @@ void tilt_tmr_move(){
                 // }
             }
         }
+
+        
     }
 }
 

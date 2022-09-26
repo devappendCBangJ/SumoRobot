@@ -2,6 +2,7 @@
 
 // [라이브러리]
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
+#include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -60,6 +61,11 @@ uint16_t black = 17500;
 ///////////////////////////////////////////////////
 extern float pitch_p;
 float tilt_deg = 5.0;
+///////////////////////////////////////////////////
+
+///////////////////////////////////////////////////
+extern float deltat;
+MPU9250 mpu9250;
 ///////////////////////////////////////////////////
 
 // AC서보 모터
@@ -138,13 +144,20 @@ int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 350000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
+double control_time = deltat * 1000000;
 
-// ///////////////////////////////////////////////////
-// double control_time = 0;
-// ///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){
+    ///////////////////////////////////////////////////
+    if(control_tmr.read_us() >= control_time){
+        mpu9250.get_data();
+        pc.printf("control_time : %d \n", control_tmr.read_us());
+
+        control_tmr.reset();
+    }
+    ///////////////////////////////////////////////////
+
     ir_val[0] = irfl.read_u16();
     ir_val[1] = irfr.read_u16();
     ir_val[2] = irmr.read_u16();
@@ -188,10 +201,10 @@ void sensor_cal(){
 }
 
 void sensor_print(){
+    pc.printf("mpu6050 pitch_p : %.1f\n", pitch_p); // 확인용 코드
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
     pc.printf("psdf_val : | %lf |, psdb_val : | %lf |\n", psdf_val, psdb_val); // 확인용 코드
-    // pc.printf("mpu6050 pitch_p : %.1f\n", pitch_p); // 확인용 코드
 }
 
 // AC 서보 모터

@@ -26,7 +26,7 @@ extern char rotate_dir;
 
 // Mutex mutex;
 
-// // ir센서 + psd센서
+// ir센서 + psd센서
 extern AnalogIn irfl;
 extern AnalogIn irfr;
 extern AnalogIn irmr;
@@ -39,7 +39,7 @@ extern AnalogIn psdf;
 extern GP2A psdb;
 
 ///////////////////////////////////////////////////
-MPU9250 mpu9250;
+extern MPU9250 mpu9250;
 ///////////////////////////////////////////////////
 
 extern uint16_t ir_val[7];
@@ -70,8 +70,6 @@ extern float ang;
 extern float inc;
 extern float small_inc;
 extern float big_inc;
-// float small_inc = 2.5;
-// float big_inc = 4.2;
 
 extern float angLL;
 extern float angML;
@@ -146,13 +144,12 @@ extern int fight_back_escape_time; // 세부조정 필요!!!
 extern int rotate_escape_time; // 세부조정 필요!!!
 extern int tilt_back_escape_time; // 세부조정 필요!!!
 
-// ///////////////////////////////////////////////////
-// extern double control_time;
-// ///////////////////////////////////////////////////
+///////////////////////////////////////////////////
+extern double control_time; // 세부조정 필요!!!
+///////////////////////////////////////////////////
 
 // [main문]
 int main(){
-
     pc.format(8, SerialBase::Even, 1);
 
     Servo.period_ms(10);
@@ -187,15 +184,7 @@ int main(){
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        // all_print();
-
-        // ///////////////////////////////////////////////////
-        // control_time = control_tmr.read_us();
-        // pc.printf("control_time : %lf \n", control_time);
-        // pc.printf("%.1f %.1f \n",roll_p,pitch_p);
-        // control_tmr.reset();
-        // control_tmr.stop();
-        // ///////////////////////////////////////////////////
+        // all_print(); // 확인용 코드
 
         in_SerialRx_main(); // interrupt 전용
 
@@ -203,24 +192,13 @@ int main(){
         sensor_cal();
         // sensor_print(); // 확인용 코드
 
-        ///////////////////////////////////////////////////
-        if(control_tmr.read_us() >= deltat * 1000000){
-            mpu9250.get_data();
-
-            // pc.printf("control_tmr : %d \n", control_tmr.read_us());
-            pc.printf("%.1f %.1f \n", roll_p, pitch_p);
-
-            control_tmr.reset();
-        }
-        ///////////////////////////////////////////////////
-
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
 
-            // mutex.lock();
-
             // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
+
+            // mutex.lock(); // thread 전용
 
             if(tot_mode == 0){
                 // 초기 동작 : 상대 탐색
@@ -630,9 +608,6 @@ int main(){
                             // pc.printf("상대 보임 \n"); // 확인용 코드
 
                             if(ang <= angML){ // 서보 왼쪽
-                                // speed = map<float>(ang, 75.0, 0.0, 0.20, 0.35);
-                                // DC_move(0, 1, speed, speed);
-
                                 if(angLL < ang){ // 서보 보통 왼쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
@@ -768,9 +743,6 @@ int main(){
                                 }
                             }
                             else if(angMR <= ang){ // 서보 오른쪽
-                                // speed = map<float>(ang, 180.0, 105.0, 0.35, 0.20);
-                                // DC_move(1, 0, speed, speed);
-
                                 if(ang < angRR){ // 서보 보통 오른쪽
                                     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                                         if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)

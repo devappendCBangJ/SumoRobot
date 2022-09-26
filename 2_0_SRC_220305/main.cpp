@@ -3,6 +3,7 @@
 // [라이브러리]
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\BangLibrary\Preprocessing.h"  // 헤더파일 전처리
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
+// #include <math.h>
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
 // 모드
@@ -128,13 +129,14 @@ extern volatile bool gotPacket2;
 extern volatile float pc_data[3];
 
 // 타이머
+// ///////////////////////////////////////////////////
+// Timer temp_tmr;
+// ///////////////////////////////////////////////////
+
+extern Timer control_tmr;
 extern Timer brk_tmr;
 extern Timer rotate_tmr;
 extern Timer tilt_tmr;
-
-// ///////////////////////////////////////////////////
-// extern Timer control_tmr;
-// ///////////////////////////////////////////////////
 
 // int turn_escape_time = 25000;
 // int back_escape_time = 100000;
@@ -150,9 +152,6 @@ extern int tilt_back_escape_time; // 세부조정 필요!!!
 
 // [main문]
 int main(){
-    // ///////////////////////////////////////////////////
-    // control_tmr.start();
-    // ///////////////////////////////////////////////////
 
     pc.format(8, SerialBase::Even, 1);
 
@@ -164,6 +163,8 @@ int main(){
     btn.fall(&btn_flip);
     mode_tic.attach(&led_flash, 0.10);
 
+    control_tmr.start();
+
     ///////////////////////////////////////////////////
     mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
     mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
@@ -174,6 +175,15 @@ int main(){
     mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
     mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
     ///////////////////////////////////////////////////
+
+    // ///////////////////////////////////////////////////
+    // const double PI = 3.1415926;
+
+    // int theta = 0;
+    // double total_time = 1000000;
+    // double for_time = total_time / 180;
+    // double a = cos(theta * PI / 180);
+    // ///////////////////////////////////////////////////
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
@@ -193,9 +203,16 @@ int main(){
         sensor_cal();
         // sensor_print(); // 확인용 코드
 
-        // ///////////////////////////////////////////////////
-        mpu9250.get_data();
-        // ///////////////////////////////////////////////////
+        ///////////////////////////////////////////////////
+        if(control_tmr.read_us() >= deltat * 1000000){
+            mpu9250.get_data();
+
+            // pc.printf("control_tmr : %d \n", control_tmr.read_us());
+            pc.printf("%.1f %.1f \n", roll_p, pitch_p);
+
+            control_tmr.reset();
+        }
+        ///////////////////////////////////////////////////
 
         if(All_move == true){ // 통신 받음
             // servo_chk(Servo); // Test 코드
@@ -649,7 +666,10 @@ int main(){
                                             // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
                                         }
                                     }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+                                    else if(
+                                        (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪾 앞 바퀴 + 왼쪽 뒷 바퀴
+                                        (ir_val[0] < black && ir_val[1] > black && ir_val[2] > black && ir_val[3] > black && ir_val[4] < black && ir_val[5] > black && ir_val[6] > black) // ir 왼쪽 앞 + ir 왼쪽 뒤
+                                    ){
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
                                             speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
                                             speedR = 0.60;
@@ -784,7 +804,10 @@ int main(){
                                             // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
                                         }
                                     }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                    else if(
+                                        (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                        (ir_val[0] > black && ir_val[1] < black && ir_val[2] > black && ir_val[3] < black && ir_val[4] > black && ir_val[5] > black && ir_val[6] > black) // ir 오른쪽 앞 + ir 오른쪽 뒤
+                                    ){
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
                                             speedL = 0.60;
                                             speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
@@ -1514,7 +1537,10 @@ int main(){
                                             // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
                                         }
                                     }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+                                    else if(
+                                        (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪾 앞 바퀴 + 왼쪽 뒷 바퀴
+                                        (ir_val[0] < black && ir_val[1] > black && ir_val[2] > black && ir_val[3] > black && ir_val[4] < black && ir_val[5] > black && ir_val[6] > black) // ir 왼쪽 앞 + ir 왼쪽 뒤
+                                    ){
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
                                             speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
                                             speedR = 0.60;
@@ -1649,7 +1675,10 @@ int main(){
                                             // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
                                         }
                                     }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                    else if(
+                                        (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+                                        (ir_val[0] > black && ir_val[1] < black && ir_val[2] > black && ir_val[3] < black && ir_val[4] > black && ir_val[5] > black && ir_val[6] > black) // ir 오른쪽 앞 + ir 오른쪽 뒤
+                                    ){
                                         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
                                             speedL = 0.60;
                                             speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
@@ -1748,9 +1777,33 @@ int main(){
             // all_print();
 
             pre_rotate_dir = rotate_dir;
+            rotate_dir = 'n';
             All_move = false;
         }
-        // speedL = 0.18; speedR = 0.40;
-        // DC_move(speedL, speedR);
+
+        // ///////////////////////////////////////////////////
+        // if(temp_tmr.read_us() >= for_time){
+        //     theta++;
+        //     speedL = cos(theta * PI / 180); speedR = cos(theta * PI / 180);
+
+        //     if(speedL >= 0.95) for_time = total_time / 2880;
+        //     else if(speedL <= -0.95) for_time = total_time / 2880;
+        //     else if(speedL >= -0.05 && speedL <= 0.05) for_time = total_time / 90;
+
+        //     // for_time = total_time / 90;
+        //     // if(speedL >= 0.95) theta = 90;
+        //     // else if(speedL <= -0.95) theta = 270;
+
+        //     // pc.printf("%d, %lf, %lf \n", theta, speedL, speedR);
+        //     // pc.printf("%lf, %lf, %lf \n", speedL, speedR, for_time);
+
+        //     temp_tmr.reset();
+        // }
+        // ///////////////////////////////////////////////////
+
+        // // 빠르게 뒤로 or 앞으로 전환
+        // // 목표보다 작으면 : ++
+        // // 목표보다 크면 : --
+        // // 목표와 같으면 : 그대로
     }
 }

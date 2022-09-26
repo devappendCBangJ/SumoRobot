@@ -225,8 +225,10 @@ float pitch, yaw, roll;
 float pitch2, yaw2, roll2;
 float AcX, AcY, GyX, GyY;
 float roll_p, pitch_p;
+float prev_x, prev_y;
 
-float deltat = 0.003f;                             // integration interval for both filter schemes
+float deltat = 0.001f;                             // integration interval for both filter schemes
+
    // used to calculate integration interval                               // used to calculate integration interval
 float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};           // vector to hold quaternion
 float qq[4] = {1.0f, 0.0f, 0.0f, 0.0f}; 
@@ -1034,8 +1036,8 @@ void get_data(){
         // mx = (float)magCount[0]*mRes*magCalibration[0] - magbias[0];  // get actual magnetometer value, this depends on scale being set
         // my = (float)magCount[1]*mRes*magCalibration[1] - magbias[1];  
         // mz = (float)magCount[2]*mRes*magCalibration[2] - magbias[2];   
-        float prev_x=roll_p;
-        float prev_y=pitch_p;
+        prev_x=roll_p;
+        prev_y=pitch_p;
 
 
         AcX=(double)(atan(ay/sqrt(pow(ax,2)+pow(az,2)))*180/PI);

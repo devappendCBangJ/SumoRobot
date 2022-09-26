@@ -55,7 +55,7 @@ bool ir_WhCol[7];
 double psdf_volts;
 double psdf_val;
 double psdb_val;
-uint16_t black = 15000;
+uint16_t black = 17500;
 
 ///////////////////////////////////////////////////
 extern float pitch_p;
@@ -133,12 +133,15 @@ Timer brk_tmr;
 Timer rotate_tmr;
 Timer tilt_tmr;
 
-extern float deltat; // 세부조정 필요!!!
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 350000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
+
+// ///////////////////////////////////////////////////
+// double control_time = 0;
+// ///////////////////////////////////////////////////
 
 // ir + psd 센서
 void sensor_read(){
@@ -435,7 +438,7 @@ void tilt_tmr_move(){
         tilt_tmr.start();
     }
     else{ // IMU 일정 각도 이하 : 타이머 리셋
-        tmr_reset(&tilt_tmr); 
+        tmr_reset(&tilt_tmr);
     }
 
     if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임

@@ -228,6 +228,7 @@ float roll_p, pitch_p;
 float prev_x, prev_y;
 
 float deltat = 0.001f;                             // integration interval for both filter schemes
+
    // used to calculate integration interval                               // used to calculate integration interval
 float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};           // vector to hold quaternion
 float qq[4] = {1.0f, 0.0f, 0.0f, 0.0f}; 

@@ -5,7 +5,7 @@
 #include "C:\Users\Hi\Mbed Programs\2_0_SRC_220305\MPU9250\MPU9250.h"
 // #include <math.h>
 
-// [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
+// [통신 + 타이머 + 모터 + 센서 class 선언 & 초기값]
 // 모드
 extern DigitalOut led1;
 extern InterruptIn btn;
@@ -37,10 +37,6 @@ extern AnalogIn irfm;
 
 extern AnalogIn psdf;
 extern GP2A psdb;
-
-///////////////////////////////////////////////////
-extern MPU9250 mpu9250;
-///////////////////////////////////////////////////
 
 extern uint16_t ir_val[7];
 // 0 : fl
@@ -149,6 +145,61 @@ extern int tilt_back_escape_time; // 세부조정 필요!!!
 extern double control_time; // 세부조정 필요!!!
 ///////////////////////////////////////////////////
 
+// [MPU9250 초기값]
+///////////////////////////////////////////////////
+extern MPU9250 mpu9250;
+///////////////////////////////////////////////////
+
+extern uint8_t Ascale;     // AFS_2G, AFS_4G, AFS_8G, AFS_16G
+extern uint8_t GscaleS; // GFS_250DPS, GFS_500DPS, GFS_1000DPS, GFS_2000DPS
+extern uint8_t Mscale; // MFS_14BITS or MFS_16BITS, 14-bit or 16-bit magnetometer resolution
+extern uint8_t Mmode;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR  
+extern float aRes, gRes, mRes;      // scale resolutions per LSB for the sensors
+
+//Set up I2C, (SDA,SCL)
+extern I2C i2c;
+
+extern DigitalOut myled;
+    
+// Pin definitions
+extern int intPin;  // These can be changed, 2 and 3 are the Arduinos ext int pins
+
+extern int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
+extern int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
+extern int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+extern float magCalibration[3], magbias[3];  // Factory mag calibration and mag bias
+extern float magScale[3];
+// float gyroBias[3] = {0, 0, 0}, accelBias[3] = {0, 0, 0}; // Bias corrections for gyro and accelerometer
+extern float gyroBias[3], accelBias[3]; // Bias corrections for gyro and accelerometer
+extern float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
+extern int16_t tempCount;   // Stores the real internal chip temperature in degrees Celsius
+extern float temperature;
+extern float SelfTest[6];
+
+extern int delt_t; // used to control display output rate
+extern int count;  // used to control display output rate
+
+// parameters for 6 DoF sensor fusion calculations
+extern float PI;
+extern float GyroMeasError;     // gyroscope measurement error in rads/s (start at 60 deg/s), then reduce after ~10 s to 3
+extern float beta;  // compute beta
+extern float GyroMeasDrift;      // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
+extern float zeta;  // compute zeta, the other free parameter in the Madgwick scheme usually set to a small or zero value
+
+extern float pitch, yaw, roll;
+extern float pitch2, yaw2, roll2;
+extern float AcX, AcY, GyX, GyY;
+extern float roll_p, pitch_p;
+extern float prev_x, prev_y;
+
+extern float deltat;                             // integration interval for both filter schemes
+
+// used to calculate integration interval                               // used to calculate integration interval
+extern float q[4];           // vector to hold quaternion
+extern float qq[4]; 
+extern float e1, e2, e3;
+extern float eInt[3];              // vector to hold integral error for Mahony method
+
 // [main문]
 int main(){
     pc.format(8, SerialBase::Even, 1);
@@ -164,10 +215,10 @@ int main(){
     control_tmr.start();
 
     ///////////////////////////////////////////////////
-    mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
-    mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
-    mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
-    //ThisThread::sleep_for(100);
+    // mpu9250.resetMPU9250(); // Reset registers to default in preparation for device calibration
+    // mpu9250.MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values 
+    // mpu9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers  
+    // ThisThread::sleep_for(100);
     mpu9250.initMPU9250();
 
     mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g

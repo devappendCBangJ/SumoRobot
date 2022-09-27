@@ -59,13 +59,10 @@ double psdb_val;
 uint16_t black = 17500;
 
 ///////////////////////////////////////////////////
-extern float pitch_p;
-float tilt_deg = 5.0;
-///////////////////////////////////////////////////
-
-///////////////////////////////////////////////////
-extern float deltat;
 MPU9250 mpu9250;
+float tilt_deg = 5.0;
+extern float deltat;
+extern float pitch_p;
 ///////////////////////////////////////////////////
 
 // AC서보 모터
@@ -152,7 +149,7 @@ void sensor_read(){
     ///////////////////////////////////////////////////
     if(control_tmr.read_us() >= control_time){
         mpu9250.get_data();
-        pc.printf("control_time : %d \n", control_tmr.read_us());
+        // pc.printf("control_time : %d \n", control_tmr.read_us()); // 확인용 코드
 
         control_tmr.reset();
     }

@@ -547,8 +547,6 @@ void tilt_tmr_move(){
                 // }
             }
         }
-
-        
     }
 }
 
@@ -581,10 +579,14 @@ void whl_bundle(){
     sensor_cal();
     // sensor_print(); // 확인용 코드
 
-    servo_move(Servo);
-    DC_move(speedL, speedR);
+    if(All_move == true){ // 통신 받음
+        servo_move(Servo);
+        DC_move(speedL, speedR);
+    }
+    All_move = false;
 
-    all_print();
+    blt.printf("%.1f\n", pitch_p); // 확인용 코드
+    // all_print(); // 확인용 코드
 }
 
 // print

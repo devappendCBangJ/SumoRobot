@@ -337,95 +337,31 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        if(angLL < ang){ // 서보 보통 왼쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                        else if(ang <= angLL){ // 서보 매우 왼쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        if(angLL < ang){ // 서보 보통 왼쪽
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                        else if(ang <= angLL){ // 서보 매우 왼쪽
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 ???
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.10;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
-                                        speedL = 0.30; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.30;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 매우 왼쪽 전진 ???
-                                    speedL = 0.10; speedR = 0.60; // 0.225;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    if(ang <= angLL){
-                                        speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                        speedR = 0.50;
-                                    }
-                                    else if(ang > angLL){
-                                        speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else{ // 그 외 : 왼쪽 전진
-                                    speedL = 0.27; speedR = 0.60;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_left_can_see_move();
+
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
 
-                            if(ras_data[1] == 4){ // 화면 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                            else if(ras_data[1] == 4){ // 화면 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_left_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
 
@@ -445,87 +381,30 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.70, -0.70);
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격
-                                        speedL = 0.60; speedR = 0.60;
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
-                                    if(ang >= 90){ // 서보 조금이라도 오른쪽 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
-                                    }
-                                    else if(ang < 90){ // 서보 조금이라도 왼쪽 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.10;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 왼쪽 전진
-                                        speedL = 0.10; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                ){
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 전진
-                                        speedL = 0.35; speedR = 0.35;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 전진
-                                    speedL = 0.27; speedR = 0.60;
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.27;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    speedL = 0.60; speedR = 0.60;
-                                }
-                                else{ // 그 외 : 전진
-                                    speedL = 0.60; speedR = 0.60;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_mid_can_see_move();
 
-                            if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_mid_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
                         
@@ -545,95 +424,30 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        if(ang < angRR){ // 서보 보통 오른쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                        else if(angRR <= ang){ // 서보 매우 오른쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        if(angRR <= ang){
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
-                                        }
-                                        else if(ang < angRR){
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 왼쪽 전진
-                                        speedL = 0.10; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
-                                        speedL = 0.30; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.30;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 매우 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.10; // 0.225;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    if(angRR <= ang){
-                                        speedL = 0.60;
-                                        speedR = -map<float>(ang, 180.0, angRR, 0.60, 0.18);
-                                    }
-                                    else if(ang < angRR){
-                                        speedL = 0.60;
-                                        speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                    }
-                                }
-                                else{ // 그 외 : 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.27;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_right_can_see_move();
 
-                            if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_right_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
                     }
@@ -657,271 +471,43 @@ int main(){
                             else{
                                 speedL = 0.45; speedR = -0.45;
                             }
+
+                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&rotate_tmr);
                         }
-                        else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                            // pc.printf("상대 보임 \n"); // 확인용 코드
+                        else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                            red_out_servo_all_can_see_move();
 
-                            if(ang <= angML){ // 서보 왼쪽
-                                if(angLL < ang){ // 서보 보통 왼쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                    }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪾 앞 바퀴 + 왼쪽 뒷 바퀴
-                                        (ir_val[0] < black && ir_val[1] > black && ir_val[2] > black && ir_val[3] > black && ir_val[4] < black && ir_val[5] > black && ir_val[6] > black) // ir 왼쪽 앞 + ir 왼쪽 뒤
-                                    ){
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-
-                                            rotate_dir = 'l';
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else if(ang <= angLL){ // 서보 매우 왼쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                            //normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                    } 
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                    }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                        speedR = 0.50;
-                                    }
-                                }
-                            }
-                            else if(angML < ang && ang < angMR){ // 서보 중간
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else if(
-                                    (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                ){
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                    // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                }
-                                else if(
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴
-                                    (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) // 오른쪽 앞 바퀴
-                                ){
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                    }
-                                }
-                                else{ // 그 외 : 자유롭게 공격
-                                    speedL = 0.60;
-                                    speedR = 0.60;
-                                }
-                            }
-                            else if(angMR <= ang){ // 서보 오른쪽
-                                if(ang < angRR){ // 서보 보통 오른쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                        (ir_val[0] > black && ir_val[1] < black && ir_val[2] > black && ir_val[3] < black && ir_val[4] > black && ir_val[5] > black && ir_val[6] > black) // ir 오른쪽 앞 + ir 오른쪽 뒤
-                                    ){
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-
-                                            rotate_dir = 'r';
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                    }
-                                }
-                                else if(angRR <= ang){ // 서보 매우 오른쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = 0.50;
-                                        speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                    }
-                                }
-                            }
-
-                            if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
-                            }
-                            else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
-                            }
+                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&rotate_tmr);
                         }
+                        else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                            tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+                            rotate_tmr_judgment(); // 로봇 빨간원 주위 회전 체크
 
-                        if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                            tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
-                            rotate_tmr_move(); // 3초 이상 빨간원 주위 회전 : 전진
+                            if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(rotate_tmr.read_us() < rotate_escape_time){
+                                    red_out_servo_all_can_see_move();
+
+                                    if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
+                                        sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
+                                    }
+                                    else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
+                                        sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                    }
+                                }
+                                else if(rotate_tmr.read_us() > rotate_escape_time){
+                                    rotate_tmr_move(); // 3초 이상 빨간원 주위 회전 : 전진
+                                }
+                            }
+                            else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                            }
 
                             if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                 speedL = speedL * (1.666);
                                 speedR = speedR * (1.666);
                             }
-                        }
-                        else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                            tmr_reset(&tilt_tmr); 
-                            tmr_reset(&rotate_tmr);
                         }
                     }
                 }
@@ -1042,7 +628,7 @@ int main(){
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
                             if(0 <= ras_data[0] < width_l){ // 화면 왼쪽
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -1071,7 +657,7 @@ int main(){
                             }
 
                             else if(width_l <= ras_data[0] < width_r){ // 화면 중간
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -1100,7 +686,7 @@ int main(){
                             }
 
                             else if(width_r <= ras_data[0]){ // 화면 오른쪽
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -1202,95 +788,31 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        if(angLL < ang){ // 서보 보통 왼쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                        else if(ang <= angLL){ // 서보 매우 왼쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        if(angLL < ang){ // 서보 보통 왼쪽
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                        else if(ang <= angLL){ // 서보 매우 왼쪽
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 ???
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.10;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
-                                        speedL = 0.30; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.30;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.45, -0.30);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 매우 왼쪽 전진 ???
-                                    speedL = 0.10; speedR = 0.60; // 0.225;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    if(ang <= angLL){
-                                        speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                        speedR = 0.50;
-                                    }
-                                    else if(ang > angLL){
-                                        speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else{ // 그 외 : 왼쪽 전진
-                                    speedL = 0.27; speedR = 0.60;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_left_can_see_move();
+
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
 
-                            if(ras_data[1] == 4){ // 화면 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                            else if(ras_data[1] == 4){ // 화면 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_left_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
 
@@ -1310,87 +832,30 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.70, -0.70);
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격
-                                        speedL = 0.60; speedR = 0.60;
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
-                                    if(ang >= 90){ // 서보 조금이라도 오른쪽 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
-                                    }
-                                    else if(ang < 90){ // 서보 조금이라도 왼쪽 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.10;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 왼쪽 전진
-                                        speedL = 0.10; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                ){
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 전진
-                                        speedL = 0.35; speedR = 0.35;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.35, -0.35);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 왼쪽 전진
-                                    speedL = 0.27; speedR = 0.60;
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.27;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    speedL = 0.60; speedR = 0.60;
-                                }
-                                else{ // 그 외 : 전진
-                                    speedL = 0.60; speedR = 0.60;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_mid_can_see_move();
 
-                            if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_mid_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
                         
@@ -1410,95 +875,30 @@ int main(){
                                 else{
                                     speedL = 0.45; speedR = -0.45;
                                 }
-                            }
-                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                                // pc.printf("상대 보임 \n"); // 확인용 코드
 
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        if(ang < angRR){ // 서보 보통 오른쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                        else if(angRR <= ang){ // 서보 매우 오른쪽
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        if(angRR <= ang){
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
-                                        }
-                                        else if(ang < angRR){
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 매우 왼쪽 전진
-                                        speedL = 0.10; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
-                                        speedL = 0.30; speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-                                        speedL = 0.60; speedR = 0.30;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                    }
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.30, -0.45);
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 매우 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.10; // 0.225;
-                                }
-                                else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
-                                    if(angRR <= ang){
-                                        speedL = 0.60;
-                                        speedR = -map<float>(ang, 180.0, angRR, 0.60, 0.18);
-                                    }
-                                    else if(ang < angRR){
-                                        speedL = 0.60;
-                                        speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                    }
-                                }
-                                else{ // 그 외 : 오른쪽 전진
-                                    speedL = 0.60; speedR = 0.27;
-                                }
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
                             }
+                            else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                red_in_servo_right_can_see_move();
 
-                            if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&rotate_tmr);
+                            }
+                            else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+
+                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    red_in_servo_right_can_see_move();
+                                }
+                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                    tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                }
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
                                     speedR = speedR * (1.666);
                                 }
-                            }
-                            else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                                tmr_reset(&tilt_tmr); 
-                                tmr_reset(&rotate_tmr);
                             }
                         }
                     }
@@ -1522,280 +922,40 @@ int main(){
                             else{
                                 speedL = 0.45; speedR = -0.45;
                             }
+
+                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&rotate_tmr);
                         }
-                        else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
-                            // pc.printf("상대 보임 \n"); // 확인용 코드
+                        else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                            red_out_servo_all_can_see_move();
 
-                            if(ang <= angML){ // 서보 왼쪽
-                                // speed = map<float>(ang, 75.0, 0.0, 0.20, 0.35);
-                                // DC_move(0, 1, speed, speed);
-
-                                if(angLL < ang){ // 서보 보통 왼쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                    }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪾 앞 바퀴 + 왼쪽 뒷 바퀴
-                                        (ir_val[0] < black && ir_val[1] > black && ir_val[2] > black && ir_val[3] > black && ir_val[4] < black && ir_val[5] > black && ir_val[6] > black) // ir 왼쪽 앞 + ir 왼쪽 뒤
-                                    ){
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                            speedR = 0.60;
-
-                                            rotate_dir = 'l';
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else if(ang <= angLL){ // 서보 매우 왼쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                            //normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                    } 
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                    }
-                                    else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                            speedR = 0.50;
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                                        speedR = 0.50;
-                                    }
-                                }
-                            }
-                            else if(angML < ang && ang < angMR){ // 서보 중간
-                                if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                    }
-                                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = 0.60;
-                                    }
-                                }
-                                else if(
-                                    (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                ){
-                                    sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                    // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                }
-                                else if(
-                                    (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴
-                                    (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) // 오른쪽 앞 바퀴
-                                ){
-                                    if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = 0.60;
-                                    }
-                                    else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -0.50);
-                                    }
-                                }
-                                else{ // 그 외 : 자유롭게 공격
-                                    speedL = 0.60;
-                                    speedR = 0.60;
-                                }
-                            }
-                            else if(angMR <= ang){ // 서보 오른쪽
-                                // speed = map<float>(ang, 180.0, 105.0, 0.35, 0.20);
-                                // DC_move(1, 0, speed, speed);
-
-                                if(ang < angRR){ // 서보 보통 오른쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
-                                        (ir_val[0] > black && ir_val[1] < black && ir_val[2] > black && ir_val[3] < black && ir_val[4] > black && ir_val[5] > black && ir_val[6] > black) // ir 오른쪽 앞 + ir 오른쪽 뒤
-                                    ){
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.60;
-                                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-
-                                            rotate_dir = 'r';
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = 0.60;
-                                        speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                                    }
-                                }
-                                else if(angRR <= ang){ // 서보 매우 오른쪽
-                                    if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                                        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                    }
-                                    else if(
-                                        (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 + 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                        (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
-                                    ){
-                                        sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                        // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
-                                        if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                                            speedL = 0.50;
-                                            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                        }
-                                        else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-                                            sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-
-                                            // normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
-                                        }
-                                    }
-                                    else{ // 그 외 : 자유롭게 공격
-                                        speedL = 0.50;
-                                        speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
-                                    }
-                                }
-                            }
-
-                            if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
-                            }
-                            else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
-                            }
+                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&rotate_tmr);
                         }
+                        else if(ras_data[1] == 4){ // 화면 원통 매우 큼
+                            tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+                            rotate_tmr_judgment(); // 로봇 빨간원 주위 회전 체크
 
-                        if(ras_data[1] == 4){ // 화면 원통 매우 큼
-                            tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
-                            rotate_tmr_move(); // 3초 이상 빨간원 주위 회전 : 전진
+                            if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(rotate_tmr.read_us() < rotate_escape_time){
+                                    red_out_servo_all_can_see_move();
+                                }
+                                else if(rotate_tmr.read_us() > rotate_escape_time){
+                                    rotate_tmr_move(); // 3초 이상 빨간원 주위 회전 : 전진
+                                }
+                            }
+                            else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                            }
 
                             if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                 speedL = speedL * (1.666);
                                 speedR = speedR * (1.666);
                             }
                         }
-                        else{ // 화면 원통 안보임 or 작음 or 보통 or 큼(화면 매우 크지 않을 때)
-                            tmr_reset(&tilt_tmr); 
-                            tmr_reset(&rotate_tmr);
-                        }
                     }
                 }
+                // mutex.unlock();
             }
 
             DC_move(speedL, speedR);

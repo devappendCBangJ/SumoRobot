@@ -38,10 +38,9 @@ void red_in_servo_right_can_see_move();
 void red_out_servo_all_can_see_move();
 
 void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR);
+void rotate_tmr_judgment();
 void tilt_tmr_judgment();
 void tilt_tmr_move();
-void rotate_tmr_judgment();
-void rotate_tmr_move();
 void tmr_reset(Timer* _tmr);
 
 void btn_flip();

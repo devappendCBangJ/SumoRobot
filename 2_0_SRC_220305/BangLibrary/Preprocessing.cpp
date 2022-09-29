@@ -139,7 +139,7 @@ Timer tilt_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
-int fight_back_escape_time = 350000; // 세부조정 필요!!!
+int fight_back_escape_time = 450000; // 세부조정 필요!!!
 int rotate_escape_time = 3000000; // 세부조정 필요!!!
 int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
@@ -1100,10 +1100,10 @@ void whl_bundle(){
     if(All_move == true){ // 통신 받음
         servo_move(Servo);
         DC_move(speedL, speedR);
+
+        blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
     }
     All_move = false;
-
-    // blt.printf("%.1f, %.2f, %.2f\n", pitch_p, speedL, speedR); // 확인용 코드
     // all_print(); // 확인용 코드
 }
 

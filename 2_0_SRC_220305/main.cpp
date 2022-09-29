@@ -226,6 +226,8 @@ int main(){
     mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
     ///////////////////////////////////////////////////
 
+    blt.printf("mbed reset\n"); // 확인용 코드
+
     // ///////////////////////////////////////////////////
     // const double PI = 3.1415926;
 
@@ -256,6 +258,8 @@ int main(){
             // mutex.lock(); // thread 전용
 
             if(tot_mode == 0){
+                blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
+
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
                     if(ras_data[0] == 999){ // 상대 안보임
@@ -483,8 +487,6 @@ int main(){
                             tmr_reset(&rotate_tmr);
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
-                            blt.printf("%d, %c\n", rotate_tmr.read_us(), rotate_dir); // 확인용 코드
-
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 red_out_servo_all_can_see_move();
 
@@ -501,7 +503,6 @@ int main(){
 
                             tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
                             rotate_tmr_judgment(); // 로봇 빨간원 주위 회전 체크
-                            blt.printf("%d, %c\n", rotate_tmr.read_us(), rotate_dir); // 확인용 코드
 
                             if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                 speedL = speedL * (1.666);
@@ -554,7 +555,7 @@ int main(){
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
                             if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 전진
-                                speedL = 0.80; speedR = 0.80;
+                                speedL = 1.0; speedR = 1.0;
                             }
                             else{
                                 speedL = 0.0; speedR = 0.0;
@@ -626,7 +627,7 @@ int main(){
                             }
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
-                            if(0 <= ras_data[0] < width_l){ // 화면 왼쪽
+                            if(ras_data[0] < width_l){ // 화면 왼쪽
                                 if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
@@ -650,12 +651,12 @@ int main(){
                                         speedL = -0.30; speedR = 0.30;
                                     }
                                 }
-                                if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
 
-                            else if(width_l <= ras_data[0] < width_r){ // 화면 중간
+                            else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 중간
                                 if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
@@ -676,10 +677,10 @@ int main(){
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.65, -0.65);
                                     }
                                     else{ // 그 외 : 정지
-                                        speedL = 0.00; speedR = -0.00;
+                                        speedL = 0.0; speedR = 0.0;
                                     }
                                 }
-                                if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
@@ -708,7 +709,7 @@ int main(){
                                         speedL = 0.30; speedR = -0.30;
                                     }
                                 }
-                                if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
@@ -932,8 +933,6 @@ int main(){
                             tmr_reset(&rotate_tmr);
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
-                            blt.printf("%d, %c\n", rotate_tmr.read_us(), rotate_dir); // 확인용 코드
-
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 red_out_servo_all_can_see_move();
 
@@ -950,7 +949,6 @@ int main(){
 
                             tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
                             rotate_tmr_judgment(); // 로봇 빨간원 주위 회전 체크
-                            blt.printf("%d, %c\n", rotate_tmr.read_us(), rotate_dir); // 확인용 코드
 
                             if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                 speedL = speedL * (1.666);

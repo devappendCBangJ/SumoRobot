@@ -60,7 +60,7 @@ uint16_t black = 17500;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
-float tilt_deg = 5.0;
+float tilt_deg = 4.0;
 extern float deltat;
 extern float pitch_p;
 ///////////////////////////////////////////////////

@@ -234,10 +234,7 @@ void servo_move(PwmOut &rc){
     // 중간 동작 : 화면 상대방 보임
     else if(ras_data[0] < width_l){
         // pc.printf("2"); // 확인용 코드
-        if(ras_data[1] == 1) ang = ang - inc;
-        else if(ras_data[1] == 2) ang = ang - inc;
-        else if(ras_data[1] == 3) ang = ang - inc;
-        else if(ras_data[1] == 4) ang = ang - inc;
+        ang = ang - inc;
         pre_data0 = 1;
     }
     else if(width_l <= ras_data[0] && ras_data[0] < width_r){
@@ -247,10 +244,7 @@ void servo_move(PwmOut &rc){
     }
     else if(width_r <= ras_data[0]){
         // pc.printf("4"); // 확인용 코드
-        if(ras_data[1] == 1) ang = ang + inc;
-        else if(ras_data[1] == 2) ang = ang + inc;
-        else if(ras_data[1] == 3) ang = ang + inc;
-        else if(ras_data[1] == 4) ang = ang + inc;
+        ang = ang + inc;
         pre_data0 = 3;
     }
 
@@ -693,7 +687,7 @@ void red_out_servo_all_can_see_move(){
                             speedL = 0.50; speedR = 0.60;
                         }
                         else{
-                            rotate_tmr.reset();
+                            tmr_reset(&rotate_tmr);
                         }
                     }
                 }
@@ -858,7 +852,7 @@ void red_out_servo_all_can_see_move(){
                             speedL = 0.60; speedR = 0.50;
                         }
                         else{
-                            rotate_tmr.reset();
+                            tmr_reset(&rotate_tmr);
                         }
                     }
                 }

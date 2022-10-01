@@ -488,13 +488,14 @@ int main(){
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
-                                red_out_servo_all_can_see_move();
-
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
                                 }
                                 else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                }
+                                else{ // 그 외
+                                    red_out_servo_all_can_see_move();
                                 }
                             }
                             else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
@@ -934,13 +935,14 @@ int main(){
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
-                                red_out_servo_all_can_see_move();
-
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
                                 }
                                 else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                }
+                                else{ // 그 외
+                                    red_out_servo_all_can_see_move();
                                 }
                             }
                             else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임

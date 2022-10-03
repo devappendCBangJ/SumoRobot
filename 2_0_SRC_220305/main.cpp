@@ -103,6 +103,7 @@ extern volatile float ras_data[3];
     // 큼 : 3
     // 매우 큼 : 4
     // 매우 매우 큼 : 5
+    // 매우 매우 매우 큼 : 6
     // 없음 : 9
 // ras_data[2] : 빨간영역 좌표 vs 상대 좌표 비교(거리, 영역)
     // 빨간 영역 안 : 0(상대 가까울 때만 공격)
@@ -239,7 +240,7 @@ int main(){
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        // all_print(); // 확인용 코드
+        all_print(); // 확인용 코드
 
         in_SerialRx_main(); // interrupt 전용
 
@@ -258,8 +259,9 @@ int main(){
             // mutex.lock(); // thread 전용
 
             if(tot_mode == 0){
-                blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-
+                // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
+                blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
                     if(ras_data[0] == 999){ // 상대 안보임
@@ -353,7 +355,7 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
 
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_left_can_see_move();
                                 }
@@ -396,7 +398,7 @@ int main(){
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
                             }
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_mid_can_see_move();
                                 }
@@ -439,7 +441,7 @@ int main(){
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
                             }
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_right_can_see_move();
                                 }
@@ -486,7 +488,7 @@ int main(){
                             tmr_reset(&tilt_tmr); 
                             tmr_reset(&rotate_tmr);
                         }
-                        else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                        else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
@@ -516,6 +518,9 @@ int main(){
             }
 
             else if(tot_mode >= 1){
+                // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
+                blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
                     if(ras_data[0] == 999){ // 상대 안보임
@@ -652,7 +657,7 @@ int main(){
                                         speedL = -0.30; speedR = 0.30;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
@@ -681,7 +686,7 @@ int main(){
                                         speedL = 0.0; speedR = 0.0;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
@@ -710,7 +715,7 @@ int main(){
                                         speedL = 0.30; speedR = -0.30;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
@@ -800,7 +805,7 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
 
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_left_can_see_move();
                                 }
@@ -843,7 +848,7 @@ int main(){
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
                             }
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_mid_can_see_move();
                                 }
@@ -886,7 +891,7 @@ int main(){
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
                             }
-                            else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                            else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                                 if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_right_can_see_move();
                                 }
@@ -933,7 +938,7 @@ int main(){
                             tmr_reset(&tilt_tmr); 
                             tmr_reset(&rotate_tmr);
                         }
-                        else if(ras_data[1] == 4 || ras_data[1] == 5){ // 화면 원통 매우 큼 + 매우 매우 큼
+                        else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);

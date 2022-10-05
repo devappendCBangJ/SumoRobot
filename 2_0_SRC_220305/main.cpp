@@ -240,7 +240,7 @@ int main(){
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        all_print(); // 확인용 코드
+        // all_print(); // 확인용 코드
 
         in_SerialRx_main(); // interrupt 전용
 
@@ -260,7 +260,9 @@ int main(){
 
             if(tot_mode == 0){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-                blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                blt.printf("%.2f\n", pitch_p); // 확인용 코드
+                blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
                 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
@@ -519,7 +521,9 @@ int main(){
 
             else if(tot_mode >= 1){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-                blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                blt.printf("%.2f\n", pitch_p); // 확인용 코드
+                blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){

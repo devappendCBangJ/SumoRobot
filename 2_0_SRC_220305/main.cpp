@@ -150,6 +150,8 @@ extern double control_time; // 세부조정 필요!!!
 // [MPU9250 초기값]
 ///////////////////////////////////////////////////
 extern MPU9250 mpu9250;
+extern float tilt_deg;
+extern float tilt_break_deg;
 ///////////////////////////////////////////////////
 
 extern uint8_t Ascale;     // AFS_2G, AFS_4G, AFS_8G, AFS_16G

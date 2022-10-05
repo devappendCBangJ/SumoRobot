@@ -61,6 +61,7 @@ uint16_t black = 17500;
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
 float tilt_deg = 4.0;
+float tilt_break_deg = 1.0;
 extern float deltat;
 extern float pitch_p;
 ///////////////////////////////////////////////////
@@ -993,10 +994,10 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                     (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
                 }
                 else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1011,10 +1012,10 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                     (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
                 }
                 else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1030,11 +1031,11 @@ void tilt_tmr_move(){
                 (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
             ){
-                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.95, -0.50);
+                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
             }
             
             else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.50, -0.95);
+                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
             }
     }
         // }
@@ -1050,11 +1051,11 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                     (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
                 }
                 
                 else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1069,11 +1070,11 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                     (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
                 }
                 
                 else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격

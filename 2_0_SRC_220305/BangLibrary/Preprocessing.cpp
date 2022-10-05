@@ -143,8 +143,8 @@ Timer tilt_tmr;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 450000; // 세부조정 필요!!!
-int rotate_escape_time = 3000000; // 세부조정 필요!!!
-int tilt_back_escape_time = 1500000; // 세부조정 필요!!!
+int rotate_recog_time = 3000000; // 세부조정 필요!!!
+int tilt_recog_time = 700000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
 
 // ir + psd 센서
@@ -684,11 +684,11 @@ void red_out_servo_all_can_see_move(){
                         rotate_dir = 'l';
                     }
 
-                    if(rotate_tmr.read_us() < rotate_escape_time){
+                    if(rotate_tmr.read_us() < rotate_recog_time){
                         speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
                         speedR = 0.60;
                     }
-                    else if(rotate_tmr.read_us() > rotate_escape_time){
+                    else if(rotate_tmr.read_us() > rotate_recog_time){
                         // if(rotate_dir == pre_rotate_dir){
                             // speedL = 0.60; speedR = 0.60;
                             speedL = 0.60; speedR = 0.40;
@@ -859,11 +859,11 @@ void red_out_servo_all_can_see_move(){
                         rotate_dir = 'r';
                     }
 
-                    if(rotate_tmr.read_us() < rotate_escape_time){
+                    if(rotate_tmr.read_us() < rotate_recog_time){
                         speedL = 0.60;
                         speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
                     }
-                    else if(rotate_tmr.read_us() > rotate_escape_time){
+                    else if(rotate_tmr.read_us() > rotate_recog_time){
                         // if(rotate_dir == pre_rotate_dir){
                             // speedL = 0.60; speedR = 0.50;
                             speedL = 0.40; speedR = 0.60;

@@ -135,13 +135,12 @@ extern Timer brk_tmr;
 extern Timer rotate_tmr;
 extern Timer tilt_tmr;
 
-// int turn_escape_time = 25000;
-// int back_escape_time = 100000;
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_escape_time; // 세부조정 필요!!!
-extern int rotate_escape_time; // 세부조정 필요!!!
-extern int tilt_back_escape_time; // 세부조정 필요!!!
+extern int rotate_recog_time; // 세부조정 필요!!!
+extern int tilt_recog_time; // 세부조정 필요!!!
+extern double control_time; // 세부조정 필요!!!
 
 ///////////////////////////////////////////////////
 extern double control_time; // 세부조정 필요!!!
@@ -360,10 +359,10 @@ int main(){
                             }
 
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_left_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -403,10 +402,10 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_mid_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -446,10 +445,10 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_right_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -493,7 +492,7 @@ int main(){
                             tmr_reset(&rotate_tmr);
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                            if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                            if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
                                 }
@@ -504,7 +503,7 @@ int main(){
                                     red_out_servo_all_can_see_move();
                                 }
                             }
-                            else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                            else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                             }
 
@@ -812,10 +811,10 @@ int main(){
                             }
 
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_left_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -855,10 +854,10 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_mid_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -898,10 +897,10 @@ int main(){
                                 tmr_reset(&rotate_tmr);
                             }
                             else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                                if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     red_in_servo_right_can_see_move();
                                 }
-                                else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                                else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                                 }
 
@@ -945,7 +944,7 @@ int main(){
                             tmr_reset(&rotate_tmr);
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
-                            if(tilt_tmr.read_us() < tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                            if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
                                 }
@@ -956,7 +955,7 @@ int main(){
                                     red_out_servo_all_can_see_move();
                                 }
                             }
-                            else if(tilt_tmr.read_us() > tilt_back_escape_time){ // 타이머 일정 시간 이상 : 특정 움직임
+                            else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
                             }
 

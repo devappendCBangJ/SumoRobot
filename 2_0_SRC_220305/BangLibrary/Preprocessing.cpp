@@ -19,6 +19,7 @@ int tic_even_cnt = 0;
 
 char pre_rotate_dir = 'n';
 char rotate_dir = 'n';
+char waiting_dir = 'l';
 
 // 코드 위치 확인
 int where = 0;
@@ -142,12 +143,16 @@ Timer control_tmr;
 Timer brk_tmr;
 Timer rotate_tmr;
 Timer tilt_tmr;
+Timer waiting_start_tmr;
+Timer waiting_dir_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
 int fight_back_escape_time = 450000; // 세부조정 필요!!!
 int rotate_recog_time = 3000000; // 세부조정 필요!!!
 int tilt_recog_time = 700000; // 세부조정 필요!!!
+int waiting_start_time = 5000000; // 세부조정 필요!!!
+int waiting_dir_time = 200000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
 
 // ir + psd 센서

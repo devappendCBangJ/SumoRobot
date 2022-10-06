@@ -20,6 +20,7 @@ extern int tic_even_cnt;
 
 extern char pre_rotate_dir;
 extern char rotate_dir;
+extern char waiting_dir;
 
 // 코드 위치 확인
 extern int where;
@@ -137,12 +138,16 @@ extern Timer control_tmr;
 extern Timer brk_tmr;
 extern Timer rotate_tmr;
 extern Timer tilt_tmr;
+extern Timer waiting_start_tmr;
+extern Timer waiting_dir_tmr;
 
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_escape_time; // 세부조정 필요!!!
 extern int rotate_recog_time; // 세부조정 필요!!!
 extern int tilt_recog_time; // 세부조정 필요!!!
+extern int waiting_start_time; // 세부조정 필요!!!
+extern int waiting_dir_time; // 세부조정 필요!!!
 extern double control_time; // 세부조정 필요!!!
 
 ///////////////////////////////////////////////////
@@ -670,6 +675,9 @@ int main(){
                             else{
                                 speedL = 0.45; speedR = -0.45;
                             }
+
+                            tmr_reset(&waiting_start_tmr);
+                            tmr_reset(&waiting_dir_tmr);
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
                             if(ras_data[0] < width_l){ // 화면 왼쪽
@@ -699,6 +707,9 @@ int main(){
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
+
+                                tmr_reset(&waiting_start_tmr);
+                                tmr_reset(&waiting_dir_tmr);
                             }
 
                             else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 중간
@@ -711,6 +722,9 @@ int main(){
                                         (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 모드 변경
                                     ){
                                         mode = 3;
+
+                                        tmr_reset(&waiting_start_tmr);
+                                        tmr_reset(&waiting_dir_tmr);
                                     }
                                     else if(
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -720,13 +734,40 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
                                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.65, -0.65);
+
+                                        tmr_reset(&waiting_start_tmr);
+                                        tmr_reset(&waiting_dir_tmr);
                                     }
                                     else{ // 그 외 : 정지
-                                        speedL = 0.0; speedR = 0.0;
+                                        waiting_start_tmr.start();
+                                        if(waiting_start_tmr.read_us() > waiting_start_time){ // 5초 이상 : 조금씩 회전
+                                            waiting_dir_tmr.start();
+                                            if(waiting_dir_tmr.read_us() > waiting_dir_time){ // 0.2초 이상 : 회전 방향 변경
+                                                if(waiting_dir == 'l') waiting_dir = 'r';
+                                                else if(waiting_dir == 'r') waiting_dir = 'l';
+                                                tmr_reset(&waiting_dir_tmr);
+                                            }
+                                            else{ // 0.2초 이하 : 조금씩 회전
+                                                if(waiting_dir == 'r'){ // 회전 방향 오른쪽
+                                                    speedL = 0.05; speedR = -0.05;
+                                                }
+                                                else if(waiting_dir == 'l'){ // 회전 방향 왼쪽
+                                                    speedL = -0.05; speedR = 0.05;
+                                                }
+                                            }
+                                        }
+                                        else{ // 5초 이하 : 정지
+                                            speedL = 0.0; speedR = 0.0;
+
+                                            tmr_reset(&waiting_dir_tmr);
+                                        }
                                     }
                                 }
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
+
+                                    tmr_reset(&waiting_start_tmr);
+                                    tmr_reset(&waiting_dir_tmr);
                                 }
                             }
 
@@ -757,6 +798,9 @@ int main(){
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
+
+                                tmr_reset(&waiting_start_tmr);
+                                tmr_reset(&waiting_dir_tmr);
                             }
                         }
                     }
@@ -766,6 +810,9 @@ int main(){
                     // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 빨간색 안보임
                     else if(ras_data[2] == 1){ // 상대방이 빨간색 끝좌표 바깥에 위치
                         mode = 3;
+
+                        tmr_reset(&waiting_start_tmr);
+                        tmr_reset(&waiting_dir_tmr);
                     }
                 }
 

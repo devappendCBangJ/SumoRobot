@@ -782,8 +782,7 @@ void red_out_servo_all_can_see_move(){
         }
         else if(ang <= angLL){ // 서보 매우 왼쪽
             if(ras_data[1] == 6){ // 화면 원통 매우 매우 매우 큼
-                speedL = -1.0;
-                speedR = 1.0;
+                speedL = -1.0; speedR = 1.0;
                 where = 73;
             }
             if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음
@@ -853,8 +852,7 @@ void red_out_servo_all_can_see_move(){
                 }
             }
             else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                speedL = 0.60;
-                speedR = 0.60;
+                speedL = 0.60; speedR = 0.60;
                 where = 93;
             }
         }
@@ -877,8 +875,7 @@ void red_out_servo_all_can_see_move(){
             (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) // 오른쪽 앞 바퀴
         ){
             if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                speedL = 0.60;
-                speedR = 0.60;
+                speedL = 0.60; speedR = 0.60;
                 where = 96;
             }
             else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -892,8 +889,7 @@ void red_out_servo_all_can_see_move(){
             }
         }
         else{ // 그 외 : 자유롭게 공격
-            speedL = 0.60;
-            speedR = 0.60;
+            speedL = 0.60; speedR = 0.60;
             where = 99;
         }
     }
@@ -989,8 +985,7 @@ void red_out_servo_all_can_see_move(){
         }
         else if(angRR <= ang){ // 서보 매우 오른쪽
             if(ras_data[1] == 6){ // 화면 원통 매우 매우 매우 큼
-                speedL = 1.0;
-                speedR = -1.0;
+                speedL = 1.0; speedR = -1.0;
                 where = 114;
             }
             else if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음

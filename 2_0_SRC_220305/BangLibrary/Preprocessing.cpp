@@ -145,6 +145,7 @@ Timer rotate_tmr;
 Timer tilt_tmr;
 Timer waiting_start_tmr;
 Timer waiting_dir_tmr;
+Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 1000000; // 세부조정 필요!!!
@@ -153,6 +154,7 @@ int rotate_recog_time = 3000000; // 세부조정 필요!!!
 int tilt_recog_time = 700000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
+int com_check_time = 1500000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
 
 // ir + psd 센서

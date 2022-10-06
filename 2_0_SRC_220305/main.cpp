@@ -140,6 +140,7 @@ extern Timer rotate_tmr;
 extern Timer tilt_tmr;
 extern Timer waiting_start_tmr;
 extern Timer waiting_dir_tmr;
+extern Timer com_check_tmr;
 
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
@@ -148,6 +149,7 @@ extern int rotate_recog_time; // 세부조정 필요!!!
 extern int tilt_recog_time; // 세부조정 필요!!!
 extern int waiting_start_time; // 세부조정 필요!!!
 extern int waiting_dir_time; // 세부조정 필요!!!
+extern int com_check_time; // 세부조정 필요!!!
 extern double control_time; // 세부조정 필요!!!
 
 ///////////////////////////////////////////////////
@@ -1053,14 +1055,23 @@ int main(){
                 // mutex.unlock();
             }
 
-            DC_move(speedL, speedR);
-
             // all_print();
 
             pre_rotate_dir = rotate_dir;
             rotate_dir = 'n';
             All_move = false;
+
+            tmr_reset(&com_check_tmr); // 통신값 여부 타이머 초기화
         }
+        else if(All_move == false){ // 통신 못받음
+            com_check_tmr.start(); // 통신값 여부 타이머 시작
+            if(com_check_tmr.read_us() > com_check_time){ // 1.5초 이상 통신 못받음 : 제자리 회전
+                speedL = 0.45; speedR = -0.45;
+            }
+            // 1.5초 이하 통신 못받음 : 원래 동작 유지
+        }
+
+        DC_move(speedL, speedR);
 
         // ///////////////////////////////////////////////////
         // if(temp_tmr.read_us() >= for_time){

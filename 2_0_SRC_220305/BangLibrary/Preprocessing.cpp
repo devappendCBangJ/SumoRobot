@@ -792,7 +792,7 @@ void red_out_servo_all_can_see_move(){
                 speedL = -1.0; speedR = 1.0;
                 where = 73;
             }
-            if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음
+            else if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음
                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                         sensor_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
@@ -1235,11 +1235,11 @@ void whl_bundle(){
         DC_move(speedL, speedR);
 
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
-        // blt.printf("w%d\n", where); // 확인용 코드
+        blt.printf("w%d\n", where); // 확인용 코드
         // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
         // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
         // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
-        blt.printf("%.2f\n", pitch_p); // 확인용 코드
+        // blt.printf("%.2f\n", pitch_p); // 확인용 코드
         // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
         // blt.printf("%d\n", brk_tmr.read_us()); // 확인용 코드
         // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드

@@ -60,11 +60,11 @@ template<class T> void sensor_tmr_move(Timer* _tmr, int* _time, T* _while_brk_se
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
-                _tmr->reset();
-                _tmr->stop();
                 break;
             }
         }
+        _tmr->reset();
+        _tmr->stop();
     }
     else if(_inequality[0] == '>'){
         while(*_while_brk_sensor > _sensor_val){
@@ -72,11 +72,11 @@ template<class T> void sensor_tmr_move(Timer* _tmr, int* _time, T* _while_brk_se
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
-                _tmr->reset();
-                _tmr->stop();
                 break;
             }
         }
+        _tmr->reset();
+        _tmr->stop();
     }
     else if(_inequality[0] == '<'){
         while(*_while_brk_sensor < _sensor_val){
@@ -84,11 +84,11 @@ template<class T> void sensor_tmr_move(Timer* _tmr, int* _time, T* _while_brk_se
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
-                _tmr->reset();
-                _tmr->stop();
                 break;
             }
         }
+        _tmr->reset();
+        _tmr->stop();
     }
 }
 

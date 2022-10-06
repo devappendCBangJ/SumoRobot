@@ -21,6 +21,9 @@ extern int tic_even_cnt;
 extern char pre_rotate_dir;
 extern char rotate_dir;
 
+// 코드 위치 확인
+extern int where;
+
 // thread
 // Thread com_th;
 
@@ -263,7 +266,10 @@ int main(){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
                 // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
                 blt.printf("%.2f\n", pitch_p); // 확인용 코드
-                blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
+                // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
+                // blt.printf("w%d\n", where); // 확인용 코드
+                // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
+                // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
                 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
@@ -337,15 +343,19 @@ int main(){
 
                                 if(pre_data0 == 1){
                                     speedL = -0.45; speedR = 0.45;
+                                    where = 201;
                                 }
                                 else if(pre_data0 == 2){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 202;
                                 }
                                 else if(pre_data0 == 3){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 203;
                                 }
                                 else{
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 204;
                                 }
 
                                 tmr_reset(&tilt_tmr); 
@@ -364,6 +374,7 @@ int main(){
                                 }
                                 else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                    where = 205;
                                 }
 
                                 tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
@@ -381,15 +392,19 @@ int main(){
 
                                 if(pre_data0 == 1){
                                     speedL = -0.45; speedR = 0.45;
+                                    where = 211;
                                 }
                                 else if(pre_data0 == 2){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 212;
                                 }
                                 else if(pre_data0 == 3){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 213;
                                 }
                                 else{
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 214;
                                 }
 
                                 tmr_reset(&tilt_tmr); 
@@ -407,6 +422,7 @@ int main(){
                                 }
                                 else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                    where = 215;
                                 }
 
                                 tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
@@ -424,15 +440,19 @@ int main(){
 
                                 if(pre_data0 == 1){
                                     speedL = -0.45; speedR = 0.45;
+                                    where = 221;
                                 }
                                 else if(pre_data0 == 2){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 222;
                                 }
                                 else if(pre_data0 == 3){
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 223;
                                 }
                                 else{
                                     speedL = 0.45; speedR = -0.45;
+                                    where = 224;
                                 }
 
                                 tmr_reset(&tilt_tmr); 
@@ -450,6 +470,7 @@ int main(){
                                 }
                                 else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                     tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                    where = 225;
                                 }
 
                                 tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
@@ -471,15 +492,19 @@ int main(){
 
                             if(pre_data0 == 1){
                                 speedL = -0.45; speedR = 0.45;
+                                where = 231;
                             }
                             else if(pre_data0 == 2){
                                 speedL = 0.45; speedR = -0.45;
+                                where = 232;
                             }
                             else if(pre_data0 == 3){
                                 speedL = 0.45; speedR = -0.45;
+                                where = 233;
                             }
                             else{
                                 speedL = 0.45; speedR = -0.45;
+                                where = 234;
                             }
 
                             tmr_reset(&tilt_tmr); 
@@ -495,9 +520,11 @@ int main(){
                             if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
+                                    where = 235;
                                 }
                                 else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
                                     sensor_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                    where = 236;
                                 }
                                 else{ // 그 외
                                     red_out_servo_all_can_see_move();
@@ -505,6 +532,7 @@ int main(){
                             }
                             else if(tilt_tmr.read_us() > tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 tilt_tmr_move(); // 1.5초 이상 로봇 각도 5도 이상 : 매우 빠른 후진
+                                where = 237;
                             }
 
                             tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
@@ -523,8 +551,14 @@ int main(){
             else if(tot_mode >= 1){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
                 // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
+                blt.printf("mode : %d\n", mode); // 확인용 코드
                 blt.printf("%.2f\n", pitch_p); // 확인용 코드
-                blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
+                // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
+                // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
+                // blt.printf("w%d\n", where); // 확인용 코드
+                // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
+                // blt.printf("%d\n", brk_tmr.read_us()); // 확인용 코드
+                // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
@@ -639,7 +673,7 @@ int main(){
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
                             if(ras_data[0] < width_l){ // 화면 왼쪽
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -662,13 +696,13 @@ int main(){
                                         speedL = -0.30; speedR = 0.30;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
 
                             else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 중간
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -691,13 +725,13 @@ int main(){
                                         speedL = 0.0; speedR = 0.0;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }
 
                             else if(width_r <= ras_data[0]){ // 화면 오른쪽
-                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
+                                if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3 || ras_data[1] == 4){ // 화면 원통 작음 or 보통 or 큼 or 매우 큼
                                     // pc.printf("상대 보임 \n"); // 확인용 코드
 
                                     if(
@@ -720,7 +754,7 @@ int main(){
                                         speedL = 0.30; speedR = -0.30;
                                     }
                                 }
-                                else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
+                                else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
                                 }
                             }

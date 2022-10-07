@@ -76,7 +76,7 @@ PwmOut Servo(PA_8);
 float ang = 90.0;
 float inc = 3.5;
 float small_inc = 3.5;
-float big_inc = 5.5;
+float big_inc = 6.7;
 // float small_inc = 2.5;
 // float big_inc = 4.2;
 
@@ -1236,6 +1236,7 @@ void whl_bundle(){
 
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
         blt.printf("w%d\n", where); // 확인용 코드
+        if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
         // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
         // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
         // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드

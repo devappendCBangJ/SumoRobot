@@ -476,7 +476,8 @@ void red_in_servo_left_can_see_move(){
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-            speedL = 0.60; speedR = 0.30;
+            // speedL = 0.60; speedR = 0.30;
+            speedL = 0.60; speedR = 0.27;
             where = 11;
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -496,7 +497,12 @@ void red_in_servo_left_can_see_move(){
         speedL = 0.10; speedR = 0.60; // 0.225;
         where = 15;
     }
-    else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
+    else if(
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 모두 검은색 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 자유롭게 공격
+    ){
         if(ang <= angLL){
             speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
             speedR = 0.50;
@@ -590,7 +596,12 @@ void red_in_servo_mid_can_see_move(){
         speedL = 0.60; speedR = 0.27;
         where = 35;
     }
-    else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
+    else if(
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 모두 검은색 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 자유롭게 공격
+    ){
         speedL = 0.60; speedR = 0.60;
         where = 36;
     }
@@ -679,7 +690,12 @@ void red_in_servo_right_can_see_move(){
         speedL = 0.60; speedR = 0.10; // 0.225;
         where = 55;
     }
-    else if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 자유롭게 공격
+    else if(
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 모두 검은색 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 오른쪽 뒷 바퀴 : 자유롭게 공격
+        (ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == true && ir_WhCol[5] == true) // 왼쪽 뒷 바퀴 + 오른쪽 뒷 바퀴 : 자유롭게 공격
+    ){
         if(angRR <= ang){
             speedL = 0.60;
             speedR = -map<float>(ang, 180.0, angRR, 0.60, 0.18);

@@ -274,8 +274,11 @@ int main(){
                 // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
                 // blt.printf("%.2f\n", pitch_p); // 확인용 코드
                 // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
-                blt.printf("w%d\n", where); // 확인용 코드
-                if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+
+                // blt.printf("w%d\n", where); // 확인용 코드
+                // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+                // blt.printf("i%d\n", ir_val[6]);
+
                 // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
                 // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
                 
@@ -559,12 +562,15 @@ int main(){
             else if(tot_mode >= 1){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
                 // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
-                blt.printf("mode : %d\n", mode); // 확인용 코드
                 // blt.printf("%.2f\n", pitch_p); // 확인용 코드
                 // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
                 // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
-                blt.printf("w%d\n", where); // 확인용 코드
-                if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+
+                // blt.printf("mode : %d\n", mode); // 확인용 코드
+                // blt.printf("w%d\n", where); // 확인용 코드
+                // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+                // blt.printf("i%d\n", ir_val[6]);
+
                 // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
                 // blt.printf("%d\n", brk_tmr.read_us()); // 확인용 코드
                 // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드

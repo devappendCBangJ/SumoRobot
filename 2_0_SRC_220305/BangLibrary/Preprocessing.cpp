@@ -450,7 +450,7 @@ void red_in_servo_left_can_see_move(){
         where = 5;
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
+        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.45, 0.45);
         where = 6;
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 ???
@@ -532,11 +532,11 @@ void red_in_servo_mid_can_see_move(){
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
         if(ang >= 90){ // 서보 조금이라도 오른쪽 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-            sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
+            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.45, -0.45);
             where = 24;
         }
         else if(ang < 90){ // 서보 조금이라도 왼쪽 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-            sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, -0.45, 0.45);
+            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.45, 0.45);
             where = 25;
         }
     }
@@ -631,7 +631,7 @@ void red_in_servo_right_can_see_move(){
         where = 45;
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-        sensor_tmr_move<uint16_t>(&brk_tmr, &back_escape_time, &ir_val[6], "<", black, 0.45, -0.45);
+        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.45, -0.45);
         where = 46;
     }
     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
@@ -646,7 +646,8 @@ void red_in_servo_right_can_see_move(){
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
-            speedL = 0.30; speedR = 0.60;
+            // speedL = 0.30; speedR = 0.60;
+            speedL = 0.27; speedR = 0.60;
             where = 49;
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -656,7 +657,8 @@ void red_in_servo_right_can_see_move(){
     }
     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
-            speedL = 0.60; speedR = 0.30;
+            // speedL = 0.60; speedR = 0.30;
+            speedL = 0.60; speedR = 0.27;
             where = 51;
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -1080,6 +1082,32 @@ void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR){
     _tmr->stop();
 }
 
+void turn_tmr_move(Timer* _tmr, int* _time, uint16_t* _while_brk_sensor, uint16_t _sensor_val, volatile float* _com_data, double _speedL, double _speedR){
+    while(*_while_brk_sensor < _sensor_val){
+        speedL = _speedL; speedR = _speedR;
+
+        whl_bundle();
+        if(_tmr->read_us() > *_time){
+            break;
+        }
+        if(int(*_com_data) == 5 || int(*_com_data) == 6){
+            break;
+        }
+        if(
+            (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true) || // 모든 바퀴
+            (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴
+            (ir_WhCol[0] == true && ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + ir 오른쪽 앞 O
+            (ir_WhCol[0] == true && ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + ir 오른쪽 앞 O
+            (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴
+            (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
+        ){
+            break;
+        }
+    }
+    _tmr->reset();
+    _tmr->stop();
+}
+
 void rotate_tmr_judgment(){
     if(
         (rotate_dir == 'l' && rotate_dir == pre_rotate_dir) || // 원 회전 상황 O and 이전 회전 방향과 현재 회전 방향 같음 : 타이머 시작
@@ -1110,10 +1138,10 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                     (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.35, -1.0);
                 }
                 else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.35);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1128,10 +1156,10 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
                     (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.35, -1.0);
                 }
                 else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.35);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1147,11 +1175,11 @@ void tilt_tmr_move(){
                 (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
             ){
-                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
+                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.35);
             }
             
             else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
+                sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.35, -1.0);
             }
     }
         // }
@@ -1167,11 +1195,11 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                     (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.35);
                 }
                 
                 else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.35, -1.0);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1186,11 +1214,11 @@ void tilt_tmr_move(){
                     (ir_val[3] > black && ir_val[4] > black) || // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                     (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
                 ){
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.95, -0.50);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.35);
                 }
                 
                 else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -0.95);
+                    sensor_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.35, -1.0);
                 }
             // }
             // else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
@@ -1235,8 +1263,11 @@ void whl_bundle(){
         DC_move(speedL, speedR);
 
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
-        blt.printf("w%d\n", where); // 확인용 코드
-        if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+
+        // blt.printf("w%d\n", where); // 확인용 코드
+        // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
+        // blt.printf("i%d\n", ir_val[6]);
+        
         // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
         // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
         // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드

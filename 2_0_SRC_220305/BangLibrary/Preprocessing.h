@@ -53,7 +53,7 @@ void all_print();
 
 extern double speedL;
 extern double speedR;
-template<class T> void sensor_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR){
+template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR){
     _tmr->start(); // _tmr->start(); = *_tmr.start();
     if(_inequality[0] == '='){
         while(*_while_brk_sensor == _sensor_val){

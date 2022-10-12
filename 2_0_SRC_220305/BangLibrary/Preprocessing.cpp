@@ -64,13 +64,13 @@ bool ir_WhCol[7];
 double psdf_volts;
 double psdf_val;
 double psdb_val;
-uint16_t black = 17500;
+uint16_t black = 45000;
 uint16_t tilt_black = 60000;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
-float tilt_deg = 4.0;
-float tilt_break_deg = 2.0;
+float tilt_deg = 4.0 + 3.26;
+float tilt_break_deg = 2.0 + 3.26;
 extern float deltat;
 extern float pitch_p;
 ///////////////////////////////////////////////////
@@ -168,7 +168,7 @@ void sensor_read(){
     if(control_tmr.read_us() >= control_time){
         mpu9250.get_data();
         // pc.printf("control_time : %d \n", control_tmr.read_us()); // 확인용 코드
-        pc.printf("%f | %u | %u |\n", pitch_p, ir_val[7], ir_val[8]); // 확인용 코드
+        // pc.printf("%f | %u | %u |\n", pitch_p, ir_val[7], ir_val[8]); // 확인용 코드
 
         control_tmr.reset();
     }
@@ -1159,7 +1159,7 @@ void tilt_tmr_judgment(){
 }
 
 void tilt_tmr_move(){
-    blt.printf("| %u | %u | %u | %u |\n", ir_val[7], ir_val[3], ir_val[4], ir_val[8]);
+    blt.printf("| %u | %u | %u | %u |\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000);
     if(ang <= angML){ // 서보 왼쪽
         if(angLL < ang){ // 서보 보통 왼쪽
             // 항상 : 자유롭게 공격
@@ -1301,7 +1301,7 @@ void tilt_tmr_move(){
             ){
                 red_out_servo_all_can_see_move();
             }
-            // 항상 : 빠른 오른쪽 후진
+            // 항상 : 빠른 왼쪽 후진
             else if(
                 (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
@@ -1310,7 +1310,7 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
             }
-            // 상대 우측 : 빠른 오른쪽 후진
+            // 상대 우측 : 빠른 왼쪽 후진
             else if(
                 (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
@@ -1318,7 +1318,7 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
             }
-            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            // 존재하지 않는 경우 : 빠른 왼쪽 후진
             else{
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
             }
@@ -1341,26 +1341,26 @@ void tilt_tmr_move(){
             ){
                 red_out_servo_all_can_see_move();
             }
-            // 항상 : 빠른 오른쪽 후진
+            // 항상 : 빠른 왼쪽 후진
             else if(
                 (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
             ){
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
             }
-            // 상대 우측 : 빠른 오른쪽 후진
+            // 상대 우측 : 빠른 왼쪽 후진
             else if(
                 (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
                 (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
             ){
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
             }
-            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            // 존재하지 않는 경우 : 빠른 왼쪽 후진
             else{
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
             }
         }
     }
@@ -1401,7 +1401,7 @@ void whl_bundle(){
 
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
 
-        // blt.printf("w%d\n", where); // 확인용 코드
+        blt.printf("w%d\n", where); // 확인용 코드
         // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
         // blt.printf("i%d\n", ir_val[6]);
         

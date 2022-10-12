@@ -271,6 +271,7 @@ int main(){
             // DC_chk(); // Test 코드
 
             // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
+            blt.printf("w%d\n", where);
 
             // mutex.lock(); // thread 전용
 
@@ -907,7 +908,7 @@ int main(){
                             else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                                 red_in_servo_left_can_see_move();
 
-                                tmr_reset(&tilt_tmr); 
+                                tmr_reset(&tilt_tmr);
                                 tmr_reset(&rotate_tmr);
                             }
 
@@ -968,7 +969,7 @@ int main(){
                                 //     where = 215;
                                 // }
 
-                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크 !!!
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);
@@ -1016,7 +1017,7 @@ int main(){
                                 //     where = 225;
                                 // }
 
-                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크
+                                tilt_tmr_judgment(); // 로봇 각도 5도 이상 체크 !!!
 
                                 if(abs(speedL) <= 0.60 && abs(speedR) <= 0.60){
                                     speedL = speedL * (1.666);

@@ -64,13 +64,13 @@ bool ir_WhCol[7];
 double psdf_volts;
 double psdf_val;
 double psdb_val;
-uint16_t black = 45000;
+uint16_t black = 17500;
 uint16_t tilt_black = 60000;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
-float tilt_deg = 4.0 + 3.26;
-float tilt_break_deg = 2.0 + 3.26;
+float tilt_deg = 4.0;
+float tilt_break_deg = 2.0;
 extern float deltat;
 extern float pitch_p;
 ///////////////////////////////////////////////////

@@ -37,11 +37,13 @@ AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
 AnalogIn irfm(PB_1);
+AnalogIn irmr2(PC_5);
+AnalogIn irml2(PA_5);
 
 AnalogIn psdf(PA_6);
 GP2A psdb(PA_7, 10, 80, 22.5, 0.1606);
 
-uint16_t ir_val[7];
+uint16_t ir_val[9];
 // 0 : fl
 // 1 : fr
 // 2 : mr
@@ -49,6 +51,8 @@ uint16_t ir_val[7];
 // 4 : bl
 // 5 : ml
 // 6 : fm
+// 7 : mr2
+// 8 : ml2
 bool ir_WhCol[7];
 // 0 : fl + fr
 // 1 : bl + br
@@ -61,6 +65,7 @@ double psdf_volts;
 double psdf_val;
 double psdb_val;
 uint16_t black = 17500;
+uint16_t tilt_black = 60000;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
@@ -163,6 +168,7 @@ void sensor_read(){
     if(control_tmr.read_us() >= control_time){
         mpu9250.get_data();
         // pc.printf("control_time : %d \n", control_tmr.read_us()); // 확인용 코드
+        pc.printf("%f | %u | %u |\n", pitch_p, ir_val[7], ir_val[8]); // 확인용 코드
 
         control_tmr.reset();
     }
@@ -175,6 +181,8 @@ void sensor_read(){
     ir_val[4] = irbl.read_u16();
     ir_val[5] = irml.read_u16();
     ir_val[6] = irfm.read_u16();
+    ir_val[7] = irmr2.read_u16();
+    ir_val[8] = irml2.read_u16();
 
     psdf_volts = psdf.read() * 3.3;
     psdf_val = 13 * pow(psdf_volts, -1.0);
@@ -212,7 +220,7 @@ void sensor_cal(){
 
 void sensor_print(){
     pc.printf("mpu6050 pitch_p : %.1f\n", pitch_p); // 확인용 코드
-    pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6]); // 확인용 코드
+    pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6], ir_val[7], ir_val[8]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
     pc.printf("psdf_val : | %lf |, psdb_val : | %lf |\n", psdf_val, psdb_val); // 확인용 코드
 }
@@ -1151,93 +1159,210 @@ void tilt_tmr_judgment(){
 }
 
 void tilt_tmr_move(){
-    // if(angLL < ang){ // 서보 보통 왼쪽
-    //     if(angLL < ang){ // 서보 보통 왼쪽
-    //         if(
-    //             (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //             (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //         ){
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, 0.10, -1.0);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, 0.10);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.40);
-    //         }
-    //     }
-    //     else if(ang <= angLL){ // 서보 매우 왼쪽
-    //         if(
-    //             (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //             (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //         ){
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, 0.10, -1.0);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, 0.10);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 왼쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.40, -1.0);
-    //         }
-    //     }
-    // }
-    // else if(angML < ang && ang < angMR){ // 서보 중간
-    //     if(
-    //         (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
-    //         (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //     ){
-    //         back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, 0.10);
-    //     }
-        
-    //     else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //         back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, 0.10, -1.0);
-    //     }
-    //     else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //         back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.40);
-    //     }
-    // }
-    // else if(angMR <= ang){ // 서보 오른쪽
-    //     if(ang < angRR){ // 서보 보통 오른쪽
-    //         if(
-    //             (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
-    //             (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //         ){
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, 0.10);
-    //         }
-    //         else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, 0.10, -1.0);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.40);
-    //         }
-    //     }
-    //     else if(angRR <= ang){ // 서보 매우 오른쪽
-    //         if(
-    //             (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 오른쪽 후진
-    //             (ir_val[3] > black && ir_val[4] < black) // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //         ){
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, 0.10);
-    //         }
-    //         else if(ir_val[3] < black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, 0.10, -1.0);
-    //         }
-    //         else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-    //             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.40);
-    //         }
-    //     }
-    // }
-
-    if(
-        (ir_val[3] < black && ir_val[4] < black) || // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-        (ir_val[3] < black && ir_val[4] > black) // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 색 : 빠른 왼쪽 후진
-    ){
-        back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50, -1.0);
+    blt.printf("| %u | %u | %u | %u |\n", ir_val[7], ir_val[3], ir_val[4], ir_val[8]);
+    if(ang <= angML){ // 서보 왼쪽
+        if(angLL < ang){ // 서보 보통 왼쪽
+            // 항상 : 자유롭게 공격
+            if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 전부 검정 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] > tilt_black) || // ir 왼쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 왼쪽 뒤 색 + 오른쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 상대 좌측 : 자유롭게 공격
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 + 왼쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 항상 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+            }
+            // 상대 좌측 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+            }
+            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            else{
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+            }
+        }
+        else if(ang <= angLL){ // 서보 매우 왼쪽
+            // 항상 : 자유롭게 공격
+            if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 전부 검정 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] > tilt_black) || // ir 왼쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 왼쪽 뒤 색 + 오른쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 상대 좌측 : 자유롭게 공격
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 + 왼쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 항상 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+            }
+            // 상대 좌측 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 오른쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+            }
+            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            else{
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+            }
+        }
     }
-    else if(ir_val[3] > black && ir_val[4] < black){ // ir 왼쪽 뒤 색 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-        back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -0.50);
+    else if(angML < ang && ang < angMR){ // 서보 중간
+        // 항상 : 자유롭게 공격
+        if(
+            (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 전부 검정 : 자유로운 공격
+            (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] > tilt_black) || // ir 왼쪽 뒤 색 : 자유로운 공격
+            (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 뒤 색 : 자유로운 공격
+            (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 왼쪽 뒤 색 + 오른쪽 뒤 색 : 자유로운 공격
+        ){
+            red_out_servo_all_can_see_move();
+        }
+        // 상대 전방 : 자유롭게 공격
+        else if(
+            (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 : 자유로운 공격
+            (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 : 자유로운 공격
+            (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 자유로운 공격
+            (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 자유로운 공격
+        ){
+            red_out_servo_all_can_see_move();
+        }
+        // 항상 : 빠른 후진
+        else if(
+            (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 후진
+            (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 후진
+            (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 후진
+            (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 후진
+        ){
+            back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -1.0);
+        }
+        // 상대 전방 : 빠른 후진
+        else if(
+            (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 후진
+            (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 + 왼쪽 뒤 색 : 빠른 후진
+        ){
+            back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -1.0);
+        }
+        // 존재하지 않는 경우 : 빠른 후진
+        else{
+            back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -1.0);
+        }
     }
-    else if(ir_val[3] > black && ir_val[4] > black){ // ir 왼쪽 뒤 검정 + ir 오른쪽 뒤 검정 : 빠른 오른쪽 후진
-        red_out_servo_all_can_see_move();
+    else if(angMR <= ang){ // 서보 오른쪽
+        if(ang < angRR){ // 서보 보통 오른쪽
+            // 항상 : 자유롭게 공격
+            if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 전부 검정 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] > tilt_black) || // ir 왼쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 왼쪽 뒤 색 + 오른쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 상대 우측 : 자유롭게 공격
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 + 왼쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 항상 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+            // 상대 우측 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            else{
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+        }
+        else if(angRR <= ang){ // 서보 매우 오른쪽
+            // 항상 : 자유롭게 공격
+            if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 전부 검정 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] > tilt_black) || // ir 왼쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 왼쪽 뒤 색 + 오른쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 상대 우측 : 자유롭게 공격
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] > tilt_black) || // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 : 자유로운 공격
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] > tilt_black) // ir 오른쪽 가운데 색 + 오른쪽 뒤 색 + 왼쪽 뒤 색 : 자유로운 공격
+            ){
+                red_out_servo_all_can_see_move();
+            }
+            // 항상 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] < tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 가운데 + 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+            // 상대 우측 : 빠른 오른쪽 후진
+            else if(
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] > black && ir_val[8] < tilt_black) || // ir 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] > black && ir_val[4] < black && ir_val[8] < tilt_black) || // ir 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+                (ir_val[7] > tilt_black && ir_val[3] < black && ir_val[4] < black && ir_val[8] < tilt_black) // ir 오른쪽 뒤 색 + 왼쪽 뒤 색 + 왼쪽 가운데 색 : 빠른 왼쪽 후진
+            ){
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            else{
+                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+            }
+        }
     }
 }
 

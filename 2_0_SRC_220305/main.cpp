@@ -38,11 +38,13 @@ extern AnalogIn irbr;
 extern AnalogIn irbl;
 extern AnalogIn irml;
 extern AnalogIn irfm;
+extern AnalogIn irmr2;
+extern AnalogIn irml2;
 
 extern AnalogIn psdf;
 extern GP2A psdb;
 
-extern uint16_t ir_val[7];
+extern uint16_t ir_val[9];
 // 0 : fl
 // 1 : fr
 // 2 : mr
@@ -50,6 +52,8 @@ extern uint16_t ir_val[7];
 // 4 : bl
 // 5 : ml
 // 6 : fm
+// 7 : mr2
+// 8 : ml2
 extern bool ir_WhCol[7];
 // 0 : fl + fr
 // 1 : bl + br
@@ -62,6 +66,7 @@ extern double psdf_volts;
 extern double psdf_val;
 extern double psdb_val;
 extern uint16_t black;
+extern uint16_t tilt_black;
 
 // AC서보 모터
 extern PwmOut Servo;

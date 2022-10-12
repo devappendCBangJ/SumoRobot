@@ -153,7 +153,7 @@ Timer waiting_dir_tmr;
 Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
-int back_escape_time = 1000000; // 세부조정 필요!!!
+int back_escape_time = 500000; // 세부조정 필요!!!
 int fight_back_escape_time = 450000; // 세부조정 필요!!!
 int rotate_recog_time = 3000000; // 세부조정 필요!!!
 int tilt_recog_time = 700000; // 세부조정 필요!!!
@@ -1196,9 +1196,9 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
             }
-            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            // 존재하지 않는 경우 : 자유롭게 공격
             else{
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                red_out_servo_all_can_see_move();
             }
         }
         else if(ang <= angLL){ // 서보 매우 왼쪽
@@ -1236,9 +1236,9 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
             }
-            // 존재하지 않는 경우 : 빠른 오른쪽 후진
+            // 존재하지 않는 경우 : 자유롭게 공격
             else{
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                red_out_servo_all_can_see_move();
             }
         }
     }
@@ -1277,9 +1277,9 @@ void tilt_tmr_move(){
         ){
             back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -1.0);
         }
-        // 존재하지 않는 경우 : 빠른 후진
+        // 존재하지 않는 경우 : 자유롭게 공격
         else{
-            back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -1.0, -1.0);
+            red_out_servo_all_can_see_move();
         }
     }
     else if(angMR <= ang){ // 서보 오른쪽
@@ -1318,9 +1318,9 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
             }
-            // 존재하지 않는 경우 : 빠른 왼쪽 후진
+            // 존재하지 않는 경우 : 자유롭게 공격
             else{
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                red_out_servo_all_can_see_move();
             }
         }
         else if(angRR <= ang){ // 서보 매우 오른쪽
@@ -1358,9 +1358,9 @@ void tilt_tmr_move(){
             ){
                 back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
             }
-            // 존재하지 않는 경우 : 빠른 왼쪽 후진
+            // 존재하지 않는 경우 : 자유롭게 공격
             else{
-                back_tmr_move<float>(&brk_tmr, &back_escape_time, &pitch_p, ">", tilt_break_deg, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                red_out_servo_all_can_see_move();
             }
         }
     }

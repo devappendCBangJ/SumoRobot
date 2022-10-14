@@ -152,11 +152,11 @@ Timer waiting_start_tmr;
 Timer waiting_dir_tmr;
 Timer com_check_tmr;
 
-int turn_escape_time = 1000000; // 세부조정 필요!!!
-int back_escape_time = 500000; // 세부조정 필요!!!
+int turn_escape_time = 700000; // 세부조정 필요!!!
+int back_escape_time = 600000; // 세부조정 필요!!!
 int fight_back_escape_time = 450000; // 세부조정 필요!!!
-int rotate_recog_time = 3000000; // 세부조정 필요!!!
-int tilt_recog_time = 700000; // 세부조정 필요!!!
+int rotate_recog_time = 2000000; // 세부조정 필요!!!
+int tilt_recog_time = 500000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
 int com_check_time = 1500000; // 세부조정 필요!!!

@@ -68,7 +68,7 @@ float AcX, AcY, GyX, GyY;
 float roll_p, pitch_p;
 float prev_x, prev_y;
 
-float deltat = 0.001f;                             // integration interval for both filter schemes
+float deltat = 0.005f;                             // integration interval for both filter schemes
 
 // used to calculate integration interval                               // used to calculate integration interval
 float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};           // vector to hold quaternion
@@ -247,7 +247,7 @@ void MPU9250::initMPU9250()
  // Disable FSYNC and set accelerometer and gyro bandwidth to 44 and 42 Hz, respectively; 
  // DLPF_CFG = bits 2:0 = 010; this sets the sample rate at 1 kHz for both
  // Maximum delay is 4.9 ms which is just over a 200 Hz maximum rate
-  writeByte(MPU9250_ADDRESS, CONFIG, 0x04);  
+  writeByte(MPU9250_ADDRESS, CONFIG, 0x03);  
  
  // Set sample rate = gyroscope output rate/(1 + SMPLRT_DIV)
   //writeByte(MPU9250_ADDRESS, SMPLRT_DIV, 0x04);  // Use a 200 Hz rate; the same rate set in CONFIG above
@@ -278,7 +278,7 @@ void MPU9250::initMPU9250()
   // Configure Interrupts and Bypass Enable
   // Set interrupt pin active high, push-pull, and clear on read of INT_STATUS, enable I2C_BYPASS_EN so additional chips 
   // can join the I2C bus and all can be controlled by the Arduino as master
-   writeByte(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);    
+   //writeByte(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);    
    writeByte(MPU9250_ADDRESS, INT_ENABLE, 0x01);  // Enable data ready (bit 0) interrupt
 }
 
@@ -819,7 +819,7 @@ void MPU9250::MPU9250SelfTest(float * destination) // Should return percent devi
 void MPU9250::get_data(){
         //sensor1.refreshRangeVelocity();
         //pc.printf("range: %d cm, velocity: %d cm/s, rate: %.2f Hz\n", sensor1.getRange_cm(), sensor1.getVelocity_cms(), 1/dt.read());
-        if(readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01) {  // On interrupt, check if data ready interrupt
+    if(readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01) {  // On interrupt, check if data ready interrupt
 
         readAccelData(accelCount);  // Read the x/y/z adc values   
         // Now we'll calculate the accleration value into actual g's
@@ -832,7 +832,7 @@ void MPU9250::get_data(){
         gx = (float)gyroCount[0]*gRes - gyroBias[0];  // get actual gyro value, this depends on scale being set
         gy = (float)gyroCount[1]*gRes - gyroBias[1];  
         gz = (float)gyroCount[2]*gRes - gyroBias[2];   
-    
+
         // readMagData(magCount);  // Read the x/y/z adc values   
         // Calculate the magnetometer values in milliGauss
         // Include factory calibration per data sheet and user environmental corrections
@@ -840,6 +840,42 @@ void MPU9250::get_data(){
         // my = (float)magCount[1]*mRes*magCalibration[1] - magbias[1];  
         // mz = (float)magCount[2]*mRes*magCalibration[2] - magbias[2];   
     }
+
+    prev_x=roll_p;
+    prev_y=pitch_p;
+
+
+    AcX=(double)(atan(ay/sqrt(pow(ax,2)+pow(az,2)))*180/PI);
+    AcY=(double)(atan(-ax/sqrt(pow(ay,2)+pow(az,2)))*180/PI);
+    // AcX=atan2(ay,az)*180/PI;
+    // AcY=atan2(ax,az)*180/PI;
+    GyX=prev_x+gx*deltat;
+    GyY=prev_y+gy*deltat;
+    roll_p=(0.996*GyX)+(1-0.996)*AcX;
+    pitch_p=(0.996*GyY)+(1-0.996)*AcY;
+
+    // else{
+    //     initMPU9250();
+    //     getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+    //     getGres(); // Get gyro sensitivity      250  500   1000
+
+    //     pitch_p = 0;
+    //     prev_y = 0;
+    // }
+
+    // prev_x=roll_p;
+    // prev_y=pitch_p;
+
+
+    // AcX=(double)(atan(ay/sqrt(pow(ax,2)+pow(az,2)))*180/PI);
+    // AcY=(double)(atan(-ax/sqrt(pow(ay,2)+pow(az,2)))*180/PI);
+    // // AcX=atan2(ay,az)*180/PI;
+    // // AcY=atan2(ax,az)*180/PI;
+    // GyX=prev_x+gx*deltat;
+    // GyY=prev_y+gy*deltat;
+    // roll_p=(0.996*GyX)+(1-0.996)*AcX;
+    // pitch_p=(0.996*GyY)+(1-0.996)*AcY;
+
         //  MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, mx, my, mz);
         //  MahonyQuaternionUpdate2(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, mx, my, mz);
         
@@ -868,18 +904,6 @@ void MPU9250::get_data(){
         // mx = (float)magCount[0]*mRes*magCalibration[0] - magbias[0];  // get actual magnetometer value, this depends on scale being set
         // my = (float)magCount[1]*mRes*magCalibration[1] - magbias[1];  
         // mz = (float)magCount[2]*mRes*magCalibration[2] - magbias[2];   
-        prev_x=roll_p;
-        prev_y=pitch_p;
-
-
-        AcX=(double)(atan(ay/sqrt(pow(ax,2)+pow(az,2)))*180/PI);
-        AcY=(double)(atan(-ax/sqrt(pow(ay,2)+pow(az,2)))*180/PI);
-        // AcX=atan2(ay,az)*180/PI;
-        // AcY=atan2(ax,az)*180/PI;
-        GyX=prev_x+gx*deltat;
-        GyY=prev_y+gy*deltat;
-        roll_p=(0.996*GyX)+(1-0.996)*AcX;
-        pitch_p=(0.996*GyY)+(1-0.996)*AcY;
 
         // MahonyQuaternionUpdate2(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz);
         //  yaw2   = atan2(2.0f * (qq[1] * qq[2] + qq[0] * qq[3]), qq[0] * qq[0] + qq[1] * qq[1] - qq[2] * qq[2] - qq[3] * qq[3]);

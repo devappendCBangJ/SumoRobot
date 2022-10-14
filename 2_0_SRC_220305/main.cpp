@@ -26,8 +26,11 @@ extern char waiting_dir;
 extern int where;
 
 // thread
-// Thread com_th;
+extern Thread imu_th;
 
+extern uint64_t Now_time, Work_time;
+
+// Thread com_th;
 // Mutex mutex;
 
 // ir센서 + psd센서
@@ -220,6 +223,8 @@ extern float eInt[3];              // vector to hold integral error for Mahony m
 
 // [main문]
 int main(){
+    // osThreadSetPriority(osThreadGetId(), osPriorityRealtime7);
+
     pc.format(8, SerialBase::Even, 1);
 
     Servo.period_ms(10);
@@ -243,6 +248,8 @@ int main(){
     mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
     ///////////////////////////////////////////////////
 
+    imu_th.start(&imu_read);
+
     blt.printf("mbed reset\n"); // 확인용 코드
 
     // ///////////////////////////////////////////////////
@@ -253,6 +260,7 @@ int main(){
     // double for_time = total_time / 180;
     // double a = cos(theta * PI / 180);
     // ///////////////////////////////////////////////////
+
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
@@ -272,6 +280,7 @@ int main(){
 
             // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
             blt.printf("w%d\n", where);
+            blt.printf("p%.2f", pitch_p);
 
             // mutex.lock(); // thread 전용
 

@@ -25,8 +25,12 @@ char waiting_dir = 'l';
 int where = 0;
 
 // thread
-// Thread com_th;
+// Thread imu_th(osPriorityNormal);
+Thread imu_th;
 
+uint64_t Now_time, Work_time;
+
+// Thread com_th;
 // Mutex mutex;
 
 // ir센서 + psd센서
@@ -73,6 +77,8 @@ float tilt_deg = 4.0;
 float tilt_break_deg = 2.0;
 extern float deltat;
 extern float pitch_p;
+extern float prev_y;
+extern float SelfTest[6];
 ///////////////////////////////////////////////////
 
 // AC서보 모터
@@ -161,17 +167,44 @@ int waiting_start_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
 int com_check_time = 1500000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
+int imu_time = 7;
+
+void imu_read(){
+    // imu_th.set_priority(osPriorityNormal);
+    while (true){
+        // ThisThread::sleep_for(7);
+        Now_time = rtos::Kernel::get_ms_count();
+        mpu9250.get_data();
+        Work_time = rtos::Kernel::get_ms_count();
+
+        ThisThread::sleep_until(rtos::Kernel::get_ms_count() + (imu_time-(Work_time - Now_time)));
+
+        // pc.printf("%d\n", fpclassify(pitch_p) == FP_NAN); // 확인용 코드
+
+        if(fpclassify(pitch_p) == FP_NAN){
+            blt.printf("imu_thread_reset"); // 확인용 코드
+
+            mpu9250.initMPU9250();
+
+            mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+            mpu9250.getGres(); // Get gyro sensitivity      250  500   1000
+
+            pitch_p = 0;
+            prev_y = 0;
+        }
+    }
+}
 
 // ir + psd 센서
 void sensor_read(){
     ///////////////////////////////////////////////////
-    if(control_tmr.read_us() >= control_time){
-        mpu9250.get_data();
-        // pc.printf("control_time : %d \n", control_tmr.read_us()); // 확인용 코드
-        // pc.printf("%f | %u | %u |\n", pitch_p, ir_val[7], ir_val[8]); // 확인용 코드
+    // if(control_tmr.read_us() >= control_time){
+    //     mpu9250.get_data();
+    //     // pc.printf("control_time : %d \n", control_tmr.read_us()); // 확인용 코드
+    //     // pc.printf("%f | %u | %u |\n", pitch_p, ir_val[7], ir_val[8]); // 확인용 코드
 
-        control_tmr.reset();
-    }
+    //     control_tmr.reset();
+    // }
     ///////////////////////////////////////////////////
 
     ir_val[0] = irfl.read_u16();

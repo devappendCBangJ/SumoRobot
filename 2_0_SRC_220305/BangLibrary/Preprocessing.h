@@ -4,6 +4,8 @@
 
 // [라이브러리]
 #include "mbed.h"
+#include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include "Servo.h" // Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
 #include "GP2A.h"
@@ -12,6 +14,7 @@
 // [함수 선언]
 template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max);
 
+void imu_read();
 void sensor_read();
 void sensor_cal();
 void sensor_print();

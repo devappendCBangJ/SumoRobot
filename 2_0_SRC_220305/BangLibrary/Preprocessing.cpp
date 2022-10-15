@@ -160,7 +160,7 @@ Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
-int fight_back_escape_time = 450000; // 세부조정 필요!!!
+int fight_back_escape_time = 700000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
@@ -827,6 +827,8 @@ void red_out_servo_all_can_see_move(){
                             // speedL = 0.60; speedR = 0.60;
                             // speedL = 0.60; speedR = 0.40;
                             // speedL = 0.60; speedR = 0.30;
+                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+                            speedR = 1.0;
                             where = 69;
                         // }
                         // else{
@@ -851,11 +853,11 @@ void red_out_servo_all_can_see_move(){
             }
         }
         else if(ang <= angLL){ // 서보 매우 왼쪽
-            if(ras_data[1] == 6){ // 화면 원통 매우 매우 매우 큼
+            if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 or 매우 매우 매우 큼
                 speedL = -1.0; speedR = 1.0;
                 where = 73;
             }
-            else if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음
+            else{ // 화면 원통 매우 매우 or 매우 매우 매우 크지 않음
                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                         back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
@@ -1030,7 +1032,8 @@ void red_out_servo_all_can_see_move(){
                         // if(rotate_dir == pre_rotate_dir){
                             // speedL = 0.60; speedR = 0.50;
                             // speedL = 0.40; speedR = 0.60;
-                            speedL = 0.30; speedR = 0.60;
+                            speedL = 1.0;
+                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
                             where = 110;
                         // }
                         // else{
@@ -1055,11 +1058,11 @@ void red_out_servo_all_can_see_move(){
             }
         }
         else if(angRR <= ang){ // 서보 매우 오른쪽
-            if(ras_data[1] == 6){ // 화면 원통 매우 매우 매우 큼
+            if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 or 매우 매우 매우 큼
                 speedL = 1.0; speedR = -1.0;
                 where = 114;
             }
-            else if(ras_data[1] != 6){ // 화면 원통 매우 매우 매우 크지 않음
+            else{ // 화면 원통 매우 매우 or 매우 매우 매우 크지 않음
                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
                     if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                         back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));

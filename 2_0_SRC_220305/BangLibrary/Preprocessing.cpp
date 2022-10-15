@@ -36,7 +36,7 @@ uint64_t Now_time, Work_time;
 // ir센서 + psd센서
 AnalogIn irfl(PA_0);
 AnalogIn irfr(PA_1);
-AnalogIn irmr(PA_4);
+AnalogIn irmr(PC_2);
 AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
@@ -74,7 +74,7 @@ uint16_t tilt_black = 60000;
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
 float tilt_deg = 4.0;
-float tilt_break_deg = 2.0;
+float tilt_break_deg = 1.5;
 extern float deltat;
 extern float pitch_p;
 extern float prev_y;
@@ -158,11 +158,11 @@ Timer waiting_start_tmr;
 Timer waiting_dir_tmr;
 Timer com_check_tmr;
 
-int turn_escape_time = 700000; // 세부조정 필요!!!
-int back_escape_time = 600000; // 세부조정 필요!!!
+int turn_escape_time = 1000000; // 세부조정 필요!!!
+int back_escape_time = 700000; // 세부조정 필요!!!
 int fight_back_escape_time = 450000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
-int tilt_recog_time = 500000; // 세부조정 필요!!!
+int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
 int com_check_time = 1500000; // 세부조정 필요!!!
@@ -184,13 +184,15 @@ void imu_read(){
         if(fpclassify(pitch_p) == FP_NAN){
             blt.printf("imu_thread_reset"); // 확인용 코드
 
-            mpu9250.initMPU9250();
+            // NVIC_SystemReset();
 
-            mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
-            mpu9250.getGres(); // Get gyro sensitivity      250  500   1000
+            // mpu9250.initMPU9250();
 
-            pitch_p = 0;
-            prev_y = 0;
+            // mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
+            // mpu9250.getGres(); // Get gyro sensitivity      250  500   1000
+
+            // pitch_p = 0;
+            // prev_y = 0;
         }
     }
 }
@@ -1192,7 +1194,7 @@ void tilt_tmr_judgment(){
 }
 
 void tilt_tmr_move(){
-    blt.printf("| %u | %u | %u | %u |\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000);
+    // blt.printf("| %u | %u | %u | %u |\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000);
     if(ang <= angML){ // 서보 왼쪽
         if(angLL < ang){ // 서보 보통 왼쪽
             // 항상 : 자유롭게 공격
@@ -1432,9 +1434,14 @@ void whl_bundle(){
         servo_move(Servo);
         DC_move(speedL, speedR);
 
+        // all_print();
+
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
 
         blt.printf("w%d\n", where); // 확인용 코드
+        blt.printf("p%.2f\n", pitch_p);
+        // blt.printf("b%d\n", brk_tmr.read_ms());
+        // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
         // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
         // blt.printf("i%d\n", ir_val[6]);
         

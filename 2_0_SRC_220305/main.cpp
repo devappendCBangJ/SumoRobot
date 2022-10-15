@@ -280,7 +280,9 @@ int main(){
 
             // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
             blt.printf("w%d\n", where);
-            blt.printf("p%.2f", pitch_p);
+            blt.printf("p%.2f\n", pitch_p);
+            // blt.printf("b%d\n", brk_tmr.read_ms());
+            // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
 
             // mutex.lock(); // thread 전용
 

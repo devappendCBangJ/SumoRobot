@@ -160,7 +160,7 @@ Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
-int fight_back_escape_time = 670000; // 세부조정 필요!!!
+int fight_back_escape_time = 570000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!

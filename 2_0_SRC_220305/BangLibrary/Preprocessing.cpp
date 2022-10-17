@@ -813,7 +813,7 @@ void red_out_servo_all_can_see_move(){
                 (ir_val[0] > black && ir_val[1] > black && ir_val[2] > black && ir_val[3] > black && ir_val[4] > black && ir_val[5] < black && ir_val[6] > black) // ir 왼쪽 가운데
             ){
                 if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                    if(ras_data[1] == 5 || ras_data[1] == 6){
+                    if(ras_data[1] == 6){
                         rotate_dir = 'l';
                     }
 
@@ -1019,7 +1019,7 @@ void red_out_servo_all_can_see_move(){
                 (ir_val[0] > black && ir_val[1] > black && ir_val[2] < black && ir_val[3] > black && ir_val[4] > black && ir_val[5] > black && ir_val[6] > black) // ir 오른쪽 가운데
             ){
                 if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
-                    if(ras_data[1] == 5 || ras_data[1] == 6){
+                    if(ras_data[1] == 6){
                         rotate_dir = 'r';
                     }
 

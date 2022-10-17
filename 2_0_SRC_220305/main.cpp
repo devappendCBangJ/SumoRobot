@@ -275,6 +275,8 @@ int main(){
         // blt.printf("%.1f, %.2f, %.2f\n", pitch_p, speedL, speedR); // 확인용 코드
 
         if(All_move == true){ // 통신 받음
+            // all_print();
+
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
 

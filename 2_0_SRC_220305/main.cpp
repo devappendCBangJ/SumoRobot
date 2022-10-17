@@ -245,7 +245,7 @@ int main(){
     mpu9250.initMPU9250();
 
     mpu9250.getAres(); // Get accelerometer sensitivity +-2g 4g 8g
-    mpu9250.getGres(); // Get gyro sensitivity      250  500   1000 
+    mpu9250.getGres(); // Get gyro sensitivity      250  500   1000
     ///////////////////////////////////////////////////
 
     imu_th.start(&imu_read);
@@ -372,19 +372,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 201;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 202;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 203;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 204;
                                 }
 
@@ -421,19 +421,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 211;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 212;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 213;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 214;
                                 }
 
@@ -469,19 +469,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 221;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 222;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 223;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 224;
                                 }
 
@@ -521,19 +521,19 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.45; speedR = 0.45;
+                                speedL = -0.80; speedR = 0.80;
                                 where = 231;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 232;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 233;
                             }
                             else{
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 234;
                             }
 
@@ -621,16 +621,16 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.45; speedR = 0.45;
+                                speedL = -0.80; speedR = 0.80;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
                             else{
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
@@ -694,16 +694,16 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.45; speedR = 0.45;
+                                speedL = -0.80; speedR = 0.80;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
                             else{
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                             }
 
                             tmr_reset(&waiting_start_tmr);
@@ -899,19 +899,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 201;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 202;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 203;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 204;
                                 }
 
@@ -948,19 +948,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 211;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 212;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 213;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 214;
                                 }
 
@@ -996,19 +996,19 @@ int main(){
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                                 if(pre_data0 == 1){
-                                    speedL = -0.45; speedR = 0.45;
+                                    speedL = -0.80; speedR = 0.80;
                                     where = 221;
                                 }
                                 else if(pre_data0 == 2){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 222;
                                 }
                                 else if(pre_data0 == 3){
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 223;
                                 }
                                 else{
-                                    speedL = 0.45; speedR = -0.45;
+                                    speedL = 0.80; speedR = -0.80;
                                     where = 224;
                                 }
 
@@ -1048,19 +1048,19 @@ int main(){
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
                             if(pre_data0 == 1){
-                                speedL = -0.45; speedR = 0.45;
+                                speedL = -0.80; speedR = 0.80;
                                 where = 231;
                             }
                             else if(pre_data0 == 2){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 232;
                             }
                             else if(pre_data0 == 3){
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 233;
                             }
                             else{
-                                speedL = 0.45; speedR = -0.45;
+                                speedL = 0.80; speedR = -0.80;
                                 where = 234;
                             }
 

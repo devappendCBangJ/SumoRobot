@@ -160,7 +160,8 @@ Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
-int fight_back_escape_time = 570000; // 세부조정 필요!!!
+int fight_back_escape_time = 550000; // 세부조정 필요!!!
+int fight_back_break_check_time = 300000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
@@ -767,7 +768,7 @@ void red_out_servo_all_can_see_move(){
                     where = 61;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                         where = 62;
                     }
                 }
@@ -787,7 +788,7 @@ void red_out_servo_all_can_see_move(){
                 where = 64;
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
-                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                     where = 65;
                 }
             }
@@ -802,7 +803,7 @@ void red_out_servo_all_can_see_move(){
                     where = 67;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                         where = 68;
                     }
                 }
@@ -841,7 +842,7 @@ void red_out_servo_all_can_see_move(){
                     where = 70;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                         where = 71;
                     }
                 }
@@ -864,7 +865,7 @@ void red_out_servo_all_can_see_move(){
                         where = 74;
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
-                            normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
                             where = 75;
                         }
                     }
@@ -884,7 +885,7 @@ void red_out_servo_all_can_see_move(){
                     where = 77;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
                         where = 78;
                     }
                 }
@@ -899,7 +900,7 @@ void red_out_servo_all_can_see_move(){
                         where = 80;
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
-                            normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
                             where = 81;
                         }
                     }
@@ -919,7 +920,7 @@ void red_out_servo_all_can_see_move(){
                 where = 91;
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
-                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.90, -0.90);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
                     where = 92;
                 }
             }
@@ -938,7 +939,7 @@ void red_out_servo_all_can_see_move(){
             where = 94;
 
             if(ras_data[1] == 5 || ras_data[1] == 6){
-                normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.90, -0.90);
+                fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
                 where = 95;
             }
         }
@@ -955,7 +956,7 @@ void red_out_servo_all_can_see_move(){
                 where = 97;
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
-                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.90, -0.90);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
                     where = 98;
                 }
             }
@@ -973,7 +974,7 @@ void red_out_servo_all_can_see_move(){
                     where = 101;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
                         where = 102;
                     }
                 }
@@ -993,7 +994,7 @@ void red_out_servo_all_can_see_move(){
                 where = 104;
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
-                    normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
                     where = 105;
                 }
             }
@@ -1008,7 +1009,7 @@ void red_out_servo_all_can_see_move(){
                     where = 107;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
                         where = 108;
                     }
                 }
@@ -1046,7 +1047,7 @@ void red_out_servo_all_can_see_move(){
                     where = 111;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                         where = 112;
                     }
                 }
@@ -1069,7 +1070,7 @@ void red_out_servo_all_can_see_move(){
                         where = 115;
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
-                            normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
                             where = 116;
                         }
                     }
@@ -1089,7 +1090,7 @@ void red_out_servo_all_can_see_move(){
                     where = 118;
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
-                        normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
                         where = 119;
                     }
                 }
@@ -1104,7 +1105,7 @@ void red_out_servo_all_can_see_move(){
                         where = 130;
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
-                            normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
                             where = 131;
                         }
                     }
@@ -1120,7 +1121,7 @@ void red_out_servo_all_can_see_move(){
                         where = 133;
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
-                            normal_tmr_move(&brk_tmr, &fight_back_escape_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
                             where = 134;
                         }
                     }
@@ -1136,12 +1137,21 @@ void red_out_servo_all_can_see_move(){
 }
 
 // 타이머 움직임
-void normal_tmr_move(Timer* _tmr, int* _time, double _speedL, double _speedR){
+void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _speedL, double _speedR){
     _tmr->start(); // _tmr->start(); = *_tmr.start(); // 타이머 시작
     while(_tmr->read_us() < *_time){ // 타이머 일정 시간 이하 : 특정 움직임 유지
         speedL = _speedL; speedR = _speedR;
 
         whl_bundle();
+
+        if(_tmr->read_us() > *_check_time){ // 타이머 일정 시간 이상 : break 판별
+            if(ras_data[1] == 6){ // 상대 매우 가까움 : break
+                break;
+            }
+        }
+        if(ir_val[3] < black || ir_val[4] < black){ // 뒷 ir 색 영역 : break
+            break;
+        }
     }
     _tmr->reset(); // 타이머 리셋
     _tmr->stop();

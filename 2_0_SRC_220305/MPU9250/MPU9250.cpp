@@ -44,7 +44,7 @@ int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 float magCalibration[3] = {0, 0, 0}, magbias[3] = {0, 0, 0};  // Factory mag calibration and mag bias
 float magScale[3]= {0,0,0};
 // float gyroBias[3] = {0, 0, 0}, accelBias[3] = {0, 0, 0}; // Bias corrections for gyro and accelerometer
-float gyroBias[3] = {-1.130, -0.435, -0.336}, accelBias[3] = {-0.024, -0.001, -0.041}; // Bias corrections for gyro and accelerometer
+float gyroBias[3] = {-1.130, -0.519, -0.313}, accelBias[3] = {-0.036, -0.010, -0.038}; // Bias corrections for gyro and accelerometer
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
 int16_t tempCount;   // Stores the real internal chip temperature in degrees Celsius
 float temperature;

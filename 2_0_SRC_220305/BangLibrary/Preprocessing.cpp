@@ -69,7 +69,7 @@ double psdf_volts;
 double psdf_val;
 double psdb_val;
 uint16_t black = 17500;
-uint16_t tilt_black = 60000;
+uint16_t tilt_black = 59000;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;

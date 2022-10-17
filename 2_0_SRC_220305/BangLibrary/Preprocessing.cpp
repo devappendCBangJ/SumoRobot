@@ -184,7 +184,7 @@ void imu_read(){
         if(fpclassify(pitch_p) == FP_NAN){
             blt.printf("imu_thread_reset"); // 확인용 코드
 
-            // NVIC_SystemReset();
+            NVIC_SystemReset();
 
             // mpu9250.initMPU9250();
 

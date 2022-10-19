@@ -6,13 +6,25 @@ Serial HC06(PC_10, PC_11);
 Timer tmr;
 Timer control_tmr;
 
-int n = 0;
+float n = 1;
+int phase = 0;
 double pre_speedL = 0;
 double pre_speedR = 0;
-double temp_speedL = 0;
-double temp_speedR = 0;
+double target_speedL = 0;
+double target_speedR = 0;
 double speedL = 0;
 double speedR = 0;
+
+bool back = true;
+bool comp = false;
+
+InterruptIn btn(BUTTON1);
+
+// 버튼 + LED
+void btn_flip(){
+    n = 0;
+    back = true;
+}
 
 // main() runs in its own thread in the OS
 int main(){
@@ -22,17 +34,40 @@ int main(){
     char ch;
     pc.printf("Hello World!\n\r");
     HC06.printf("Hello World!\n\r");
+
+    btn.fall(&btn_flip);
     
     control_tmr.start();
     tmr.start();
 
     while(1){
         if(control_tmr.read_ms() > 100){
-            if(tmr.read_ms() < 10000){
-                temp_speedL = 1.0; temp_speedR = 0.4;
+            if(tmr.read_ms() < 1000){
+                phase = 1;
+                target_speedL = 1.0; target_speedR = 0.4;
             }
-            else if(tmr.read_ms() < 20000){
-                temp_speedL = -0.6; temp_speedR = -1.0;
+            else if(tmr.read_ms() < 2000){
+                phase = 2;
+                target_speedL = -0.6; target_speedR = -1.0;
+            }
+            else if(tmr.read_ms() < 2500){
+                phase = 3;
+                target_speedL = 0.5; target_speedR = 0.5;
+            }
+            else if(tmr.read_ms() < 2800){
+                phase = 4;
+                target_speedL = -0.6; target_speedR = -1.0;
+            }
+            else if(tmr.read_ms() < 3100){
+                phase = 5;
+                target_speedL = 1.0; target_speedR = 1.0;
+            }
+            else if(tmr.read_ms() < 3500){
+                phase = 6;
+                target_speedL = -1.0; target_speedR = -1.0;
+            }
+            else{
+                phase = 7;
                 tmr.reset();
             }
             // if(HC06.readable()){
@@ -46,37 +81,76 @@ int main(){
             //     HC06.printf("%c", ch);
             // }
 
+            // // 움직임
+            // if(target_speedL > 0.0 && target_speedR > 0.0){ // 목표 : 전진
+            //     if(pre_speedL < 0.0 && pre_speedR < 0.0){ // 이전 : 후진
+            //         if(speedL < 0.0 && speedR < 0.0){ // [목표 : 전진] + [이전 : 후진] + [현재 : 후진] -> 정지
+            //             speedL = 0.01;
+            //             speedR = 0.01;
+            //         }
+            //         else{ // [목표 : 전진] + [이전 : 후진] + [현재 : 전진] -> 천천히 적용
+            //             speedL += target_speedL / 10.0;
+            //             speedR += target_speedR / 10.0;
 
-            if(temp_speedL > 0.0 && temp_speedR > 0.0){
-                if(pre_speedL < 0.0 && pre_speedR < 0.0){
-                    speedL = 0.0;
-                    speedR = 0.0;
+            //             if(speedL > target_speedL){
+            //                 speedL = target_speedL;
+
+            //                 comp = true;
+            //                 pre_speedL = target_speedL;
+            //             }
+            //             if(speedR > target_speedR){
+            //                 speedR = target_speedR;
+
+            //                 comp = true;
+            //                 pre_speedR = target_speedR;
+            //             }
+            //         }
+            //     }
+            //     else{ // [목표 : 전진] + [이전 : 전진] -> 즉시 적용
+            //         speedL = target_speedL;
+            //         speedR = target_speedR;
+
+            //         comp = true;
+            //         pre_speedL = target_speedL;
+            //         pre_speedR = target_speedR;
+            //     }
+            // }
+            // else{ // [목표 : 후진] -> 즉시 적용
+            //     speedL = target_speedL;
+            //     speedR = target_speedR;
+
+            //     comp = true;
+            //     pre_speedL = target_speedL;
+            //     pre_speedR = target_speedR;
+            // }
+
+            // // 움직임 제한
+            // if(speedL > 1.0){
+            //     speedL = 1.0;
+            // }
+            // else if(speedR > 1.0){
+            //     speedR = 1.0;
+            // }
+
+            // target_speedL = 0.0;
+            // target_speedR = 0.0;
+
+            if(back == true){
+                n += 0.1;
+
+                if(n >= 1){
+                    n = 1;
+                    back = false;
                 }
-                else if(pre_speedL < temp_speedL || pre_speedR < temp_speedR){
-                    speedL = temp_speedL;
-                    speedR = temp_speedR;
-                }
-            }
-            else{
-                speedL = temp_speedL;
-                speedR = temp_speedR;
             }
 
-            speedL += temp_speedL / 10.0;
-            speedR += temp_speedR / 10.0;
+            speedL = target_speedL * n;
+            speedR = target_speedR * n;
 
-
-            if(speedL > 1.0){
-                speedL = 1.0;
-            }
-            else if(speedR > 1.0){
-                speedR = 1.0;
-            }
-
-            pre_speedL = speedL;
-            pre_speedR = speedR;
-
-            pc.printf("%.2f, %.2f \n", speedL, speedR);
+            pc.printf("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n");
+            pc.printf("%d \n", phase);
+            pc.printf("[t] %.2f, %.2f \n", target_speedL, target_speedR);
+            pc.printf("[n] %.2f, %.2f \n", speedL, speedR);
 
             control_tmr.reset();
 

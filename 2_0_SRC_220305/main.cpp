@@ -371,22 +371,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 201;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 202;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 203;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 204;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -420,22 +405,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 211;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 212;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 213;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 214;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -468,22 +438,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 221;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 222;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 223;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 224;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -520,22 +475,7 @@ int main(){
                         if(ras_data[1] == 9){ // 화면 원통 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                            if(pre_data0 == 1){
-                                speedL = -0.80; speedR = 0.80;
-                                where = 231;
-                            }
-                            else if(pre_data0 == 2){
-                                speedL = 0.80; speedR = -0.80;
-                                where = 232;
-                            }
-                            else if(pre_data0 == 3){
-                                speedL = 0.80; speedR = -0.80;
-                                where = 233;
-                            }
-                            else{
-                                speedL = 0.80; speedR = -0.80;
-                                where = 234;
-                            }
+                            no_see_move();
 
                             tmr_reset(&tilt_tmr); 
                             tmr_reset(&rotate_tmr);
@@ -620,18 +560,7 @@ int main(){
                         if(ras_data[1] == 9){ // 화면 원통 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                            if(pre_data0 == 1){
-                                speedL = -0.80; speedR = 0.80;
-                            }
-                            else if(pre_data0 == 2){
-                                speedL = 0.80; speedR = -0.80;
-                            }
-                            else if(pre_data0 == 3){
-                                speedL = 0.80; speedR = -0.80;
-                            }
-                            else{
-                                speedL = 0.80; speedR = -0.80;
-                            }
+                            no_see_move();
                         }
                         else if(ras_data[1] != 9){ // 화면 원통 보임
                             if(ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 모두 검은색 : 전진
@@ -693,18 +622,7 @@ int main(){
                         if(ras_data[1] == 9){ // 화면 원통 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                            if(pre_data0 == 1){
-                                speedL = -0.80; speedR = 0.80;
-                            }
-                            else if(pre_data0 == 2){
-                                speedL = 0.80; speedR = -0.80;
-                            }
-                            else if(pre_data0 == 3){
-                                speedL = 0.80; speedR = -0.80;
-                            }
-                            else{
-                                speedL = 0.80; speedR = -0.80;
-                            }
+                            no_see_move();
 
                             tmr_reset(&waiting_start_tmr);
                             tmr_reset(&waiting_dir_tmr);
@@ -898,22 +816,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 201;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 202;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 203;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 204;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -947,22 +850,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 211;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 212;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 213;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 214;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -995,22 +883,7 @@ int main(){
                             if(ras_data[1] == 9){ // 화면 원통 안보임
                                 // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                                if(pre_data0 == 1){
-                                    speedL = -0.80; speedR = 0.80;
-                                    where = 221;
-                                }
-                                else if(pre_data0 == 2){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 222;
-                                }
-                                else if(pre_data0 == 3){
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 223;
-                                }
-                                else{
-                                    speedL = 0.80; speedR = -0.80;
-                                    where = 224;
-                                }
+                                no_see_move();
 
                                 tmr_reset(&tilt_tmr); 
                                 tmr_reset(&rotate_tmr);
@@ -1047,22 +920,7 @@ int main(){
                         if(ras_data[1] == 9){ // 화면 원통 안보임
                             // pc.printf("상대 안보임 \n"); // 확인용 코드
 
-                            if(pre_data0 == 1){
-                                speedL = -0.80; speedR = 0.80;
-                                where = 231;
-                            }
-                            else if(pre_data0 == 2){
-                                speedL = 0.80; speedR = -0.80;
-                                where = 232;
-                            }
-                            else if(pre_data0 == 3){
-                                speedL = 0.80; speedR = -0.80;
-                                where = 233;
-                            }
-                            else{
-                                speedL = 0.80; speedR = -0.80;
-                                where = 234;
-                            }
+                            no_see_move();
 
                             tmr_reset(&tilt_tmr); 
                             tmr_reset(&rotate_tmr);

@@ -462,6 +462,21 @@ void th_SerialRx(){ // thread 전용
 }
 
 // 기본 움직임
+void no_see_move(){
+    if(pre_data0 == 1){
+        speedL = -0.80; speedR = 0.80;
+    }
+    else if(pre_data0 == 2){
+        speedL = 0.80; speedR = -0.80;
+    }
+    else if(pre_data0 == 3){
+        speedL = 0.80; speedR = -0.80;
+    }
+    else{
+        speedL = 0.80; speedR = -0.80;
+    }
+}
+
 void red_in_servo_left_can_see_move(){
     // pc.printf("상대 보임 \n"); // 확인용 코드
 

@@ -35,6 +35,8 @@ void th_SerialRx();
 // void fight_back_tmr_move(bool* _while_brk_sensor, const char* _inequality, bool _sensor_val, double _speedL, double _speedR);
 // void fight_back_tmr_move(uint16_t * _while_brk_sensor, const char* _inequality, uint16_t  _sensor_val, double _speedL, double _speedR);
 // void fight_back_tmr_move(double* _while_brk_sensor, const char* _inequality, double _sensor_val, double _speedL, double _speedR);
+void no_see_move();
+
 void red_in_servo_left_can_see_move();
 void red_in_servo_mid_can_see_move();
 void red_in_servo_right_can_see_move();

@@ -350,6 +350,16 @@ void DC_move(float _PwmL, float _PwmR){
     PwmR = abs(_PwmR);
 }
 
+void DC_ratio_inc(){
+    // 모터 비율 조절
+    if(ratio < 1.0){
+        ratio += 0.1;
+        if(ratio >= 1.0){
+            ratio = 1.0;
+        }
+    }
+}
+
 void DC_chk(){
     static char pc_serialInBuffer2[32];
     static int buff_cnt2 = 0;
@@ -1467,6 +1477,8 @@ void whl_bundle(){
     // sensor_print(); // 확인용 코드
 
     if(All_move == true){ // 통신 받음
+        DC_ratio_inc();
+
         servo_move(Servo);
         DC_move(speedL, speedR);
 

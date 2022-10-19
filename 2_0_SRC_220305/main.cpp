@@ -291,13 +291,7 @@ int main(){
 
             // mutex.lock(); // thread 전용
 
-            // 모터 비율 조절
-            if(ratio < 1.0){
-                ratio += 0.1;
-                if(ratio >= 1.0){
-                    ratio = 1.0;
-                }
-            }
+            DC_ratio_inc();
 
             if(tot_mode == 0){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드

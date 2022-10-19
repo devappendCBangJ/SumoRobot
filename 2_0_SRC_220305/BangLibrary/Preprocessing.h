@@ -25,6 +25,7 @@ void servo_chk(PwmOut &rc);
 
 void DC_set();
 void DC_move(float _PwmL, float _PwmR);
+void DC_ratio_inc();
 void DC_chk();
 
 void in_SerialRx();

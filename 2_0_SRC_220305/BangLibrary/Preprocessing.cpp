@@ -107,6 +107,8 @@ double speed = 0;
 double speedL = 0;
 double speedR = 0;
 
+float ratio = 1;
+
 // 통신
 RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다
@@ -335,6 +337,9 @@ void DC_set(){
 }
 
 void DC_move(float _PwmL, float _PwmR){
+    _PwmL = _PwmL * ratio;
+    _PwmR = _PwmR * ratio;
+
     if(_PwmL < 0) DirL = 0;
     else DirL = 1;
 
@@ -1161,13 +1166,16 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
 
         if(_tmr->read_us() > *_check_time){ // 타이머 일정 시간 이상 : break 판별
             if(ras_data[1] == 6){ // 상대 매우 가까움 : break
+                ratio = 0;
                 break;
             }
         }
         if(ir_val[3] < black || ir_val[4] < black){ // 뒷 ir 색 영역 : break
+            ratio = 0;
             break;
         }
     }
+    ratio = 0;
     _tmr->reset(); // 타이머 리셋
     _tmr->stop();
 }

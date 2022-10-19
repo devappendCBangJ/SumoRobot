@@ -95,6 +95,9 @@ extern double speed;
 extern double speedL;
 extern double speedR;
 
+
+extern float ratio;
+
 // 통신
 extern RawSerial ras;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
 extern RawSerial pc;    // RawSerial 클래스에는 scanf가 정의되어있지 않다
@@ -287,6 +290,14 @@ int main(){
             // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
 
             // mutex.lock(); // thread 전용
+
+            // 모터 비율 조절
+            if(ratio < 1.0){
+                ratio += 0.1;
+                if(ratio >= 1.0){
+                    ratio = 1.0;
+                }
+            }
 
             if(tot_mode == 0){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드

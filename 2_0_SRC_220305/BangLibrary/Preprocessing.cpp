@@ -162,7 +162,7 @@ Timer com_check_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
-int fight_back_escape_time = 550000; // 세부조정 필요!!!
+int fight_back_escape_time = 630000; // 세부조정 필요!!!
 int fight_back_break_check_time = 300000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
@@ -858,8 +858,8 @@ void red_out_servo_all_can_see_move(){
                             // speedL = 0.60; speedR = 0.60;
                             // speedL = 0.60; speedR = 0.40;
                             // speedL = 0.60; speedR = 0.30;
-                            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                            speedR = 1.0;
+                            speedL = 0.60;
+                            speedR = 0.50;
                             where = 69;
                         // }
                         // else{
@@ -1063,8 +1063,8 @@ void red_out_servo_all_can_see_move(){
                         // if(rotate_dir == pre_rotate_dir){
                             // speedL = 0.60; speedR = 0.50;
                             // speedL = 0.40; speedR = 0.60;
-                            speedL = 1.0;
-                            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+                            speedL = 0.50;
+                            speedR = 0.60;
                             where = 110;
                         // }
                         // else{

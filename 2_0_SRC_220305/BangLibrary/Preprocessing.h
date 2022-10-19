@@ -59,6 +59,7 @@ void all_print();
 
 extern double speedL;
 extern double speedR;
+extern float ratio;
 template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR){
     _tmr->start(); // _tmr->start(); = *_tmr.start();
     if(_inequality[0] == '='){
@@ -69,6 +70,10 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
             if(_tmr->read_us() > *_time){
                 break;
             }
+        }
+
+        if(_speedL <= -0.95 || _speedR <= -0.95){
+            ratio = 0;
         }
         _tmr->reset();
         _tmr->stop();
@@ -82,6 +87,10 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
                 break;
             }
         }
+
+        if(_speedL <= -0.95 || _speedR <= -0.95){
+            ratio = 0;
+        }
         _tmr->reset();
         _tmr->stop();
     }
@@ -93,6 +102,10 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
             if(_tmr->read_us() > *_time){
                 break;
             }
+        }
+
+        if(_speedL <= -0.95 || _speedR <= -0.95){
+            ratio = 0;
         }
         _tmr->reset();
         _tmr->stop();

@@ -1176,12 +1176,10 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
 
         if(_tmr->read_us() > *_check_time){ // 타이머 일정 시간 이상 : break 판별
             if(ras_data[1] == 6){ // 상대 매우 가까움 : break
-                ratio = 0;
                 break;
             }
         }
         if(ir_val[3] < black || ir_val[4] < black){ // 뒷 ir 색 영역 : break
-            ratio = 0;
             break;
         }
     }

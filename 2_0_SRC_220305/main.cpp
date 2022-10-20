@@ -106,7 +106,7 @@ extern Serial blt;    // RawSerial 클래스에는 scanf가 정의되어있지 �
 // 통신 - ras_com
 extern volatile bool All_move;
 extern volatile bool gotPacket;
-extern volatile float ras_data[3];
+extern volatile float ras_data[4];
 // ras_data[0] : 상대 방향 + 보임 유무
     // 왼쪽 : 0/11 ~ 4/11 (1 ~ 145)
     // 가운데 : 4/11 ~ 7/11 (146 ~ 254)
@@ -150,18 +150,26 @@ extern Timer brk_tmr;
 extern Timer rotate_tmr;
 extern Timer tilt_tmr;
 extern Timer waiting_start_tmr;
+extern Timer waiting_break_tmr;
 extern Timer waiting_dir_tmr;
 extern Timer com_check_tmr;
+extern Timer escape_blue_tmr;
 
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
 extern int fight_back_escape_time; // 세부조정 필요!!!
+extern int fight_back_break_check_time; // 세부조정 필요!!!
 extern int rotate_recog_time; // 세부조정 필요!!!
 extern int tilt_recog_time; // 세부조정 필요!!!
 extern int waiting_start_time; // 세부조정 필요!!!
+extern int waiting_break_time; // 세부조정 필요!!!
 extern int waiting_dir_time; // 세부조정 필요!!!
 extern int com_check_time; // 세부조정 필요!!!
 extern double control_time; // 세부조정 필요!!!
+
+extern int escape_blue_turn_time; // 세부조정 필요!!!
+extern int escape_blue_go_time; // 세부조정 필요!!!
+extern int imu_time;
 
 ///////////////////////////////////////////////////
 extern double control_time; // 세부조정 필요!!!
@@ -308,20 +316,7 @@ int main(){
                 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
-                    if(ras_data[0] == 999){ // 상대 안보임
-                        speedL = 0.45; speedR = -0.45;
-                    }
-                    else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
-                        speedL = -0.45; speedR = 0.45;
-                    }
-                    else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
-                        speedL = 0.0; speedR = 0.0;
-                        mode = 1;
-                        // pc.printf("mode = 1"); // 확인용 코드
-                    }
-                    else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
-                        speedL = 0.45; speedR = -0.45;
-                    }
+                    init_move();
                 }
                 
                 // 중간 동작 : 상대 탐색 + 원 회전 + 공격
@@ -542,20 +537,7 @@ int main(){
 
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
-                    if(ras_data[0] == 999){ // 상대 안보임
-                        speedL = 0.45; speedR = -0.45;
-                    }
-                    else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
-                        speedL = -0.45; speedR = 0.45;
-                    }
-                    else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
-                        speedL = 0.0; speedR = 0.0;
-                        mode = 1;
-                        // pc.printf("mode = 1"); // 확인용 코드
-                    }
-                    else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
-                        speedL = 0.45; speedR = -0.45;
-                    }
+                    init_move();
                 }
 
                 // 중간 동작1 : 원까지 접근

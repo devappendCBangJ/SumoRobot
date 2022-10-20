@@ -117,7 +117,7 @@ Serial blt(PC_10, PC_11, 9600);    // RawSerial 클래스에는 scanf가 정의�
 // 통신 - ras_com
 volatile bool All_move = false;
 volatile bool gotPacket = false;
-volatile float ras_data[3];
+volatile float ras_data[4];
 // ras_data[0] : 상대 방향 + 보임 유무
     // 왼쪽 : 0/11 ~ 4/11 (1 ~ 145)
     // 가운데 : 4/11 ~ 7/11 (146 ~ 254)
@@ -157,8 +157,10 @@ Timer brk_tmr;
 Timer rotate_tmr;
 Timer tilt_tmr;
 Timer waiting_start_tmr;
+Timer waiting_break_tmr;
 Timer waiting_dir_tmr;
 Timer com_check_tmr;
+Timer escape_blue_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
@@ -167,9 +169,13 @@ int fight_back_break_check_time = 300000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
+int waiting_break_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
 int com_check_time = 1500000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
+
+int escape_blue_turn_time = 100000; // 세부조정 필요!!!
+int escape_blue_go_time = 3000000; // 세부조정 필요!!!
 int imu_time = 7;
 
 void imu_read(){
@@ -476,7 +482,39 @@ void th_SerialRx(){ // thread 전용
     }
 }
 
-// 기본 움직임
+void init_move(){
+    if(ras_data[0] == 999){ // 상대 안보임
+        speedL = 0.60; speedR = -0.60;
+    }
+    else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
+        speedL = -0.60; speedR = 0.60;
+    }
+    else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
+        speedL = 0.0; speedR = 0.0;
+        mode = 1;
+        // pc.printf("mode = 1"); // 확인용 코드
+    }
+    else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
+        speedL = 0.60; speedR = -0.60;
+    }
+}
+
+void wait_move(){
+    if(ras_data[0] == 999){ // 상대 안보임
+        speedL = 0.60; speedR = -0.60;
+    }
+    else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
+        speedL = -0.60; speedR = 0.60;
+    }
+    else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
+        speedL = 0.0; speedR = 0.0;
+        // pc.printf("mode = 1"); // 확인용 코드
+    }
+    else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
+        speedL = 0.60; speedR = -0.60;
+    }
+}
+
 void no_see_move(){
     if(pre_data0 == 1){
         speedL = -0.80; speedR = 0.80;
@@ -524,7 +562,7 @@ void red_in_servo_left_can_see_move(){
         where = 5;
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.45, 0.45);
+        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.80, 0.80);
         where = 6;
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 ???
@@ -589,7 +627,7 @@ void red_in_servo_left_can_see_move(){
         }
     }
     else{ // 그 외 : 왼쪽 전진
-        speedL = 0.27; speedR = 0.60;
+        speedL = 0.45; speedR = 1.0;
         where = 18;
     }
 }
@@ -613,11 +651,11 @@ void red_in_servo_mid_can_see_move(){
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞
         if(ang >= 90){ // 서보 조금이라도 오른쪽 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.45, -0.45);
+            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.80, -0.80);
             where = 24;
         }
         else if(ang < 90){ // 서보 조금이라도 왼쪽 : 제자리 좌회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.45, 0.45);
+            turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], -0.80, 0.80);
             where = 25;
         }
     }
@@ -717,7 +755,7 @@ void red_in_servo_right_can_see_move(){
         where = 45;
     }
     else if(ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 : 제자리 우회전 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
-        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.45, -0.45);
+        turn_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[6], black, &ras_data[1], 0.80, -0.80);
         where = 46;
     }
     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
@@ -782,7 +820,7 @@ void red_in_servo_right_can_see_move(){
         }
     }
     else{ // 그 외 : 오른쪽 전진
-        speedL = 0.60; speedR = 0.27;
+        speedL = 1.0; speedR = 0.45;
         where = 58;
     }
 }
@@ -1183,7 +1221,30 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
             break;
         }
     }
+
+    waiting_break_tmr.start();
+    while(waiting_break_tmr.read_us() < waiting_break_time){
+        wait_move();
+
+        whl_bundle();
+
+        if(psdb_val <= 70.0){ // 뒤 PSD 70cm 이하 + 상대 빨간원 바깥 : break
+            if(ras_data[2] == 1){
+                break;
+            }
+        }
+        else if(psdb_val > 70.0){ // 뒤 PSD 70cm 이상 + 상대 파란원 바깥 : break
+            if(ras_data[3] == 1){
+                break;
+            }
+        }
+        if(ras_data[1] == 5 || ras_data[1] == 6){
+            break;
+        }
+    }
     ratio = 0;
+
+    tmr_reset(&waiting_break_tmr);
     _tmr->reset(); // 타이머 리셋
     _tmr->stop();
 }

@@ -765,7 +765,7 @@ int main(){
                         // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
                         //     brk_tmr.start();
                         //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
+                        //         speedL = -0.80; speedR = 0.80;
 
                         //         whl_bundle();
                         //         if(brk_tmr.read_us() > turn_escape_time){
@@ -781,7 +781,7 @@ int main(){
                         // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
                         //     brk_tmr.start();
                         //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
+                        //         speedL = -0.80; speedR = 0.80;
 
                         //         whl_bundle();
                         //         if(brk_tmr.read_us() > turn_escape_time){

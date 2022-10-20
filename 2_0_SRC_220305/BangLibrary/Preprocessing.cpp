@@ -1222,29 +1222,29 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
         }
     }
 
-    waiting_break_tmr.start();
-    while(waiting_break_tmr.read_us() < waiting_break_time){
-        wait_move();
+    // waiting_break_tmr.start();
+    // while(waiting_break_tmr.read_us() < waiting_break_time){
+    //     wait_move();
 
-        whl_bundle();
+    //     whl_bundle();
 
-        if(psdb_val <= 70.0){ // 뒤 PSD 70cm 이하 + 상대 빨간원 바깥 : break
-            if(ras_data[2] == 1){
-                break;
-            }
-        }
-        else if(psdb_val > 70.0){ // 뒤 PSD 70cm 이상 + 상대 파란원 바깥 : break
-            if(ras_data[3] == 1){
-                break;
-            }
-        }
-        if(ras_data[1] == 5 || ras_data[1] == 6){
-            break;
-        }
-    }
+    //     if(psdb_val <= 70.0){ // 뒤 PSD 70cm 이하 + 상대 빨간원 바깥 : break
+    //         if(ras_data[2] == 1){
+    //             break;
+    //         }
+    //     }
+    //     else if(psdb_val > 70.0){ // 뒤 PSD 70cm 이상 + 상대 파란원 바깥 : break
+    //         if(ras_data[3] == 1){
+    //             break;
+    //         }
+    //     }
+    //     if(ras_data[1] == 5 || ras_data[1] == 6){
+    //         break;
+    //     }
+    // }
     ratio = 0;
 
-    tmr_reset(&waiting_break_tmr);
+    // tmr_reset(&waiting_break_tmr);
     _tmr->reset(); // 타이머 리셋
     _tmr->stop();
 }

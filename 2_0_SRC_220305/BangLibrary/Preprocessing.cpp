@@ -44,8 +44,10 @@ AnalogIn irfm(PB_1);
 AnalogIn irmr2(PC_5);
 AnalogIn irml2(PA_5);
 
-AnalogIn psdf(PA_6);
-GP2A psdb(PA_7, 10, 80, 22.5, 0.1606);
+AnalogIn psdfm(PA_6);
+GP2A psdfl(PC_3, 30, 150, 60, 0);
+GP2A psdfr(PC_4, 30, 150, 60, 0);
+GP2A psdb(PA_7, 30, 150, 60, 0);
 
 uint16_t ir_val[9];
 // 0 : fl
@@ -65,11 +67,23 @@ bool ir_WhCol[7];
 // 4 : mr + br
 // 5 : bl + ml
 
-double psdf_volts;
-double psdf_val;
+double psdfm_volts;
+double psdfm_val;
+double psdfl_val;
+double psdfr_val;
 double psdb_val;
+double psdb_list[51] = {0};
+double psdb_pre_avg = 0;
+double psdb_now_avg = 0;
+int psdb_list_len = 50;
+int n = 0;
+
 uint16_t black = 17500;
 uint16_t tilt_black = 59000;
+double psdfm_dis = 30.0;
+// double psdfl_fr_dis1 = 10.0;
+double psdfl_fr_dis = 90.0;
+double psdb_dis = 95.0;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
@@ -139,6 +153,9 @@ volatile float ras_data[4];
 // ras_data[3] : 파란영역 좌표 vs 상대 좌표 비교(거리, 영역)
     // 파란 영역 안 : 0(그대로 밀면 됨)
     // 파란 영역 밖 : 1(파란 영역 안으로 넣으면 best)
+// ras_data[4] : 빨간 영역 크기 vs 파란 영역 크기 비교
+    // 빨간 영역 크기 > 파란 영역 크기 : 0
+    // 빨간 영역 크기 < 파란 영역 크기 : 1
 int pre_data0 = 9;
 // 상대 최근 위치 왼쪽 : 1
 // 상대 최근 위치 가운데 : 2
@@ -162,7 +179,8 @@ Timer waiting_start_tmr;
 Timer waiting_break_tmr;
 Timer waiting_dir_tmr;
 Timer com_check_tmr;
-Timer escape_blue_tmr;
+Timer escape_blue_all_tmr;
+Timer escape_blue_go_tmr;
 
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 700000; // 세부조정 필요!!!
@@ -171,13 +189,15 @@ int fight_back_break_check_time = 300000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!
+int waiting_temp_break_time = 200000; // 세부조정 필요!!!
 int waiting_break_time = 5000000; // 세부조정 필요!!!
 int waiting_dir_time = 200000; // 세부조정 필요!!!
 int com_check_time = 1500000; // 세부조정 필요!!!
 double control_time = deltat * 1000000; // 세부조정 필요!!!
 
 int escape_blue_turn_time = 100000; // 세부조정 필요!!!
-int escape_blue_go_time = 3000000; // 세부조정 필요!!!
+int escape_blue_all_time = 3000000; // 세부조정 필요!!!
+int escape_blue_go_time = 2000000; // 세부조정 필요!!!
 int imu_time = 7;
 
 void imu_read(){
@@ -230,10 +250,13 @@ void sensor_read(){
     ir_val[7] = irmr2.read_u16();
     ir_val[8] = irml2.read_u16();
 
-    psdf_volts = psdf.read() * 3.3;
-    psdf_val = 13 * pow(psdf_volts, -1.0);
-    if(psdf_val > 30) psdf_val = 30;
+    psdfm_volts = psdfm.read() * 3.3;
+    psdfm_val = 13 * pow(psdfm_volts, -1.0);
+    if(psdfm_val > 30) psdfm_val = 30;
 
+    psdb_list[n] = psdb.getDistance();
+    psdfl_val = psdfl.getDistance();
+    psdfr_val = psdfr.getDistance();
     psdb_val = psdb.getDistance();
 }
 
@@ -262,13 +285,24 @@ void sensor_cal(){
         ir_WhCol[5] = true;
     }
     else ir_WhCol[5] = false;
+
+    psdb_pre_avg = psdb_now_avg;
+    if(n != psdb_list_len){
+        psdb_now_avg = psdb_pre_avg + (psdb_list[n] - psdb_list[n+1]) / double(psdb_list_len);
+    }
+    else if(n == psdb_list_len){
+        psdb_now_avg = psdb_pre_avg + (psdb_list[n] - psdb_list[0]) / double(psdb_list_len);
+    }
+    n++;
+    if(n == psdb_list_len + 1) n = 0;
 }
 
 void sensor_print(){
     pc.printf("mpu6050 pitch_p : %.1f\n", pitch_p); // 확인용 코드
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6], ir_val[7], ir_val[8]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
-    pc.printf("psdf_val : | %lf |, psdb_val : | %lf |\n", psdf_val, psdb_val); // 확인용 코드
+    pc.printf("psdfm_val : | %lf |, psdb_val : | %lf |\n", psdfm_val, psdb_val); // 확인용 코드
+    pc.printf("psdfl_val : | %lf |, psdfr_val : | %lf |\n", psdfl_val, psdfr_val); // 확인용 코드
 }
 
 // AC 서보 모터
@@ -503,17 +537,17 @@ void init_move(){
 
 void wait_move(){
     if(ras_data[0] == 999){ // 상대 안보임
-        speedL = 0.60; speedR = -0.60;
+        speedL = 0.40; speedR = -0.40;
     }
     else if(ras_data[0] < width_l){ // 화면 왼쪽 보임
-        speedL = -0.60; speedR = 0.60;
+        speedL = -0.40; speedR = 0.40;
     }
     else if(width_l <= ras_data[0] && ras_data[0] < width_r){ // 화면 가운데 보임
         speedL = 0.0; speedR = 0.0;
         // pc.printf("mode = 1"); // 확인용 코드
     }
     else if(width_r <= ras_data[0]){ // 화면 오른쪽 보임
-        speedL = 0.60; speedR = -0.60;
+        speedL = 0.40; speedR = -0.40;
     }
 }
 
@@ -536,7 +570,7 @@ void red_in_servo_left_can_see_move(){
     // pc.printf("상대 보임 \n"); // 확인용 코드
 
     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+        if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 빠른 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
             if(angLL < ang){ // 서보 보통 왼쪽
                 where = 1;
                 back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
@@ -546,18 +580,27 @@ void red_in_servo_left_can_see_move(){
                 back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
             }
         }
-        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-            if(angLL < ang){ // 서보 보통 왼쪽
-                speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                speedR = 0.60;
-                where = 3;
-            }
-            else if(ang <= angLL){ // 서보 매우 왼쪽
-                speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                speedR = 0.50;
-                where = 4;
-            }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+        //     if(angLL < ang){ // 서보 보통 왼쪽
+        //         speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+        //         speedR = 0.60;
+        //         where = 3;
+        //     }
+        //     else if(ang <= angLL){ // 서보 매우 왼쪽
+        //         speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+        //         speedR = 0.50;
+        //         where = 4;
+        //     }
+        // }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
+            where = 3;
+            color_escape_tmr_move();
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
         where = 5;
@@ -580,8 +623,16 @@ void red_in_servo_left_can_see_move(){
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
             // speedL = 0.30; speedR = 0.60;
-            speedL = 0.27; speedR = 0.60;
-            where = 9;
+            if(ang <= angLLL && ras_data[0] < width_l){
+                where = 302;
+                turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[1], black, &ras_data[1], -0.80, 0.80);
+                // speedL = -0.80; speedR = 0.80;
+            }
+            else{
+                speedL = 0.45; speedR = 1.0;
+                where = 9;
+            }
+
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
             where = 10;
@@ -591,7 +642,7 @@ void red_in_servo_left_can_see_move(){
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진
             // speedL = 0.60; speedR = 0.30;
-            speedL = 0.60; speedR = 0.27;
+            speedL = 1.0; speedR = 0.45; // ???
             where = 11;
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 우회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -629,15 +680,8 @@ void red_in_servo_left_can_see_move(){
         }
     }
     else{ // 그 외 : 왼쪽 전진
-        if(ang <= angLLL && ras_data[0] < width_l){
-            where = 301;
-            turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[1], black, &ras_data[1], -0.80, 0.80);
-            // speedL = -0.80; speedR = 0.80;
-        }
-        else{
-            speedL = 0.45; speedR = 1.0;
-            where = 18;
-        }
+        speedL = 0.45; speedR = 1.0;
+        where = 18;
     }
 }
 
@@ -645,14 +689,24 @@ void red_in_servo_mid_can_see_move(){
     // pc.printf("상대 보임 \n"); // 확인용 코드
 
     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+        if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 빠른 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
             where = 21;
             back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.70, -0.70);
         }
-        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격
-            speedL = 0.60; speedR = 0.60;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격 ★★★ 색 영역 공격 모드
+        //     speedL = 0.60; speedR = 0.60;
+        //     where = 22;
+        // }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
             where = 22;
+            color_escape_tmr_move();
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
         where = 23;
@@ -736,7 +790,7 @@ void red_in_servo_right_can_see_move(){
     // pc.printf("상대 보임 \n"); // 확인용 코드
 
     if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-        if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+        if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 빠른 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
             if(ang < angRR){ // 서보 보통 오른쪽
                 where = 41;
                 back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
@@ -746,18 +800,28 @@ void red_in_servo_right_can_see_move(){
                 back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
             }
         }
-        else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-            if(angRR <= ang){
-                speedL = 0.50;
-                speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
-                where = 43;
-            }
-            else if(ang < angRR){
-                speedL = 0.60;
-                speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                where = 44;
-            }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+        //     if(angRR <= ang){
+        //         speedL = 0.50;
+        //         speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
+        //         where = 43;
+        //     }
+        //     else if(ang < angRR){
+        //         speedL = 0.60;
+        //         speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+        //         where = 44;
+        //     }
+        // }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
+            where = 43;
+            color_escape_tmr_move();
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     else if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 : 왼쪽 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
         where = 45;
@@ -780,7 +844,7 @@ void red_in_servo_right_can_see_move(){
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진 -> 왼쪽 전진
             // speedL = 0.30; speedR = 0.60;
-            speedL = 0.27; speedR = 0.60;
+            speedL = 0.45; speedR = 1.0; // ???
             where = 49;
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
@@ -790,9 +854,16 @@ void red_in_servo_right_can_see_move(){
     }
     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진 -> 오른쪽 전진
-            // speedL = 0.60; speedR = 0.30;
-            speedL = 0.60; speedR = 0.27;
-            where = 51;
+            if(ang >= angRRR && ras_data[0] > width_r){
+                where = 301;
+                turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[0], black, &ras_data[1], 0.80, -0.80);
+                // speedL = 0.80; speedR = -0.80;
+            }
+            else{
+                // speedL = 0.60; speedR = 0.30;
+                speedL = 1.0; speedR = 0.45;
+                where = 51;
+            }
         }
         else if(ir_WhCol[0] == true){ // ir 왼쪽 앞 + ir 오른쪽 앞 O : 좌회 후진 (ir 가운데 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
             where = 52;
@@ -829,15 +900,8 @@ void red_in_servo_right_can_see_move(){
         }
     }
     else{ // 그 외 : 오른쪽 전진
-        if(ang >= angRRR && ras_data[0] > width_r){
-            where = 302;
-            turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[0], black, &ras_data[1], 0.80, -0.80);
-            // speedL = 0.80; speedR = -0.80;
-        }
-        else{
-            speedL = 1.0; speedR = 0.45;
-            where = 58;
-        }
+        speedL = 1.0; speedR = 0.45;
+        where = 58;
     }
 }
 
@@ -847,7 +911,7 @@ void red_out_servo_all_can_see_move(){
     if(ang <= angML){ // 서보 왼쪽
         if(angLL < ang){ // 서보 보통 왼쪽
             if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+                if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                     where = 61;
                     back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angML, angLL, 0.60, 0.85), -0.50);
 
@@ -856,11 +920,21 @@ void red_out_servo_all_can_see_move(){
                         fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
                     }
                 }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                    speedR = 0.60;
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+                //     speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+                //     speedR = 0.60;
+                //     where = 63;
+                // }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                     where = 63;
+                    color_escape_tmr_move();
                 }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
             }
             else if(
                 (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
@@ -944,7 +1018,7 @@ void red_out_servo_all_can_see_move(){
             }
             else{ // 화면 원통 매우 매우 or 매우 매우 매우 크지 않음
                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+                    if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                         where = 74;
                         back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -map<float>(ang, angLL, 0.0, 0.85, 0.95), -0.50);
 
@@ -953,11 +1027,21 @@ void red_out_servo_all_can_see_move(){
                             fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
                         }
                     }
-                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                        speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                        speedR = 0.50;
+
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+                    //     speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+                    //     speedR = 0.50;
+                    //     where = 76;
+                    // }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+                    else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                         where = 76;
+                        color_escape_tmr_move();
                     }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
                 } 
                 else if(
                     (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
@@ -999,7 +1083,7 @@ void red_out_servo_all_can_see_move(){
     }
     else if(angML < ang && ang < angMR){ // 서보 중간
         if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-            if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+            if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                 where = 91;
                 back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.50);
 
@@ -1008,10 +1092,20 @@ void red_out_servo_all_can_see_move(){
                     fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
                 }
             }
-            else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                speedL = 0.60; speedR = 0.60;
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+            //     speedL = 0.60; speedR = 0.60;
+            //     where = 93;
+            // }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                 where = 93;
+                color_escape_tmr_move();
             }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         else if(
             (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴) 
@@ -1053,7 +1147,7 @@ void red_out_servo_all_can_see_move(){
     else if(angMR <= ang){ // 서보 오른쪽
         if(ang < angRR){ // 서보 보통 오른쪽
             if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+                if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                     where = 101;
                     back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angMR, angRR, 0.60, 0.85));
 
@@ -1062,11 +1156,21 @@ void red_out_servo_all_can_see_move(){
                         fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
                     }
                 }
-                else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                    speedL = 0.60;
-                    speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+                //     speedL = 0.60;
+                //     speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+                //     where = 103;
+                // }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                     where = 103;
+                    color_escape_tmr_move();
                 }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
             }
             else if(
                 (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
@@ -1149,7 +1253,7 @@ void red_out_servo_all_can_see_move(){
             }
             else{ // 화면 원통 매우 매우 or 매우 매우 매우 크지 않음
                 if(ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == true){ // 모든 바퀴
-                    if(psdb_val >= 70.0){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
+                    if(psdb_val >= psdb_dis){ // 뒤 PSD 70cm 이상 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
                         where = 115;
                         back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -map<float>(ang, angRR, 180.0, 0.85, 0.95));
 
@@ -1158,11 +1262,21 @@ void red_out_servo_all_can_see_move(){
                             fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
                         }
                     }
-                    else if(psdb_val < 70.0){ // 뒤 PSD 70cm 이하 : 자유롭게 공격
-                        speedL = 0.50;
-                        speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
+
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
+                    //     speedL = 0.50;
+                    //     speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.15);
+                    //     where = 117;
+                    // }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
+                    else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                         where = 117;
+                        color_escape_tmr_move();
                     }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////
                 }
                 else if(
                     (ir_WhCol[0] == true && ir_WhCol[2] == false && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false) || // ir 왼쪽 앞 + ir 오른쪽 앞 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴 검은색 될때까지, 시간 지나면 자동으로 빠져나옴)
@@ -1221,6 +1335,84 @@ void red_out_servo_all_can_see_move(){
 }
 
 // 타이머 움직임
+void color_escape_tmr_move(){
+    escape_blue_all_tmr.start();
+    speedL = -0.60; speedR = 0.60; // 기본 동작 : 좌회전
+    while(ir_val[0] < black && ir_val[1] < black && ir_val[2] < black && ir_val[3] < black && ir_val[4] < black && ir_val[5] < black){
+        if(escape_blue_all_tmr.read_us() < escape_blue_all_time){
+            if( // psdf 2개 이상 거리 가까움 : 매우 빠른 탈출
+                (psdfl_val > psdfl_fr_dis && psdfm_val >= psdfm_dis) || // psdfl + psdfm 거리 멀음 : 매우 빠른 전진
+                (psdfm_val >= psdfm_dis && psdfr_val > psdfl_fr_dis) // psdfm + psdfr 거리 멀음 : 매우 빠른 전진
+                // (psdfl_val <= psdfl_fr_dis1 && psdfm_val >= psdfm_dis) || // psdfl + psdfm 거리 멀음 : 매우 빠른 전진
+                // (psdfm_val >= psdfm_dis && psdfr_val <= psdfl_fr_dis2) // psdfm + psdfr 거리 멀음 : 매우 빠른 전진
+            ){
+                where = 310;
+                escape_blue_go_tmr.start();
+                speedL = 0.0; speedR = 0.0;
+                while(ir_val[0] < black && ir_val[1] < black){ // ir 왼쪽 앞 검정색 + ir 오른쪽 앞 검정색 : break
+                    if(ang < angMM){
+                        speedL = map<float>(ang, 0.0, angMM, 0.80, 1.0);
+                        speedR = 1.0;
+                    }
+                    else if(ang >= angMM){
+                        speedL = 1.0;
+                        speedR = map<float>(ang, 180.0, angMM, 0.80, 1.0);
+                    }
+
+                    whl_bundle();
+                    if(escape_blue_go_tmr.read_us() > escape_blue_go_time){ // 일정 시간 이상 : break
+                        break;
+                    }
+                }
+                tmr_reset(&escape_blue_go_tmr);
+            }
+            else{ // psdf 2개 미만 거리 가까움 : 제자리 오른쪽 회전
+                if(ras_data[1] != 9){ // 화면 원통 보임
+                    if(ang <= angLL){ // 상대 매우 왼쪽 : 제자리 오른쪽 회전
+                        speedL = -0.60; speedR = 0.60;
+                    }
+                    else if(angLL < ang && ang < angRR);// 상대 중간쯤 : 동작 그대로
+                    else if(ang >= angRR){
+                        speedL = 0.60; speedR = -0.60; // 
+                    }
+                }
+                else{ // 화면 원통 안보임
+                    no_see_move();
+                }
+                where = 311;
+            }
+        }
+        else{
+            if(ang <= angLL){ // 서보 매우 왼쪽
+                speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+                speedR = 0.50;
+                where = 312;
+            }
+            else if(angLL < ang && ang <= angML){ // 서보 보통 왼쪽
+                speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+                speedR = 0.60;
+                where = 313;
+            }
+            else if(angML < ang && ang < angMR){ // 서보 가운데
+                speedL = 0.60; speedR = 0.60;
+                where = 314;
+            }
+            else if(angMR < ang && ang < angRR){ // 서보 보통 오른쪽
+                speedL = 0.60;
+                speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+                where = 315;
+            }
+            else if(angRR < ang){ // 서보 매우 오른쪽
+                speedL = 0.50;
+                speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
+                where = 316;
+            }
+        }
+        whl_bundle();
+    }
+    tmr_reset(&escape_blue_all_tmr);
+}
+
 void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _speedL, double _speedR){
     _tmr->start(); // _tmr->start(); = *_tmr.start(); // 타이머 시작
     while(_tmr->read_us() < *_time){ // 타이머 일정 시간 이하 : 특정 움직임 유지
@@ -1238,29 +1430,31 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
         }
     }
 
-    // waiting_break_tmr.start();
-    // while(waiting_break_tmr.read_us() < waiting_break_time){
-    //     wait_move();
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    waiting_break_tmr.start(); // ★★★ 공격 후 대기 모드
+    while(waiting_break_tmr.read_us() < waiting_break_time){
+        wait_move();
 
-    //     whl_bundle();
+        whl_bundle();
 
-    //     if(psdb_val <= 70.0){ // 뒤 PSD 70cm 이하 + 상대 빨간원 바깥 : break
-    //         if(ras_data[2] == 1){
-    //             break;
-    //         }
-    //     }
-    //     else if(psdb_val > 70.0){ // 뒤 PSD 70cm 이상 + 상대 파란원 바깥 : break
-    //         if(ras_data[3] == 1){
-    //             break;
-    //         }
-    //     }
-    //     if(ras_data[1] == 5 || ras_data[1] == 6){
-    //         break;
-    //     }
-    // }
+        if(psdb_val < psdb_dis){ // 상대 빨간원 근처 + 상대 빨간원 바깥 : break
+            if(ras_data[2] == 1){
+                break;
+            }
+        }
+        else if(psdb_now_avg >= psdb_dis){ // 상대 파란원 근처 + 상대 파란원 바깥 : break
+            if(ras_data[3] == 1){
+                break;
+            }
+        }
+        if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 5 || ras_data[1] == 6){ // 상대 매우 멀음 or 상대 매우 가까움 : break
+            break;
+        }
+    }
+    tmr_reset(&waiting_break_tmr);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     ratio = 0;
-
-    // tmr_reset(&waiting_break_tmr);
     _tmr->reset(); // 타이머 리셋
     _tmr->stop();
 }
@@ -1615,7 +1809,7 @@ void all_print(){
     pc.printf("ㅡㅡㅡㅡㅡ모드ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     pc.printf("mode = %d \n", mode); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ통신ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
-    pc.printf("ras_data = %.3f, %.3f, %.3f\n", ras_data[0], ras_data[1], ras_data[2]); // 확인용 코드
+    pc.printf("ras_data = %.3f, %.3f, %.3f, %.3f\n", ras_data[0], ras_data[1], ras_data[2], ras_data[3]); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ센서ㅡㅡㅡㅡㅡ\n"); // 확인용 코드
     sensor_print(); // 확인용 코드
     pc.printf("ㅡㅡㅡㅡㅡ모터ㅡㅡㅡㅡㅡ\n"); // 확인용 코드

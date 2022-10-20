@@ -44,7 +44,10 @@ extern AnalogIn irfm;
 extern AnalogIn irmr2;
 extern AnalogIn irml2;
 
-extern AnalogIn psdf;
+extern AnalogIn psdfm;
+extern AnalogIn psdfl;
+extern AnalogIn psdfr;
+extern GP2A psdBb;
 extern GP2A psdb;
 
 extern uint16_t ir_val[9];
@@ -65,11 +68,26 @@ extern bool ir_WhCol[7];
 // 4 : mr + br
 // 5 : bl + ml
 
-extern double psdf_volts;
-extern double psdf_val;
+extern double psdfm_volts;
+extern double psdfm_val;
+extern double psdfl_volts;
+extern double psdfl_val;
+extern double psdfr_volts;
+extern double psdfr_val;
+extern double psdBb_val;
 extern double psdb_val;
+extern double psdb_list[5];
+extern double psdb_pre_avg;
+extern double psdb_now_avg;
+extern int psdb_list_len;
+extern int n;
+
 extern uint16_t black;
 extern uint16_t tilt_black;
+extern double psdfm_dis;
+extern double psdfl_fr_dis1;
+extern double psdfl_fr_dis2;
+extern double psdBb_dis;
 
 // AC서보 모터
 extern PwmOut Servo;
@@ -153,7 +171,8 @@ extern Timer waiting_start_tmr;
 extern Timer waiting_break_tmr;
 extern Timer waiting_dir_tmr;
 extern Timer com_check_tmr;
-extern Timer escape_blue_tmr;
+extern Timer escape_blue_all_tmr;
+extern Timer escape_blue_go_tmr;
 
 extern int turn_escape_time; // 세부조정 필요!!!
 extern int back_escape_time; // 세부조정 필요!!!
@@ -488,12 +507,12 @@ int main(){
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
-                                if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
+                                if(ang <= angLL && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -1.0, -0.6);
                                     where = 235;
                                 }
-                                else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                else if(ang >= angRR && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -0.6, -1.0);
                                     where = 236;
                                 }
                                 else{ // 그 외
@@ -920,12 +939,12 @@ int main(){
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
-                                if(ang <= angLL && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -1.0, -0.6);
+                                if(ang <= angLL && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -1.0, -0.6);
                                     where = 235;
                                 }
-                                else if(ang >= angRR && psdf_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdf_val, "<", 20.0, -0.6, -1.0);
+                                else if(ang >= angRR && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -0.6, -1.0);
                                     where = 236;
                                 }
                                 else{ // 그 외
@@ -952,7 +971,7 @@ int main(){
 
             // all_print();
 
-            pre_rotate_dir = rotate_dir;
+            pre_rotate_dir = rotate_dir; // while bundle에는 이거 안넣어도 되나???
             rotate_dir = 'n';
             All_move = false;
 

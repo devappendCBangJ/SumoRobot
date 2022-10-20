@@ -319,7 +319,7 @@ int main(){
             // mutex.lock(); // thread 전용
 
             DC_ratio_inc();
-
+            
             if(tot_mode == 0){
                 // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
                 // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드

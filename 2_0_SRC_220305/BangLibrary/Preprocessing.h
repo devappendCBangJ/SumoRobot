@@ -66,11 +66,16 @@ void all_print();
 extern double speedL;
 extern double speedR;
 extern float ratio;
-template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sensor, const char* _inequality, T _sensor_val, double _speedL, double _speedR){
+template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sensor, const char* _inequality, T _sensor_val, double* psd_val, double* psd_dis, double _speedL, double _speedR){
     _tmr->start(); // _tmr->start(); = *_tmr.start();
     if(_inequality[0] == '='){
         while(*_while_brk_sensor == _sensor_val){
-            speedL = _speedL; speedR = _speedR;
+            if(*psd_val > *psd_dis){
+                speedL = _speedL; speedR = _speedR;
+            }
+            else if(*psd_val <= *psd_dis){
+                speedL = _speedR; speedR = _speedL;
+            }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
@@ -86,7 +91,12 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
     }
     else if(_inequality[0] == '>'){
         while(*_while_brk_sensor > _sensor_val){
-            speedL = _speedL; speedR = _speedR;
+            if(*psd_val > *psd_dis){
+                speedL = _speedL; speedR = _speedR;
+            }
+            else if(*psd_val <= *psd_dis){
+                speedL = _speedR; speedR = _speedL;
+            }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
@@ -102,7 +112,12 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
     }
     else if(_inequality[0] == '<'){
         while(*_while_brk_sensor < _sensor_val){
-            speedL = _speedL; speedR = _speedR;
+            if(*psd_val > *psd_dis){
+                speedL = _speedL; speedR = _speedR;
+            }
+            else if(*psd_val <= *psd_dis){
+                speedL = _speedR; speedR = _speedL;
+            }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){

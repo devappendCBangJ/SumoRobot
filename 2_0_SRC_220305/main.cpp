@@ -86,9 +86,9 @@ extern int n;
 extern uint16_t black;
 extern uint16_t tilt_black;
 extern double psdfm_dis;
-extern double psdfl_fr_dis1;
-extern double psdfl_fr_dis2;
-extern double psdBb_dis;
+extern double psdfl_fr_dis;
+extern double psdb_back_tmr_move_dis;
+extern double psdb_dis;
 
 // AC서보 모터
 extern PwmOut Servo;
@@ -512,11 +512,11 @@ int main(){
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -1.0, -0.6);
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, &psdb_now_avg, &psdb_back_tmr_move_dis, -1.0, -0.6);
                                     where = 235;
                                 }
                                 else if(ang >= angRR && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -0.6, -1.0);
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, &psdb_now_avg, &psdb_back_tmr_move_dis, -0.6, -1.0);
                                     where = 236;
                                 }
                                 else{ // 그 외
@@ -656,7 +656,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 우회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.80, -0.50);
+                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, &psdb_now_avg, &psdb_back_tmr_move_dis, -0.80, -0.50);
                                     }
                                     else{ // 그 외 : 제자리 좌회전
                                         speedL = -0.30; speedR = 0.30;
@@ -691,7 +691,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.65, -0.65);
+                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, &psdb_now_avg, &psdb_back_tmr_move_dis, -0.65, -0.65);
 
                                         tmr_reset(&waiting_start_tmr);
                                         tmr_reset(&waiting_dir_tmr);
@@ -747,7 +747,7 @@ int main(){
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴 + 오른쪽 앞 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                         (ir_WhCol[2] == true && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 왼쪽 앞 바퀴 + 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴 : 좌회 후진 (ir 왼쪽 앞 바퀴, 오른쪽 앞 바퀴가 검은색일 때까지, 시간 지나면 자동으로 빠져나옴)
                                     ){
-                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, -0.50, -0.80);
+                                        back_tmr_move<bool>(&brk_tmr, &back_escape_time, &ir_WhCol[0], "==", true, &psdb_now_avg, &psdb_back_tmr_move_dis, -0.50, -0.80);
                                     }
                                     else{ // 그 외 : 제자리 우회전
                                         speedL = 0.30; speedR = -0.30;
@@ -944,11 +944,11 @@ int main(){
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
                             if(tilt_tmr.read_us() < tilt_recog_time){ // 타이머 일정 시간 이상 : 특정 움직임
                                 if(ang <= angLL && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 왼쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -1.0, -0.6);
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, &psdb_now_avg, &psdb_back_tmr_move_dis, -1.0, -0.6);
                                     where = 235;
                                 }
                                 else if(ang >= angRR && psdfm_val <= 10){ // 앞 PSD 10cm 이하 + 각도 매우 오른쪽 : 매우 빠른 후진
-                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, -0.6, -1.0);
+                                    back_tmr_move<double>(&brk_tmr, &back_escape_time, &psdfm_val, "<", 20.0, &psdb_now_avg, &psdb_back_tmr_move_dis, -0.6, -1.0);
                                     where = 236;
                                 }
                                 else{ // 그 외

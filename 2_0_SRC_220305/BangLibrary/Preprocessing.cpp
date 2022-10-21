@@ -918,7 +918,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 62;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
 
@@ -948,7 +948,7 @@ void red_out_servo_all_can_see_move(){
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
                     where = 65;
-                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                 }
             }
             else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
@@ -963,7 +963,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 68;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
             }
@@ -1002,7 +1002,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 71;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
             }
@@ -1025,7 +1025,7 @@ void red_out_servo_all_can_see_move(){
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
                             where = 75;
-                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                         }
                     }
 
@@ -1055,7 +1055,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 78;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
                 else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 왼쪽 앞 바퀴
@@ -1070,7 +1070,7 @@ void red_out_servo_all_can_see_move(){
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
                             where = 81;
-                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angLL, 0.0, 0.85, 0.95) * 1.0525, -0.50 * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                         }
                     }
                 }
@@ -1090,7 +1090,7 @@ void red_out_servo_all_can_see_move(){
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
                     where = 92;
-                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                 }
             }
 
@@ -1119,7 +1119,7 @@ void red_out_servo_all_can_see_move(){
 
             if(ras_data[1] == 5 || ras_data[1] == 6){
                 where = 95;
-                fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
+                fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
             }
         }
         else if(
@@ -1136,7 +1136,7 @@ void red_out_servo_all_can_see_move(){
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
                     where = 98;
-                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.90, -0.90);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                 }
             }
         }
@@ -1154,7 +1154,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 102;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
 
@@ -1184,7 +1184,7 @@ void red_out_servo_all_can_see_move(){
 
                 if(ras_data[1] == 5 || ras_data[1] == 6){
                     where = 105;
-                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                    fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                 }
             }
             else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
@@ -1199,7 +1199,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 108;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.1760, -map<float>(ang, angMR, angRR, 0.60, 0.85) * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
             }
@@ -1237,7 +1237,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 112;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -map<float>(ang, angML, angLL, 0.60, 0.85) * 1.1760, -0.50 * 1.1760);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
             }
@@ -1260,7 +1260,7 @@ void red_out_servo_all_can_see_move(){
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
                             where = 116;
-                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                         }
                     }
 
@@ -1290,7 +1290,7 @@ void red_out_servo_all_can_see_move(){
 
                     if(ras_data[1] == 5 || ras_data[1] == 6){
                         where = 119;
-                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                        fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                     }
                 }
                 else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == false && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴
@@ -1305,7 +1305,7 @@ void red_out_servo_all_can_see_move(){
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
                             where = 131;
-                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                         }
                     }
                 }
@@ -1321,7 +1321,7 @@ void red_out_servo_all_can_see_move(){
 
                         if(ras_data[1] == 5 || ras_data[1] == 6){
                             where = 134;
-                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -0.50 * 1.0525, -map<float>(ang, angRR, 180.0, 0.85, 0.95) * 1.0525);
+                            fight_back_tmr_move(&brk_tmr, &fight_back_escape_time, &fight_back_break_check_time, -1.0, -1.0);
                         }
                     }
                 }
@@ -1440,7 +1440,7 @@ void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _spee
                 break;
             }
         }
-        else if(psdb_now_avg >= psdb_dis){ // 상대 파란원 근처 + 상대 파란원 바깥 : break
+        else if(psdb_val >= psdb_dis){ // 상대 파란원 근처 + 상대 파란원 바깥 : break
             if(ras_data[3] == 1){
                 break;
             }
@@ -1788,8 +1788,10 @@ void whl_bundle(){
 
         // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
 
-        blt.printf("w%d\n", where); // 확인용 코드
+        // blt.printf("w%d\n", where); // 확인용 코드
+        blt.printf("%.2f\n", psdb_val);
         blt.printf("p%.2f\n", pitch_p);
+
         // blt.printf("b%d\n", brk_tmr.read_ms());
         // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
         // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);

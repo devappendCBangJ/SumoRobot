@@ -46,11 +46,12 @@ void red_in_servo_mid_can_see_move();
 void red_in_servo_right_can_see_move();
 void red_out_servo_all_can_see_move();
 
-void color_escape_tmr_move();
 void fight_back_tmr_move(Timer* _tmr, int* _time, int* _check_time, double _speedL, double _speedR);
 void turn_90_tmr_move(Timer* _tmr, int* _time, uint16_t* _while_brk_sensor, uint16_t _sensor_val, volatile float* _com_data, double _speedL, double _speedR);
 void turn_180_tmr_move(Timer* _tmr, int* _time, uint16_t* _while_brk_sensor, uint16_t _sensor_val, volatile float* _com_data, double _speedL, double _speedR);
 void rotate_tmr_judgment();
+void blue_all_tmr_judgment();
+void blue_all_tmr_move();
 void tilt_tmr_judgment();
 void tilt_tmr_move();
 void tmr_reset(Timer* _tmr);

@@ -20,6 +20,7 @@ int tic_even_cnt = 0;
 char pre_rotate_dir = 'n';
 char rotate_dir = 'n';
 char waiting_dir = 'l';
+bool blue_all = false;
 
 // 코드 위치 확인
 int where = 0;
@@ -598,7 +599,7 @@ void red_in_servo_left_can_see_move(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
             where = 3;
-            color_escape_tmr_move();
+            blue_all_tmr_move();
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -704,7 +705,7 @@ void red_in_servo_mid_can_see_move(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
             where = 22;
-            color_escape_tmr_move();
+            blue_all_tmr_move();
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -819,7 +820,7 @@ void red_in_servo_right_can_see_move(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
             where = 43;
-            color_escape_tmr_move();
+            blue_all_tmr_move();
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -932,7 +933,7 @@ void red_out_servo_all_can_see_move(){
                 ////////////////////////////////////////////////////////////////////////////////////////////////////
                 else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                     where = 63;
-                    color_escape_tmr_move();
+                    blue_all_tmr_move();
                 }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////
             }
@@ -1039,7 +1040,7 @@ void red_out_servo_all_can_see_move(){
                     ////////////////////////////////////////////////////////////////////////////////////////////////////
                     else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                         where = 76;
-                        color_escape_tmr_move();
+                        blue_all_tmr_move();
                     }
                     ////////////////////////////////////////////////////////////////////////////////////////////////////
                 } 
@@ -1103,7 +1104,7 @@ void red_out_servo_all_can_see_move(){
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                 where = 93;
-                color_escape_tmr_move();
+                blue_all_tmr_move();
             }
             ////////////////////////////////////////////////////////////////////////////////////////////////////
         }
@@ -1168,7 +1169,7 @@ void red_out_servo_all_can_see_move(){
                 ////////////////////////////////////////////////////////////////////////////////////////////////////
                 else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                     where = 103;
-                    color_escape_tmr_move();
+                    blue_all_tmr_move();
                 }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////
             }
@@ -1274,7 +1275,7 @@ void red_out_servo_all_can_see_move(){
                     ////////////////////////////////////////////////////////////////////////////////////////////////////
                     else if(psdb_val < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 탈출 모드
                         where = 117;
-                        color_escape_tmr_move();
+                        blue_all_tmr_move();
                     }
                     ////////////////////////////////////////////////////////////////////////////////////////////////////
                 }
@@ -1335,80 +1336,77 @@ void red_out_servo_all_can_see_move(){
 }
 
 // 타이머 움직임
-void color_escape_tmr_move(){
-    escape_blue_all_tmr.start();
-    speedL = -0.60; speedR = 0.60; // 기본 동작 : 좌회전
-    while(ir_val[0] < black && ir_val[1] < black && ir_val[2] < black && ir_val[3] < black && ir_val[4] < black && ir_val[5] < black){
-        if(escape_blue_all_tmr.read_us() < escape_blue_all_time){
-            if( // psdf 2개 이상 거리 가까움 : 매우 빠른 탈출
-                (psdfl_val > psdfl_fr_dis && psdfm_val >= psdfm_dis) || // psdfl + psdfm 거리 멀음 : 매우 빠른 전진
-                (psdfm_val >= psdfm_dis && psdfr_val > psdfl_fr_dis) // psdfm + psdfr 거리 멀음 : 매우 빠른 전진
-                // (psdfl_val <= psdfl_fr_dis1 && psdfm_val >= psdfm_dis) || // psdfl + psdfm 거리 멀음 : 매우 빠른 전진
-                // (psdfm_val >= psdfm_dis && psdfr_val <= psdfl_fr_dis2) // psdfm + psdfr 거리 멀음 : 매우 빠른 전진
-            ){
-                where = 310;
-                escape_blue_go_tmr.start();
-                speedL = 0.0; speedR = 0.0;
-                while(ir_val[0] < black && ir_val[1] < black){ // ir 왼쪽 앞 검정색 + ir 오른쪽 앞 검정색 : break
-                    if(ang < angMM){
-                        speedL = map<float>(ang, 0.0, angMM, 0.80, 1.0);
-                        speedR = 1.0;
-                    }
-                    else if(ang >= angMM){
-                        speedL = 1.0;
-                        speedR = map<float>(ang, 180.0, angMM, 0.80, 1.0);
-                    }
+void blue_all_tmr_move(){
+    blue_all = true;
 
-                    whl_bundle();
-                    if(escape_blue_go_tmr.read_us() > escape_blue_go_time){ // 일정 시간 이상 : break
-                        break;
-                    }
+    escape_blue_all_tmr.start();
+    speedL = -0.60; speedR = 0.60; // psdf 2개 미만 거리 가까울 때 기본 동작 : 좌회전
+    if(escape_blue_all_tmr.read_us() < escape_blue_all_time){
+        if( // psdf 2개 이상 거리 가까움 : 매우 빠른 탈출
+            (psdfl_val > psdfl_fr_dis && psdfm_val >= psdfm_dis) || // psdfl + psdfm 거리 멀음 : 매우 빠른 전진
+            (psdfm_val >= psdfm_dis && psdfr_val > psdfl_fr_dis) // psdfm + psdfr 거리 멀음 : 매우 빠른 전진
+        ){
+            where = 310;
+            escape_blue_go_tmr.start();
+            speedL = 0.0; speedR = 0.0;
+            while(ir_val[0] < black && ir_val[1] < black){ // ir 왼쪽 앞 검정색 + ir 오른쪽 앞 검정색 : break
+                if(ang < angMM){
+                    speedL = map<float>(ang, 0.0, angMM, 0.80, 1.0);
+                    speedR = 1.0;
                 }
-                tmr_reset(&escape_blue_go_tmr);
+                else if(ang >= angMM){
+                    speedL = 1.0;
+                    speedR = map<float>(ang, 180.0, angMM, 0.80, 1.0);
+                }
+
+                whl_bundle();
+                if(escape_blue_go_tmr.read_us() > escape_blue_go_time){ // 일정 시간 이상 : break
+                    break;
+                }
             }
-            else{ // psdf 2개 미만 거리 가까움 : 제자리 오른쪽 회전
-                if(ras_data[1] != 9){ // 화면 원통 보임
-                    if(ang <= angLL){ // 상대 매우 왼쪽 : 제자리 오른쪽 회전
-                        speedL = -0.60; speedR = 0.60;
-                    }
-                    else if(angLL < ang && ang < angRR);// 상대 중간쯤 : 동작 그대로
-                    else if(ang >= angRR){
-                        speedL = 0.60; speedR = -0.60; // 
-                    }
+            tmr_reset(&escape_blue_go_tmr);
+        }
+        else{ // psdf 2개 미만 거리 가까움 : 제자리 오른쪽 회전
+            where = 311;
+            if(ras_data[1] != 9){ // 화면 원통 보임
+                if(ang <= angLL){ // 상대 매우 왼쪽 : 제자리 오른쪽 회전
+                    speedL = -0.60; speedR = 0.60;
                 }
-                else{ // 화면 원통 안보임
-                    no_see_move();
+                else if(angLL < ang && ang < angRR);// 상대 중간쯤 : 동작 그대로
+                else if(ang >= angRR){
+                    speedL = 0.60; speedR = -0.60; // 상대 매우 오른쪽 : 제자리 왼쪽 회전
                 }
-                where = 311;
+            }
+            else{ // 화면 원통 안보임 : 이전값 기반 상대 추적
+                no_see_move();
             }
         }
-        else{
-            if(ang <= angLL){ // 서보 매우 왼쪽
-                speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
-                speedR = 0.50;
-                where = 312;
-            }
-            else if(angLL < ang && ang <= angML){ // 서보 보통 왼쪽
-                speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
-                speedR = 0.60;
-                where = 313;
-            }
-            else if(angML < ang && ang < angMR){ // 서보 가운데
-                speedL = 0.60; speedR = 0.60;
-                where = 314;
-            }
-            else if(angMR < ang && ang < angRR){ // 서보 보통 오른쪽
-                speedL = 0.60;
-                speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
-                where = 315;
-            }
-            else if(angRR < ang){ // 서보 매우 오른쪽
-                speedL = 0.50;
-                speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
-                where = 316;
-            }
+    }
+    else{
+        if(ang <= angLL){ // 서보 매우 왼쪽
+            speedL = -map<float>(ang, angLL, 0.0, 0.15, 0.50);
+            speedR = 0.50;
+            where = 312;
         }
-        whl_bundle();
+        else if(angLL < ang && ang <= angML){ // 서보 보통 왼쪽
+            speedL = map<float>(ang, angML, angLL, 0.30, 0.18);
+            speedR = 0.60;
+            where = 313;
+        }
+        else if(angML < ang && ang < angMR){ // 서보 가운데
+            speedL = 0.60; speedR = 0.60;
+            where = 314;
+        }
+        else if(angMR < ang && ang < angRR){ // 서보 보통 오른쪽
+            speedL = 0.60;
+            speedR = map<float>(ang, angRR, angMR, 0.18, 0.30);
+            where = 315;
+        }
+        else if(angRR < ang){ // 서보 매우 오른쪽
+            speedL = 0.50;
+            speedR = -map<float>(ang, 180.0, angRR, 0.50, 0.18);
+            where = 316;
+        }
     }
     tmr_reset(&escape_blue_all_tmr);
 }
@@ -1524,6 +1522,13 @@ void rotate_tmr_judgment(){
     }
     else{ // 원 회전 상황 X or 이전 회전 방향과 현재 회전 방향 다름 : 타이머 리셋
         tmr_reset(&rotate_tmr);
+    }
+}
+
+void blue_all_tmr_judgment(){
+    if(blue_all == true); // 직전 blue_all_tmr_move 수행 O : escape_blue_all_tmr 유지
+    else{ // 직전 blue_all_tmr_move 수행 X : escape_blue_all_tmr reset
+        tmr_reset(&escape_blue_all_tmr);
     }
 }
 

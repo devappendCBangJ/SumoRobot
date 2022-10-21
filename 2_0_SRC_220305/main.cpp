@@ -21,6 +21,7 @@ extern int tic_even_cnt;
 extern char pre_rotate_dir;
 extern char rotate_dir;
 extern char waiting_dir;
+extern bool blue_all;
 
 // 코드 위치 확인
 extern int where;
@@ -502,7 +503,7 @@ int main(){
                         else if(ras_data[1] == 1 || ras_data[1] == 2 || ras_data[1] == 3){ // 화면 원통 작음 or 보통 or 큼
                             red_out_servo_all_can_see_move();
 
-                            tmr_reset(&tilt_tmr); 
+                            tmr_reset(&tilt_tmr);
                             tmr_reset(&rotate_tmr);
                         }
                         else if(ras_data[1] == 4 || ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 큼 or 매우 매우 큼 or 매우 매우 매우 큼
@@ -971,8 +972,11 @@ int main(){
 
             // all_print();
 
+            blue_all_tmr_judgment(); // 직전 blue_all_tmr_move 실행 체크
+
             pre_rotate_dir = rotate_dir; // while bundle에는 이거 안넣어도 되나???
             rotate_dir = 'n';
+            blue_all = false;
             All_move = false;
 
             tmr_reset(&com_check_tmr); // 통신값 여부 타이머 초기화

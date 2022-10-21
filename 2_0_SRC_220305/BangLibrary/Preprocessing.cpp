@@ -314,7 +314,6 @@ template <class T> T map(T x, T in_min, T in_max, T out_min, T out_max){
 void servo_set(PwmOut &rc){
     Servo.period_ms(10);
     uint16_t pulseW = map<float>(ang, 180., 0., 500., 2600.);
-    // uint16_t pulseW = map<float>(ang, 180., 0., 833., 2266.);
     rc.pulsewidth_us(pulseW);
 }
 

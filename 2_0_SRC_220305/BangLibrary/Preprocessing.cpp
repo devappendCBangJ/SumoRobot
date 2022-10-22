@@ -90,7 +90,7 @@ double psdb_dis = 95.0;
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
 float tilt_deg = 4.0;
-float tilt_break_deg = 1.5;
+float tilt_break_deg = 1.2;
 extern float deltat;
 extern float pitch_p;
 extern float prev_y;

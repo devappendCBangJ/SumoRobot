@@ -84,7 +84,6 @@ uint16_t tilt_black = 59000;
 double psdfm_dis = 30.0;
 double psdfl_fr_dis = 90.0;
 double psdb_back_tmr_move_dis = 70.0;
-double psdb_red_out_blue_dis = 60.0;
 double psdb_dis = 95.0;
 
 ///////////////////////////////////////////////////
@@ -1794,7 +1793,7 @@ void whl_bundle(){
 
         // all_print(); // 확인용 코드
 
-        // blt.printf("w%d\n", where); // 확인용 코드
+        blt.printf("w%d\n", where); // 확인용 코드
         // blt.printf("b%.2f\n", psdb_now_avg); // 확인용 코드
         // blt.printf("p%.2f\n", pitch_p); // 확인용 코드
     }

@@ -186,7 +186,7 @@ Timer escape_blue_go_tmr;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 900000; // 세부조정 필요!!!
 int fight_back_escape_time = 630000; // 세부조정 필요!!!
-int fight_back_break_check_time = 300000; // 세부조정 필요!!!
+int fight_back_break_check_time = 365000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!

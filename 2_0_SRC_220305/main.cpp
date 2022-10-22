@@ -316,7 +316,7 @@ int main(){
 
             // blt.printf("w%d\n", where); // 확인용 코드
             // blt.printf("b%.2f\n", psdb_now_avg); // 확인용 코드
-            // blt.printf("p%.2f\n", pitch_p); // 확인용 코드
+            blt.printf("p%.2f\n", pitch_p); // 확인용 코드
 
             // mutex.lock(); // thread 전용
 

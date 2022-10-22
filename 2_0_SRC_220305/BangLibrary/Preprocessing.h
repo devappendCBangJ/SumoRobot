@@ -70,12 +70,12 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
     _tmr->start(); // _tmr->start(); = *_tmr.start();
     if(_inequality[0] == '='){
         while(*_while_brk_sensor == _sensor_val){
-            if(*psd_val > *psd_dis){
+            // if(*psd_val > *psd_dis){
                 speedL = _speedL; speedR = _speedR;
-            }
-            else if(*psd_val <= *psd_dis){
-                speedL = _speedR; speedR = _speedL;
-            }
+            // }
+            // else if(*psd_val <= *psd_dis){
+            //     speedL = _speedR; speedR = _speedL;
+            // }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
@@ -91,12 +91,12 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
     }
     else if(_inequality[0] == '>'){
         while(*_while_brk_sensor > _sensor_val){
-            if(*psd_val > *psd_dis){
+            // if(*psd_val > *psd_dis){
                 speedL = _speedL; speedR = _speedR;
-            }
-            else if(*psd_val <= *psd_dis){
-                speedL = _speedR; speedR = _speedL;
-            }
+            // }
+            // else if(*psd_val <= *psd_dis){
+            //     speedL = _speedR; speedR = _speedL;
+            // }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){
@@ -112,12 +112,12 @@ template<class T> void back_tmr_move(Timer* _tmr, int* _time, T* _while_brk_sens
     }
     else if(_inequality[0] == '<'){
         while(*_while_brk_sensor < _sensor_val){
-            if(*psd_val > *psd_dis){
+            // if(*psd_val > *psd_dis){
                 speedL = _speedL; speedR = _speedR;
-            }
-            else if(*psd_val <= *psd_dis){
-                speedL = _speedR; speedR = _speedL;
-            }
+            // }
+            // else if(*psd_val <= *psd_dis){
+            //     speedL = _speedR; speedR = _speedL;
+            // }
 
             whl_bundle();
             if(_tmr->read_us() > *_time){

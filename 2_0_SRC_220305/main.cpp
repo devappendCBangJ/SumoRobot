@@ -88,6 +88,7 @@ extern uint16_t tilt_black;
 extern double psdfm_dis;
 extern double psdfl_fr_dis;
 extern double psdb_back_tmr_move_dis;
+extern double psdb_red_out_blue_dis;
 extern double psdb_dis;
 
 // AC서보 모터
@@ -306,37 +307,22 @@ int main(){
         // blt.printf("%.1f, %.2f, %.2f\n", pitch_p, speedL, speedR); // 확인용 코드
 
         if(All_move == true){ // 통신 받음
-            // all_print();
+            // all_print(); // 확인용 코드
 
             // servo_chk(Servo); // Test 코드
             // DC_chk(); // Test 코드
 
             // pc.printf("tot_mode : %d \n", tot_mode); // 확인용 코드
 
-            blt.printf("w%d\n", where);
-            blt.printf("b%.2f\n", psdb_now_avg);
-            blt.printf("p%.2f\n", pitch_p);
-
-            // blt.printf("b%d\n", brk_tmr.read_ms());
-            // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
+            // blt.printf("w%d\n", where); // 확인용 코드
+            // blt.printf("b%.2f\n", psdb_now_avg); // 확인용 코드
+            // blt.printf("p%.2f\n", pitch_p); // 확인용 코드
 
             // mutex.lock(); // thread 전용
 
             DC_ratio_inc();
             
             if(tot_mode == 0){
-                // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-                // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
-                // blt.printf("%.2f\n", pitch_p); // 확인용 코드
-                // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
-
-                // blt.printf("w%d\n", where); // 확인용 코드
-                // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
-                // blt.printf("i%d\n", ir_val[6]);
-
-                // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
-                // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
-                
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
                     init_move();
@@ -351,43 +337,6 @@ int main(){
 
                     if(ras_data[2] == 0){ // 상대방이 빨간색 끝좌표 안쪽에 위치
                         // pc.printf("상대방이 빨간색 안에 위치,   "); // 확인용 코드
-
-                        // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
-
-                        // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
-
-                        // 서보가 많이 돌아가있음(테스트 필요)
-                        // 상대 감지됐는데 화면 매우 큼(테스트 필요)
-                        // 벽에 박을 정도로 psd 앞 매우 가까이 감지. 앞판이 벽면에 완전히 박혀있을 때처럼 제자리 회전마저도 불가능한 경우 기준으로 측정(테스트 필요)
-                        // 후진 1.0으로 밀어버림
 
                         // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치 (ir 사용o. 전면 카메라 사용x)
                         if(ang <= angML){ // 서보 왼쪽
@@ -543,21 +492,6 @@ int main(){
             }
 
             else if(tot_mode >= 1){
-                // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-                // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
-                // blt.printf("%.2f\n", pitch_p); // 확인용 코드
-                // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
-                // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
-
-                // blt.printf("mode : %d\n", mode); // 확인용 코드
-                // blt.printf("w%d\n", where); // 확인용 코드
-                // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
-                // blt.printf("i%d\n", ir_val[6]);
-
-                // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
-                // blt.printf("%d\n", brk_tmr.read_us()); // 확인용 코드
-                // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
-
                 // 초기 동작 : 상대 탐색
                 if(mode == 0){
                     init_move();
@@ -595,38 +529,6 @@ int main(){
                 else if(mode == 2){
                     if(ras_data[2] == 0){ // 상대방이 빨간색 끝좌표 안쪽에 위치
                         // pc.printf("상대방이 빨간색 안에 위치,   "); // 확인용 코드
-
-                        // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
-
-                        // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
 
                         // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치 (ir 사용o. 전면 카메라 사용x)
                         if(ras_data[1] == 9){ // 화면 원통 안보임
@@ -783,43 +685,6 @@ int main(){
 
                     if(ras_data[2] == 0){ // 상대방이 빨간색 끝좌표 안쪽에 위치
                         // pc.printf("상대방이 빨간색 안에 위치,   "); // 확인용 코드
-
-                        // // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // if(ang == 0 && ras_data[0] < width_l){ // 서보 왼쪽 최대 + 화면 매우 왼쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
-
-                        // // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치
-                        // else if(ang == 180 && width_r < ras_data[0]){ // 서보 오른쪽 최대 + 화면 매우 오른쪽 상대방 보임 // 상대 로봇이 클때의 경우도 and 조건으로 추가해야함!!!
-                        //     brk_tmr.start();
-                        //     while(ir_val[6] < black){
-                        //         speedL = -0.40; speedR = 0.40;
-
-                        //         whl_bundle();
-                        //         if(brk_tmr.read_us() > turn_escape_time){
-                        //             brk_tmr.reset();
-                        //             brk_tmr.stop();
-                        //             break;
-                        //         }
-                        //         // if(ras_data[1] == 4) break;
-                        //     }
-                        // }
-
-                        // 서보가 많이 돌아가있음(테스트 필요)
-                        // 상대 감지됐는데 화면 매우 큼(테스트 필요)
-                        // 벽에 박을 정도로 psd 앞 매우 가까이 감지. 앞판이 벽면에 완전히 박혀있을 때처럼 제자리 회전마저도 불가능한 경우 기준으로 측정(테스트 필요)
-                        // 후진 1.0으로 밀어버림
 
                         // 화면 매우 왼쪽이나 매우 오른쪽 제외 상대방 보임 + 화면 빨간색 1개만 출력 + 상대방이 빨간색 끝좌표 안쪽에 위치 (ir 사용o. 전면 카메라 사용x)
                         if(ang <= angML){ // 서보 왼쪽

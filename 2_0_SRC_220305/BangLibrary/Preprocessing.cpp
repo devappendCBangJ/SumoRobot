@@ -82,9 +82,9 @@ int n = 0;
 uint16_t black = 17500;
 uint16_t tilt_black = 59000;
 double psdfm_dis = 30.0;
-// double psdfl_fr_dis1 = 10.0;
 double psdfl_fr_dis = 90.0;
 double psdb_back_tmr_move_dis = 70.0;
+double psdb_red_out_blue_dis = 60.0;
 double psdb_dis = 95.0;
 
 ///////////////////////////////////////////////////
@@ -303,7 +303,7 @@ void sensor_print(){
     pc.printf("mpu6050 pitch_p : %.1f\n", pitch_p); // 확인용 코드
     pc.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0], ir_val[1], ir_val[2], ir_val[3], ir_val[4], ir_val[5], ir_val[6], ir_val[7], ir_val[8]); // 확인용 코드
     pc.printf("ir_WhCol : | %d | %d | %d | %d | %d | %d |\n", ir_WhCol[0], ir_WhCol[1], ir_WhCol[2], ir_WhCol[3], ir_WhCol[4], ir_WhCol[5]); // 확인용 코드
-    pc.printf("psdfm_val : | %lf |, psdb_val : | %lf |\n", psdfm_val, psdb_val); // 확인용 코드
+    pc.printf("psdfm_val : | %lf |, psdb_now_avg : | %lf |\n", psdfm_val, psdb_now_avg); // 확인용 코드
     pc.printf("psdfl_val : | %lf |, psdfr_val : | %lf |\n", psdfl_val, psdfr_val); // 확인용 코드
 }
 
@@ -1141,7 +1141,7 @@ void red_out_servo_all_can_see_move(){
             }
         }
         else if(
-            (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
+            (ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true) || // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
             (ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false) // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         ){
             if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 자유롭게 공격
@@ -1802,26 +1802,11 @@ void whl_bundle(){
         servo_move(Servo);
         DC_move(speedL, speedR);
 
-        // all_print();
+        // all_print(); // 확인용 코드
 
-        // blt.printf("b%d\n", brk_tmr.read_ms()); // 확인용 코드
-
-        blt.printf("w%d\n", where); // 확인용 코드
-        blt.printf("b%.2f\n", psdb_now_avg);
-        blt.printf("p%.2f\n", pitch_p);
-
-        // blt.printf("b%d\n", brk_tmr.read_ms());
-        // blt.printf("| %u | %u | %u | %u | %.2f\n", ir_val[7]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[8]/1000, pitch_p);
-        // if(where == 46 || where == 24 || where == 6) blt.printf("---%d---\n", where);
-        // blt.printf("i%d\n", ir_val[6]);
-        
-        // blt.printf("r%d\n", rotate_tmr.read_ms()); // 확인용 코드
-        // blt.printf("%d, %.1f, %.2f, %.2f, %d, %d\n", mode, pitch_p, speedL, speedR, rotate_tmr.read_us(), tilt_tmr.read_us()); // 확인용 코드
-        // blt.printf("%.2f, %.2f, %d, %.1f\n", speedL, speedR, rotate_tmr.read_us(), pitch_p); // 확인용 코드
-        // blt.printf("%.2f\n", pitch_p); // 확인용 코드
-        // blt.printf("%d\n", tilt_tmr.read_us()); // 확인용 코드
-        // blt.printf("%d\n", brk_tmr.read_us()); // 확인용 코드
-        // blt.printf("ir_val : | %u | %u | %u | %u | %u | %u | %u |\n", ir_val[0]/1000, ir_val[1]/1000, ir_val[2]/1000, ir_val[3]/1000, ir_val[4]/1000, ir_val[5]/1000, ir_val[6]/1000); // 확인용 코드
+        // blt.printf("w%d\n", where); // 확인용 코드
+        // blt.printf("b%.2f\n", psdb_now_avg); // 확인용 코드
+        // blt.printf("p%.2f\n", pitch_p); // 확인용 코드
     }
     All_move = false;
     // all_print(); // 확인용 코드

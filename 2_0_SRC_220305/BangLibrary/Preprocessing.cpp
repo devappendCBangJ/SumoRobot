@@ -165,7 +165,9 @@ int pre_data0 = 9;
 
 int width = 400;
 int width_l = width * 4.5 / 11.0; // 세부조정 필요!!!
+int width_ll = width * 3.0 / 11.0; // 세부조정 필요!!!
 int width_r = width * 6.5 / 11.0; // 세부조정 필요!!!
+int width_rr = width * 8.0 / 11.0; // 세부조정 필요!!!
 
 // 통신 - DC_chk
 volatile bool gotPacket2 = false;
@@ -624,7 +626,7 @@ void red_in_servo_left_can_see_move(){
     else if(ir_WhCol[2] == true && ir_WhCol[3] == false && ir_WhCol[4] == false && ir_WhCol[5] == true){ // 왼쪽 앞 바퀴 + 왼쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 왼쪽 전진
             // speedL = 0.30; speedR = 0.60;
-            if(ang <= angLLL && ras_data[0] < width_l){
+            if(ang <= angLLL && ras_data[0] < width_ll){
                 where = 302;
                 turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[1], black, &ras_data[1], -0.80, 0.80);
                 // speedL = -0.80; speedR = 0.80;
@@ -855,7 +857,7 @@ void red_in_servo_right_can_see_move(){
     }
     else if(ir_WhCol[2] == false && ir_WhCol[3] == true && ir_WhCol[4] == true && ir_WhCol[5] == false){ // 오른쪽 앞 바퀴 + 오른쪽 뒷 바퀴
         if(ir_WhCol[0] == false){ // ir 왼쪽 앞 + ir 오른쪽 앞 X : 조금 오른쪽 전진 -> 오른쪽 전진
-            if(ang >= angRRR && ras_data[0] > width_r){
+            if(ang >= angRRR && ras_data[0] > width_rr){
                 where = 301;
                 turn_180_tmr_move(&brk_tmr, &turn_escape_time, &ir_val[0], black, &ras_data[1], 0.80, -0.80);
                 // speedL = 0.80; speedR = -0.80;

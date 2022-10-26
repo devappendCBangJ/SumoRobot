@@ -106,13 +106,13 @@ float big_inc = 6.7;
 // float small_inc = 2.5;
 // float big_inc = 4.2;
 
-float angLLL = 5;
+float angLLL = 0.1;
 float angLL = 30;
 float angML = 78;
 float angMM = 90;
 float angMR = 102;
 float angRR = 150;
-float angRRR = 175;
+float angRRR = 179.9;
 
 // DC 모터
 DigitalOut DirL(PC_7);
@@ -186,7 +186,7 @@ Timer escape_blue_go_tmr;
 int turn_escape_time = 1000000; // 세부조정 필요!!!
 int back_escape_time = 900000; // 세부조정 필요!!!
 int fight_back_escape_time = 630000; // 세부조정 필요!!!
-int fight_back_break_check_time = 300000; // 세부조정 필요!!!
+int fight_back_break_check_time = 330000; // 세부조정 필요!!!
 int rotate_recog_time = 2000000; // 세부조정 필요!!!
 int tilt_recog_time = 650000; // 세부조정 필요!!!
 int waiting_start_time = 5000000; // 세부조정 필요!!!

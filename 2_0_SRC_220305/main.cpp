@@ -295,7 +295,7 @@ int main(){
 
     // com_th.start(&th_SerialRx); // thread 전용
     while(1){
-        all_print(); // 확인용 코드
+        // all_print(); // 확인용 코드
 
         in_SerialRx_main(); // interrupt 전용
 

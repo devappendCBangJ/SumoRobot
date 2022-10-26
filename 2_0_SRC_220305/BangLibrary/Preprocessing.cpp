@@ -73,10 +73,10 @@ double psdfm_val;
 double psdfl_val;
 double psdfr_val;
 double psdb_val;
-double psdb_list[31] = {0};
+double psdb_list[41] = {0};
 double psdb_pre_avg = 0;
 double psdb_now_avg = 0;
-int psdb_list_len = 30;
+int psdb_list_len = 40;
 int n = 0;
 
 uint16_t black = 17500;

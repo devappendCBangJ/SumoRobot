@@ -201,6 +201,7 @@ int escape_blue_all_time = 3000000; // 세부조정 필요!!!
 int escape_blue_go_time = 2000000; // 세부조정 필요!!!
 int imu_time = 7;
 
+
 void imu_read(){
     // imu_th.set_priority(osPriorityNormal);
     while (true){

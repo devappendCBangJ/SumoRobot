@@ -80,7 +80,7 @@ int psdb_list_len = 40;
 int n = 0;
 
 uint16_t black = 17500;
-uint16_t tilt_black = 59000;
+uint16_t tilt_black = 58500;
 double psdfm_dis = 30.0;
 double psdfl_fr_dis = 90.0;
 double psdb_back_tmr_move_dis = 70.0;
@@ -88,7 +88,7 @@ double psdb_dis = 95.0;
 
 ///////////////////////////////////////////////////
 MPU9250 mpu9250;
-float tilt_deg = 4.0;
+float tilt_deg = 3.8;
 float tilt_break_deg = 1.2;
 extern float deltat;
 extern float pitch_p;
@@ -698,7 +698,7 @@ void red_in_servo_mid_can_see_move(){
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        // else if(psdb_now_avg < psdb_dis){ // 뒤 PSD 70cm 이하 : 빠른 자유롭게 공격 ★★★ 색 영역 공격 모드
+        // else if(psdb_now_avg < psdb_dis){ // 뒤 PSD 70cm 이하 : 자유롭게 공격 ★★★ 색 영역 공격 모드
         //     speedL = 0.60; speedR = 0.60;
         //     where = 22;
         // }

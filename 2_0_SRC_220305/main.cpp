@@ -565,6 +565,7 @@ int main(){
                                 }
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
+                                    ratio = 0.4;
                                 }
 
                                 tmr_reset(&waiting_start_tmr);
@@ -624,6 +625,7 @@ int main(){
                                 }
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
+                                    ratio = 0.4;
 
                                     tmr_reset(&waiting_start_tmr);
                                     tmr_reset(&waiting_dir_tmr);
@@ -656,6 +658,7 @@ int main(){
                                 }
                                 else if(ras_data[1] == 5 || ras_data[1] == 6){ // 화면 원통 매우 매우 큼 or 매우 매우 매우 큼 : 모드 변경
                                     mode = 3;
+                                    ratio = 0.4;
                                 }
 
                                 tmr_reset(&waiting_start_tmr);

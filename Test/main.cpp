@@ -1,3 +1,47 @@
+// Servo 라이브러리 : https://os.mbed.com/users/simon/code/Servo/docs/tip/classServo.html
+
+// [라이브러리]
+#include "mbed.h"
+#include "GP2A.h"
+
+// ir 센서
+AnalogIn ir(PA_0);    // 핀 번호 선언 - AnalogIn
+
+// psd 센서
+GP2A psdf(PA_1, 30, 150, 60, 0); // 핀 번호 선언 - AnalogIn
+
+uint16_t ir_val;
+double psdf_val;
+
+// 통신
+RawSerial pc(USBTX, USBRX, 115200); // 통신 객체 선언 - RawSerial
+
+// [함수정의]
+void sensor_read(); // 센서값 읽기
+void sensor_print(); // 센서값 출력
+
+// [main문]
+int main(){
+    while(1){
+        sensor_read(); // 센서값 읽기
+        sensor_print(); // 센서값 출력
+    }
+}
+
+// [함수 정의]
+// ir + psd 센서
+void sensor_read(){ // 센서값 읽기
+    ir_val = ir.read_u16(); // IR값 읽기 - AnalogIn
+
+    psdf_val = psdf.getDistance(); // psd값 읽기 - AnalogIn
+}
+
+void sensor_print(){ // 센서값 출력 - pc.printf
+    pc.printf("ir_val : | %d |\n", ir_val);
+    pc.printf("psd_val : | %lf |\n", psdf_val);
+}
+
+/*
 #include "mbed.h"
 
 Serial pc(USBTX, USBRX);
@@ -176,4 +220,4 @@ int main(){
 //         }
 //     }
 // }
-            
+*/

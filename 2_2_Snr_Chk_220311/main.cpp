@@ -6,37 +6,39 @@
 #include "GP2A.h"
 
 // [통신 + 타이머 + 모터 + 센서 class 선언 & 초기 값]
-// ir센서 + psd센서
-AnalogIn irfl(PA_0);
+// ir 센서
+AnalogIn irfl(PA_0);    // 핀 번호 선언 - AnalogIn
 AnalogIn irfr(PA_1);
 AnalogIn irmr(PA_4);
 AnalogIn irbr(PB_0);
 AnalogIn irbl(PC_1);
 AnalogIn irml(PC_0);
-GP2A psdb(PC_4, 10, 80, 0.246, -0.297);
+
+// psd 센서
+GP2A psdb(PC_4, 10, 80, 0.246, -0.297); // 핀 번호 선언 - AnalogIn
 
 uint16_t irfl_val, irfr_val, irmr_val, irbr_val, irbl_val, irml_val;
 double psdb_val;
 
 // 통신
-RawSerial ras(PA_9, PA_10, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
-RawSerial pc(USBTX, USBRX, 115200);    // RawSerial 클래스에는 scanf가 정의되어있지 않다.
+RawSerial ras(PA_9, PA_10, 115200);
+RawSerial pc(USBTX, USBRX, 115200); // 통신 객체 선언 - RawSerial
 
 volatile bool gotPacket = false;
 volatile float data[3];
 
 // [함수정의]
-void sensor_read();
-void sensor_print();
+void sensor_read(); // 센서값 읽기
+void sensor_print(); // 센서값 출력
 
-void onSerialRx();
-void onSerialRx_print();
+void onSerialRx(); // 통신값 읽기
+void onSerialRx_print(); // 통신값 출력
 
 // [main문]
 int main(){
-    ras.attach(&onSerialRx);
+    ras.attach(&onSerialRx); // 통신값 읽기 - Interrupt
     while(1){
-        sensor_read();
+        sensor_read(); // 센서값 읽기
 
         onSerialRx_print(); // 통신값 출력
         sensor_print(); // 센서값 출력
@@ -45,25 +47,24 @@ int main(){
 
 // [함수 정의]
 // ir + psd 센서
-void sensor_read(){
-    irfl_val = irfl.read_u16();
+void sensor_read(){ // 센서값 읽기
+    irfl_val = irfl.read_u16(); // IR값 읽기 - AnalogIn
     irfr_val = irfr.read_u16();
     irmr_val = irmr.read_u16();
     irbr_val = irbr.read_u16();
     irbl_val = irbl.read_u16();
     irml_val = irml.read_u16();
 
-    psdb_val = psdb.getDistance();
+    psdb_val = psdb.getDistance(); // psd값 읽기 - AnalogIn
 }
 
-void sensor_print(){
-    // printf("ir_val : | %u | \n", irbl_val);
-    // printf("ir_val : | %u | %u | %u | %u | %u | %u |\n", irfl_val, irfr_val, irmr_val, irbr_val, irbl_val, irml_val);
-    printf("psd_val : | %lf |\n", psdb_val);
+void sensor_print(){ // 센서값 출력 - pc.printf
+pc.printf("ir_val : | %d |\n", irfl_val);
+    pc.printf("psd_val : | %lf |\n", psdb_val);
 }
 
 // 통신(pc, ras, mbed)
-void onSerialRx(){
+void onSerialRx(){ // 통신값 읽기
     static char serialInBuffer[32];
     static int data_cnt = 0, buff_cnt = 0;
 
@@ -91,7 +92,7 @@ void onSerialRx(){
     }
 }
 
-void onSerialRx_print(){
+void onSerialRx_print(){ // 통신값 출력
     // pc.printf("pc 연결 OK \n"); // pc, mbed 통신 출력
     if(gotPacket) {
         gotPacket = false;
